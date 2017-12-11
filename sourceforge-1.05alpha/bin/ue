@@ -1,0 +1,18 @@
+#!/bin/sh
+cd $EMERALDROOT
+RCMP=${RCMP:-rcmp -u -d10}
+if [ $# = 0 ] ; then 
+  echo "Usage: ue host"
+  exit
+fi
+case $1 in
+  work|mako|ubc|manning|cascade)
+    ${RCMP} `allfiles` cascade:emerald ;;
+  vuw|circa|bats)
+    ${RCMP} `allfiles` bats:/vol/projects/emerald ;;
+  home|norm.home|hutchinson.home)
+    ${RCMP} `allfiles` norm.home:/emerald ;;
+  *)
+    ${RCMP} `allfiles` ${1}:emerald ;;
+esac
+  

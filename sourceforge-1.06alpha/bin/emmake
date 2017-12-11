@@ -1,0 +1,81 @@
+#!/bin/sh
+#
+# emmake
+#
+# invoke make as usual, but ensure that if we're building in a
+# directory under $EMERALDROOT, any Emerald common definitions
+# are processed first, followed by any architecture specific
+# definitions (allowing them to override the common definitions.)
+# The -v option (which must be first, else it is passed through)
+# will cause emmake to be verbose about exactly what make line is
+# executed.
+#
+
+#
+# domake - make, and echo if appropriate
+#
+domake () {
+  if [ $verbose = 1 ] ; then
+    echo "make $*"
+  fi
+  make $*
+}
+
+#
+# main
+#
+# consume emmake options
+verbose=0
+if [ .$1 = '.-v' ] ; then
+  verbose=1
+  shift
+fi
+
+# if expr >/dev/null `pwd` : .*$EMERALDROOT ; then
+# if true ; then
+  # we're in Emerald-land
+
+  # if there are Emerald common macros, remember to include them
+  if [ -r $EMERALDROOT/lib/macroMf ] ; then
+    commonmakefile="-f $EMERALDROOT/lib/macroMf"
+  fi
+
+  # if there are CCalls common macros, remember to include them
+  if [ -r $EMERALDROOT/lib/ccallsMf ] ; then
+    commonmakefile="$commonmakefile -f $EMERALDROOT/lib/ccallsMf"
+  fi
+
+  # if there are architecture specific macros, remember to include them
+  if [ -r $EMERALDROOT/lib/$EMERALDARCH/macroMf ] ; then
+    archmakefile="-f $EMERALDROOT/lib/$EMERALDARCH/macroMf"
+  fi
+
+  # if there are any -f arguments, don't provide "-f Makefile"
+  for i do
+    if [ $i = '-f' ] ; then
+      domake $commonmakefile $archmakefile $*
+	  exit 
+    fi
+  done
+
+  # simulate make behaviour of searching first for 'makefile'
+  # and then for 'Makefile'
+  if [ -r makefile ] ; then
+    if [ -r makefile.depend ] ; then
+      domake $commonmakefile $archmakefile -f makefile -f makefile.depend $*
+    else
+      domake $commonmakefile $archmakefile -f makefile $*
+    fi
+  else
+    if [ -r Makefile.depend ] ; then
+      domake $commonmakefile $archmakefile -f Makefile -f Makefile.depend $*
+    else
+      domake $commonmakefile $archmakefile -f Makefile $*
+    fi
+  fi
+
+# else
+#   # we're not in Emerald-land
+#   domake $*
+# fi
+

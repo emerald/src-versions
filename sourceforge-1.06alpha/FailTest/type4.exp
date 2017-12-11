@@ -1,0 +1,4 @@
+Compiling type4.m
+  Immutable mismatch
+  Type anytype doesn't conform to type constraint
+"type4.m", line 35: Actual #1 to "of[1]" does not match constraint on formal (deferred)

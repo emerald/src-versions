@@ -1,0 +1,48 @@
+CCALLSROOT = $(EMERALDROOT)/ccalls
+
+#
+# Provide a default set of ccalls, in case nothing is specified in the macroMf
+CCALLS_OBJ=emstream.o string.o misk.o rand.o
+
+CCALLS_SRC = \
+	$(CCALLSROOT)/regexp/regexp.c \
+	$(CCALLSROOT)/misk/misk.c \
+	$(CCALLSROOT)/rand/rand.c \
+	$(CCALLSROOT)/emstream/emstream.c \
+	$(CCALLSROOT)/string/string.c \
+	$(CCALLSROOT)/xta/xta.c \
+	$(CCALLSROOT)/xliba/xliba.c \
+	$(CCALLSROOT)/xma/xma.c \
+	$(CCALLSROOT)/xforms/xforms.c \
+	$(CCALLSROOT)/bani/bani.c
+
+regexp.o: $(CCALLSROOT)/regexp/regexp.c $(CCALLSROOT)/regexp/regexp.h \
+	$(CCALLSROOT)/regexp/regmagic.h
+	$(CC) -c $(CCALLSCPFLAGS) $(CFLAGS) -I$(CCALLSROOT)/regexp $(CCALLSROOT)/regexp/regexp.c
+
+misk.o: $(CCALLSROOT)/misk/misk.c
+	$(CC) -c $(CCALLSCPFLAGS) $(CFLAGS) -I$(CCALLSROOT)/misk $(CCALLSROOT)/misk/misk.c
+
+rand.o: $(CCALLSROOT)/rand/rand.c
+	$(CC) -c $(CCALLSCPFLAGS) $(CFLAGS) -I$(CCALLSROOT)/rand $(CCALLSROOT)/rand/rand.c
+
+emstream.o: $(CCALLSROOT)/emstream/emstream.c
+	$(CC) -c $(CCALLSCPFLAGS) $(CFLAGS) -I$(CCALLSROOT)/emstream $(CCALLSROOT)/emstream/emstream.c
+
+string.o: $(CCALLSROOT)/string/string.c
+	$(CC) -c $(CCALLSCPFLAGS) $(CFLAGS) -I$(CCALLSROOT)/string $(CCALLSROOT)/string/string.c
+
+xforms.o: $(CCALLSROOT)/xforms/xforms.c
+	$(CC) -c $(CCALLSCPFLAGS) $(CFLAGS) -I$(CCALLSROOT)/xforms -I. $(CCALLSROOT)/xforms/xforms.c
+
+bani.o: $(CCALLSROOT)/bani/bani.c
+	$(CC) -c $(CCALLSCPFLAGS) $(CFLAGS) -I$(CCALLSROOT)/bani -I. $(CCALLSROOT)/bani/bani.c
+
+xta.o: $(CCALLSROOT)/xta/xta.c
+	$(CC) -c $(CCALLSCPFLAGS) $(CFLAGS) -I$(CCALLSROOT)/xta $(CCALLSROOT)/xta/xta.c
+
+xma.o: $(CCALLSROOT)/xma/xma.c
+	$(CC) -c $(CCALLSCPFLAGS) $(CFLAGS) -I$(CCALLSROOT)/xma $(CCALLSROOT)/xma/xma.c
+
+xliba.o: $(CCALLSROOT)/xliba/xliba.c
+	$(CC) -c $(CCALLSCPFLAGS) $(CFLAGS) -I$(CCALLSROOT)/xliba $(CCALLSROOT)/xliba/xliba.c

@@ -1,0 +1,8 @@
+#!/bin/csh -f
+if ( -r execCP ) then
+    set real = `ls -l execCP | sed -e 's/^.*-> //'`
+    ls -l $real
+else
+    echo There is no current version.
+    ls -l execCP
+endif

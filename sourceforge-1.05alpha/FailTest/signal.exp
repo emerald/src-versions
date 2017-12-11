@@ -1,0 +1,3 @@
+Compiling signal.m
+"signal.m", line 5: Wait statements must be in monitored objects
+"signal.m", line 6: Signal statements must be in monitored objects

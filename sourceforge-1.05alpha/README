@@ -1,0 +1,35 @@
+This is the Emerald Distributed Programming Language
+
+This package is a redistribution of the original package under the GPL.
+The original package is at the moment available at 
+http://www.cs.ubc.ca/~norm/emerald.html (might change in the future).
+
+We have redistributed the package so as to make it available to the public, 
+as well as to make it available on modern architectures. In particular the
+original package had a dependency on the 'csh' shell which we have tried 
+to eliminate so that it now uses the more widely available 'sh'.
+
+Quick installation instructions
+===============================
+
+  1. unpack the package to the location where you want to install emerald 
+  (eg. /opt - The package is then unpacked in the directory 
+  emerald-PACKAGEVERSION under /opt)
+
+  2. Set EMERALDROOT in your environment to point to this directory (eg.
+  export EMERALDROOT=/opt/emerald )
+
+  3. set EMERALDARCH to your architecture type (probably 'i686mt', look in bin for other possibilities. normally the output of 'arch' will suffice)
+
+  3. run ./configure. 
+  Add --prefix=install_location if you want the emerald binaries to be
+  installed somewhere else than /usr/local
+
+  4. run make
+
+  5. run make install (you might need to be root)
+
+Otherwise read INSTALL for generic installation instructions
+
+In 'Doc' are the installation instructions and other documents of the original 
+package.

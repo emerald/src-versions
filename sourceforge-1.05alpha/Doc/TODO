@@ -1,0 +1,1200 @@
+Emerald ToDo/Done list
+=====================
+
+ToDo
+---
+
+Bin:
+- consider 'subarchitecture' for emarch and emmake, 'user' for emmake
+- consider having emmake get Makefile if it's missing
+- systems needs a way of distinguishing between architecture variants
+  so it doesn't build (say) 3 vmcs for hp700
+
+Lib:
+- move CC definition and others to generic macroMakefile, so specific
+  ones only need provide values if they're weird.  Also, reduce number
+  of debug and optimization options.  When CC defaults to gcc,
+  add -fsigned_char everywhere
+
+Emx (vm):
+- Makefile needs to support building debug and optimized versions
+  without changing the Makefile
+- eliminate jsys.* in favour of CCalls implementations
+- replace uses of TRACEn with TRACE
+- files should be opened in binary mode for future NT compatibitlity
+
+EC:
+- files should be opened in binary mode for future NT compatibility
+- new format toUnix calls don't set permissions as before, desired
+  permissions are present in comments but not implemented
+- need install target for Makefile
+
+
+Builtins:
+
+CCalls:
+- use emmake facilities more
+
+Exectests:
+
+Example:
+- ensure the examples all compile with the current language
+- change == to <- as appropriate
+
+Vmc:
+- fix to compile with 'best' compiler, as well as std compiler, maybe
+  use optimization (for size?) too.  In short, use emmake facilities
+- not compiled on i386mach or sun4sol yet, because we don't have
+  source nfs mounted or a standard compiler, respectively
+- replace uses of TRACEn with TRACE
+- find out why * in arguments (whether files matching the pattern exist
+  or not) to rm causes error 1 in Makefiles on m88k
+
+Emyacc:
+- fix to compile with 'best' compiler, as well as std compiler, maybe
+  use optimization (for size?) too.  In short, use emmake facilities
+- dumps core brutally when given no args
+  y2.c: line 258, we write to freduce even if it's not been opened
+  (which is the case if neither -p nor -m were given)
+  assuming we deal with that, there's still the question of what
+  to do given no grammar file.  And how about quitting after printing
+  a Usage message rather than continuing?
+- default paths are strange too
+
+Report:
+- page 27, Boolean AND and OR description, could express the operations
+  in terms of their corresponding ifs, as is done for FOR
+- remove Appendix B and C, they are obsolete and replaced by the
+  Tutorial (which perhaps should be renamed User's Guide)
+
+Doc:
+- describe the new state of the world in wonderful new prose
+
+
+Done
+---
+- remove *.current* when convinced new things work, also Obsolete
+
+Bin:
+- moved symlink test to a separate script; existing symlink test
+  fails on symlinks to non-existent directories
+- setarch didn't work on hp700 until tr arguments were quoted and
+  bracketed
+- new setarch now handles "" by complaining it won't disable architecture
+  specific stuff
+- setuser now handles "" by disabling user-specific stuff
+- moved changed, checkout, distribute, maketar* here, patched as
+  appropriate
+- added buildvmcs
+- added buildemyaccs
+- added newarch
+- added emmake which sources appropriate architecture independent
+  and dependent stuff before doing a standard make, when below
+  $EMERALDROOT
+- moved *version scripts here from EC
+- ffs functionality moved to makefile
+- emc invokes golden EC and builtins, xemc invokes experimental EC and
+  builtins, emx is always found through the path, use emarch to set it
+- checkout and friends replaced by generic 'forallsys' script
+  to invoke and build on all architectures
+- rcssync has makefile inline, rather than in lib
+- forallsys -> forallarch, to consistently name all tools with arch
+- maketar* now aware of new directory layout
+- setarch/user can emit sh and csh compatible output
+- RCS now in use for tools found here
+- *version scripts now work with Builtins (done by norm.) Simplest,
+  fastest, safest fix was to have Builtins Makefile create name and
+  name.idx, as expected by version scripts
+
+Lib:
+- created 
+- moved systems here and patched checkout appropriately.  Systems can
+  now contain comments as well
+- architecture dependent and independent macroMakefiles added to
+  be sourced as appropriate by emmake
+- made bytecodedefs an install target of building emx
+
+Emx (vm):
+- architecture independent makefiles installed, using emmake
+  facilities and Makefile instead of makeMakefile and baseMakefile
+- new mechanism is (or was at one point, it's evolved since) exactly
+  equivalent to old mechanism, except that ARCH is accurate, whereas
+  old mechanism tended to call everything sun; this affects the user
+  target
+- tested versions with new Makefiles
+- main Vm directory renamed vm.  RCS directory lives in vm.
+  experimental architectures norm and mueller have symlinks to it
+- implemented new TRACE macro which doesn't require different versions
+  for different argument lists
+- sun4sol compiles.  Required #including netinet/in.h and sys/types.h
+  in a bunch of places.  This in turn, required adding a cast to
+  array.h to compile on other architectures again.
+- moved XVm and YVM to be architectures vm/norm and vm/mueller
+- for each architecture, build using (in order of preference) gcc2,
+  gcc1, then cc (except hp700 where cc is first choice.)  Build emx
+  to have tracing, countbytecodes and debug info in interpreter.
+- keep 'fast' version with minimal features, optimization on,
+  for use when rebuilding the compiler lots on hp700
+- emx emits #!  emx instead of a fixed path relative to compile
+  time $EMERALDROOT when -C is used to compress checkpoint files
+- jsys.c - jfopen() reimplemented to use fopen
+- vm.desc - added SCMP nil checks, implemented CCALL bytecode
+- RS6000 support: misc.c, vm.c, gc/runtime.h, gc/gcassm.S, vmc changes
+  garbage collector not extensively tested
+
+EC:
+- compiler emits #!  emx instead of a fixed path relative to compile
+  time $EMERALDROOT which is guaranteed to be incorrect.  This way,
+  user can make a symlink to an appropriate emx in the directory
+  containing the .x file if desired
+- compiler searches for ccalldefs in lib and vm.h, jsys.h in vm
+  and is more flexible about the contents of those files.  lines
+  containing other than #define DEF val are silently ignored.
+- ccalls support
+- from/toUnix references changed to use fopen style arguments
+
+Builtins:
+- from/toUnix implementations (In/OutStream.m) - changed primitive
+  call to new fopen style interface.  added checks that mode starts
+  with 'r', 'w' or 'a' as appropriate
+- Makefile now installs as lib/Builtins instead of Etc/CP
+
+CCalls:
+- created.  works on all architectures by means of emmake and
+  macroMakefiles
+
+GC:
+
+Exectests:
+- RCS directory added
+- from/toUnix references changed to use fopen style arguments
+
+Example:
+
+Misc:
+
+Vmc:
+- compiles (using standard compiler) most places, and has been
+  installed in search path.  i386mach and sun4sol not done yet
+  (although sun4sol can run sun4 version.)  mips required breaking
+  long string constants into shorter ones.  sgi required adding a
+  conditional to test for ANSI in yet another way in tracing.
+  m88k is happier with tokens after #endif commented out and
+  Makefile rm command not containing *.
+- tested too (octopus is cool!) new versions all produce the same
+  output as the old version and as each other
+- Makefiles no longer attempt to find vmc in ../vmc
+- now produces more correct usage message, and protects itself better
+  against invalid command line arguments (i.e. no core dumps when
+  invoked without any arguments)
+- install target sets group permissions wisely
+
+EmYacc:
+- compiles (using some compiler) most places and has been installed.
+  required removing gratuituous \ from y1.c, changing strings.h to
+  string.h (maybe should try using #ifdef SYSTYPE_SYSV like lib.c)
+  Of course, it dumps core, and the code is sufficiently
+  ugly that I'm going to ignore it for a little while.
+- install target sets group permissions wisely
+
+Report:
+- new toUnix/fromUnix interface documented
+
+Doc:
+
+
+
+Portability Notes
+----------------
+
+- ar shouldn't have a - in front of commands for maximum portability
+  (Emerald Makefile don't)
+- not all makes set SHELL = /bin/sh by default
+  (generic macroMakefile sets this, always)
+- whoami isn't installed everywhere, $user isn't necessarily set on
+  hp700.  $LOGNAME isn't set on next. (no satisfactory solution, yet)
+- the IBMs are somewhat broken.  awk is broken (can't handle other
+  than single line programs on command line, much like m88k).  ls is
+  broken (-l puts uppercase letters in first column, for Files, Dirs
+  and Links). 
+
+
+Questions
+--------
+
+- what's the xvm stuff in vm/Makefile?
+- what does target user do?
+- why use {}s in Makefiles?  Seems to work, but normally use ()
+- why are there multiple emeralds, for example in /project?
+- do we want to continue sourcing the bytecode list, rather than
+  compiling it in?
+- why do are so many of the debug compile options actually optimization
+  options?
+- why do we need to specify self. for local functions, but not for
+  local variables?
+- 'style': is it better to make new objects, or to modify existing ones?
+  (consider: nameserver, addname with existing name)
+
+- why is there a fakemain.c? (for building emx on top of xkernel)
+- we can use gcc2 for cpp, right?  (yes)
+- new string ops are implemented where? (in String, possibly as Emerald code,
+  possibly as ccalls.)
+- why do iset.[ch], ffs get checked out rw? (strict locking not on,
+  rcs -L <filename> to fix)
+- appears that norm fixed clock_ticks problem on ibm? (yes)
+
+
+
+Language additions
+-----------------
+
+- need to export stuff like strings, booleans and other builtins
+- need string operations:  concatenation with characters for
+  starters
+- need character operations: ctype stuff, toupper, tolower
+- ccalls stuff: be careful with unix vs clib
+- need mechanism for inheritance of types; i.e. I want to create a
+  type which is all of the existing stuff in a type, and then some.
+  We have classes, but I just want to grow the type, since it's
+  separate from the implementation.  Consider also, I want to return
+  a subset of some record to the user, how do I do this?  Inherited
+  records seem like an approach.
+- allow a trailing comma in a list, when constructing vector literals,
+  for example
+
+
+
+- 26 Feb 93 - Fixed
+- Fix the writing of abstract type vectors and their entries
+-     They currently generate gibberish 0 entries and 1 entry NIL
+
+- Fold abstract op vector entries, and abstract op vectors.
+-	Actually just implemented an option to not generate AT info at all.
+
+- 24 dec 92 norm
+- Fold signatures in the compiler (notice when you have generated him before).
+-    decided that this is not a good idea.
+
+- Interactive debugger enabled with -i flag.
+-	Done
+
+- Implement the print command
+-	Done
+
+Worry about variable scopes in the debugger:
+	loop 
+	    var x : Integer <- 99
+	    loop
+		var x : Integer <- 101
+		assert false
+	-> Printing x at this point requires finding the right x
+
+- Align operands in the interpreter on natural boundaries.
+-	Changes to bytecode.m
+-	vm.desc (or whereever those unaligned guys are)
+-	also added calloids with a 16 bit operation id
+
+Trim the trees before checkpointing them.
+
+- Done.
+- Worry about moving active processes.  What is the state of the stack?
+- Should the locations of temps be changed?  Do we need to generate templates
+- for the random garbage on the interpreter stack?  If so, how should it be
+- organized?
+
+Generate machine code on the fly.
+
+Do a study of how language level processes ought to be mapped on to OS level
+processes or threads or scheduler activations or whatever.
+
+- 24 Dec 92  Eliminated all monitors, so don't need to bother
+- Check on incestuous monitor calls and calls to private operations from
+- outside the monitor.
+
+- 3 June 92 norm
+- Added Real.literal and aReal.- (like ~)
+
+- 3 June 92 norm
+- Fix the spurious oblit dump when attempting to invoke an operation that is
+- not defined. 
+
+- 5 June 92 norm
+- Cleanup checking for exported operations
+- When the type information was found from an oblit, we didn't use to check
+-   whether the operation was exported.  Now we do.
+
+- 24 Dec 92 norm
+- Type checking across compilations doesn't seem to work.  This is because the
+- type information for identifiers isn't exported unless the trees are.  There
+- should be a switch (on by default) that exports type information for each
+- exported identifier, and another switch (off by default) that exports trees.
+- The second one could well be the current exporttree.  The first one is
+- just whether we are doing typechecking. 
+
+- 18 jun 92 norm
+- Parsers generated by emyacc seem to have monitor problems.  Looking at this
+- some more, I can't reproduce the problem.  The compiler now compiles itself
+- correctly with generateconcurrent.  The problem was in sym.m.
+
+- 18 jun 92 norm
+- modify vmc to make the pointers in assemble and disassemble unsigned long
+- instead of char *.  This removes a large number of warnings.
+
+- Done.
+- Figure out why type checking of directory (and presumably other builtins
+- doesn't work).
+
+Go through all the evaluateManifests and find all of the places where if
+execute fails it dies, and replace them with
+    Environment$env$needMoreEvaluateManifest <- true return
+
+- 17 Sep 92
+- Fix the tracing of calls to use the real stack.
+    Done
+
+- Fix the indentation on call tracing.
+- Done.  There is a remaining problem that the first initially on a stack is
+- indented the same as the next call, but that cannot be helped because they
+- actually do happen at the same point on the stack and it is almost
+- impossible to tell them apart.
+
+- Trace process start/termination under IMPLEMENTCONCURRENCY
+- Done, under the control of traceprocess
+
+- x : vector.of[foo] const y <- x(0) does not set a type for y.  Seems like a
+- subscript operation doesn't have at info available.
+-   More information:  If you execute the vector.of[foo] in this compilation,
+-      then there  is no problem.  If you get information about it from the
+-      idb file then there is not enough information to get the instance type.
+- The final solution is to re-execute the invocation, ensuring that the
+- resulting objects are allocated but no code is generated for them.
+
+- 24 Dec 92 norm
+- Eventually delete NCASE and make CASE be like NCASE is now.
+
+- 23 Dec 92
+-     Get number of arguments and results into the method name.
+
+Implement Ab/Cons.
+
+- 04 Mar 93
+- Line number info now allows negative jumps.
+- Think about how to generate reasonable line numbers for failure handlers.
+- The code is generated at the end of the block, but the line number mechanism
+- currently doesn't allow going backwards.
+
+- 26 Feb 93
+- Fix type checking of starinvocs.
+
+- 17 Feb 93
+- Implement CALLSTAR for real.  The hard part is finding a place to put the
+- number of results that are expected.
+- We create a dummy stack record for the extra int.  The saved pc == 0 is a
+- signal to the debugger so that it doesn't try to print variables that
+- aren't there.
+
+- 24 Feb 93
+- Implement conforms.  This requires that signatures be generated as opposed
+- to types.  You get from one to the other by invocing getSignature.  This
+- is now mostly done.
+-  1 Mar 93
+- Now it is really done.  The code generator checks to see if the expression
+- has type 'type' or 'signature' and does the right thing.
+
+- 25 Feb 93 - fixed
+- Printing of variables in the debugger is now broken.  Possibly because of
+- the changes that were made in avoiding .* activation records.
+
+- August 94 - Done
+- Check what sort of gibberish is generated for things like Array and Set.
+-   The objects generated are now correct.  Even isTypeVariable is set
+-   correctly.  Conforms at runtime won't work for them yet.
+
+- 7 Mar 93 - done.
+- The debugger doesn't notice when a failure happens when I am debugging.
+- Perhaps it should trap to the debugger when the failure is raised so that I
+- get to see it.  At the moment if there is a failure when debugging, it just
+- quietly goes to the handler.
+
+- 4Mar93 This has now been fixed
+- In any case it should not undo the effect of single stepping.
+- When a failure is signalled and the debugger is enabled, the debugger finds
+- a hander before starting to interact with the user.  This loses the ability
+- to poke around at the point of failure.  The debugger should interact with
+- the user, and if the user resumes the execution, then the debugger ought to
+- jump to the handler.
+
+- 12Mar93 Done.
+-    There was a particularly nasty problem with getting ATs written out
+-    since they reference other ats by oid.  We had to invent two new
+-    interpreter primitives RELOCATETYPE and RELOCATEVECTOR to cause the
+-    relocation information to be generated.  This gives us a way to
+-    simulate what in the checkpoint file is done by a reference to a -OB-.
+- execute now doesn't generate ATs.  There is no generatebuiltin on the atcode
+- collection.
+
+- 9 Mar 93 - Done
+- dynamic code loading.  The primitive is DLOAD string.  Loading code that
+- references missing objects by oid also works.  relocationMap hold the places
+- that will need fixing when the named object is loaded.
+
+Variables that can't be integer/character/boolean/real only require 4 bytes.
+
+- Check inserted 10 Mar 93 
+-   If evaluateManifests goes 10 more passes than findManifests did, panic.
+- Declarations like const sconst <- sconst seem to break things somewhere.
+- Actually, the place is evaluatemanifests where it just keeps trying to make
+- progress and never gets anywhere.  
+
+- Done - the right answer is actually CODEPTRINDEX(ct)
+- The checks in ncpr.c for builtin indicies need to be CODEPTR(WHATEVERI).
+
+- Check inserted 11 Jun 93
+- outstream.putstring should check for nil
+
+A var declaration shouldn't require a type if there is an initializer present
+
+- 16 Jun 93-
+- Self is converted, more or less syntactically, to the name of the object
+- being referred to.  This causes problems, if there are (say) method
+- parameters of the same name as the object to which self has been converted.
+- The fix was to leave self as self.  This also makes "doselfs" unnecessary.
+
+Clean up const/var/field/ext decls.  There should be a superclass here.
+
+- 25 Jun 93
+- Done as a byproduct of cleaning up of bytecode.nest
+- We need to generate code to nil variables that are declared inside of loops.
+
+- 20 Jul 93
+- They are now.
+- Multiple declarations in a parameter list are not detected!!!!!
+
+- Done August 94
+- The interpreter needs an option to disable the stack trace on an error, and
+- emc needs to use it.
+-   The default stack trace is now just routines, not a dump.
+
+- Done
+- The compiler needs to detect when it can't open files and report some more
+- reasonable error.
+
+- Done 10 Mar 94
+- The garbage collector needs to check when it attempts to promote objects
+- that there is in fact still space in the old generation.  An assert would be
+- sufficient.
+
+Fix the call tracing to know about callctb and callb and calls.
+- This is partially done, but it is really hard to find the right operation
+- name on the return, as it is not recorded in the call instruction.
+-  3 Oct 94  It is even more done now, as callctb and its returns now
+-    generate the correct operation name.  Doing this with calls and callb
+-    will be much harder because we don't keep the abcon around after the 
+-    invoke.
+
+- Done 18 May 94
+- Fix the debugger to look in the locals before the instance vars.
+- Done by reversing the order of the calls to tfind in find
+
+- Done 9 Jun 94
+- We can make the interpreter faster by preprocessing out the context switch
+- code when we want it fast.  We could get this by turning off
+- IMPLEMENTCONCURRENCY.  Right now on every invoke and on every branch we
+- check to see if we should context switch.
+-
+- Done.  The new symbol to get context switching code is TIMESLICE.
+
+- Done August 94
+- Type check manifest invocations
+- Generate ats for things like Set and Array right
+- Check that manifest invocations are not attempted at runtime
+- Check for shadowed identifiers
+- Fields generated operations for "get" but they should be functions.
+
+Implement overloading on number of results.
+  This requires figuring out the context for every invocation, which
+  should be done anyway
+- Turns out this is already done.
+
+  We can merge this with figuring out whether an invoc contains another 
+  invoc in its argument list.  Sure, but it would involve changing all of
+  the resolve symbols or define symbols out there to return a boolean.
+
+- Done August 94
+- Making bestCP should load all of the Builtins.
+- Actually, it is making xbestCP that does.
+
+- Get typechecking right.  Typechecking the compiler should be able to figure 
+-   real types for everything.
+- Done
+
+- Done August 94
+- Prune exported trees.  This is a problem in the face of compiler generated
+- invocations and inheritance.  Still got a ways to go.
+
+- Done August 94
+- Fixed a failure when debug information is not generated.  This was caused
+- by a bug in misc.c that treated a nil operation template as an excuse to
+- do no work, when in fact there are still an arbitrary number of variables
+- that needed to be handled on the stack (arguments, results, and temps).
+
+- Implement a "why" option in the compiler so that it explains why things
+- don't conform.  
+
+- Done August 94
+- Check out the style of the old "-why" report and duplicate it.
+- I like the new one better.
+
+- Got rid of all symbols tables and many symbols by finally deleting the
+- right ones.
+
+- Made the compiler executable much smaller by careful attention to the
+- number and sizes of things that are generated.  Also fixed the size
+- reporting in read.c under control of -Tctinfo so that it was correct.
+
+Garbage collection should deal with more than one old chunk so as to be able
+to grow the old area.  An alternative is to malloc a bigger chunk but only
+use a prefix of it and slide the boundary.  Most oses won't allocate
+physical memory until the malloced memory is touched for the first time.
+
+- Done August 94
+- Merge all of the {int,char,bool,nil} lit.m's
+- They are now all in literal.m
+
+- Done August 94
+- Dynamically grow the move_stack, and check for failures.  Looks like 2000
+- words is good enough for the compiler.
+
+- Done August 94
+- Look carefully at nexp in resolve symbols, and decide if you can use it to
+- discover when an expression appears in a statement context.  Right now it
+- looks like it is wrong when oblits resolve their names.
+- I don't need this method, because of the following note.
+
+- Done August 94
+- Find expressions in statement contexts and generate errors.
+- Inserted typechecking code in block to make it look for expressions.  This
+- depends on knowing what all the expression node in the parse tree are, but
+- any other solution is even more complicated.
+
+- Done August 94
+- Deal with versions of the compiler, interpreter, and builtins.  Shell
+- scripts seem called for here.
+
+- Done August 94
+- Protect the real gc size variables from multiple confusing -O -g -G
+- arguments.  main.c should set parameters to gc_init, which should copy them
+- to real variables on the only time that it initializes.
+
+- Done August 94
+- Implement XVIEW correctly.
+- This called for introducing a new bytecode VIEW which assumes a variable
+- and a type on the stack and fails if the type of the variable doesn't
+- conform to the type.  I believe that conformity is probably still broken
+- in the interpreter.  Next item.
+
+- Done August 94
+- Check that conformity actually does the right thing in the interpreter,
+- making sure that it works on vector.of[integer] *> vector.of[integer] and
+- vector.of[integer] *> vectorofint, and fails on Integer *> character
+- Immutablevector.of[character] *> String and such like that.
+-   All of this is fine, but (see the next item)
+
+Generate an isVector bit in an AT, and use it in conform.c to prevent things
+that look like vectors and immutable vectors being confused with them.  One
+can also get rid of "value" in AbstractTypes and collapse the two bits
+(isImmutable and isTypeVariable) into a bit field.  The code in conform.c
+has already been written, but is ifdeffed out.
+
+- Done 15 September 94
+- Insert checks that things in type positions are in fact types.  The compiler
+- never checked that the things after the : in declarations were really types.
+
+- Done 15 September 94
+- Check type assignment to consts without explicit types.  Do their symbols 
+- ever get types assigned if the initializing expression is complex (an invoc)?
+- Yes, but only when typechecking is enabled.
+
+- Done 16 September 94
+- Typechecking fails to catch situations where an object has an operation with
+- the right number and types of arguments, but the wrong number of results.
+- Only in if statements, loops, and things like that.
+- In particular:
+-     const t <- object t 
+- 	export operation foo[i : Integer] -> [r : Boolean]
+- 	end foo
+-     end t
+-     if true then
+- 	t.foo[4]
+-     end if
+- generates no errors.
+- The fix is to copy operation typecheck from block to ifclause, elseclause,
+- and loopstat.
+
+- Done 16 Sep 94
+- Nothing checks that the expression in if, exit and like those is boolean.
+
+- Done  3 Oct 94
+- We want to export non-manifest objects to the environment correctly:
+-   - use the isExported bit to mark them.  This needs to be done early so
+-     that we can correctly determine this second thing.
+-   - check that they only import manifest or exported things.
+-   - Generate MKOBs instead of CREATES
+
+- Done Mar 95
+- Figure out what breaks on Example/brokenset.m  We get a failure like
+- 
+- cobra% emc -i
+- Command: brokenset.m
+- Compiling brokenset.m
+- Exception: Invoked nil, opname = 880 getisnotmanifest@0@1
+- Raised at: "sym.m", line 72 (operation getisnotmanifest)
+- edb> 
+-
+- The problem was that we were neglecting to assign types on some copied
+- state when an invoke was done at compile time.   
+
+- Done 06 Mar 95
+- Fix vmc to not write into yytext.
+
+- Done 06 Mar 95
+- Make InterpreterState a real object.  I thought about allocating it with
+- gc_malloc, but it doesn't tolerate being copied by the collector well.
+- Some day when the process/state management code is cleaned up we'll be
+- able to delete states!  There should be a vmFree sometime after a state is
+- removed from allProcesses.
+
+- Fixed 3 Apr 95
+- Execute now fails because relocations don't track ct moves due to gc.
+-   Changed to do relocations based on an object and an offset    
+- The objectotoid table isn't updated when objects move during gc.  This is a
+- problem since the address of the object is the key!
+-   Changed to explicitly update the table when an object is moved by the gc.
+- Now there is another one.  The literal array in cts contains pointers, but
+- they aren't updated by gcs.
+-   Now they are, due to the introduction of a new builtin and a new brand.
+
+There is still a problem with code objects that move since the saved pcs on
+the stack are absolute addresses.  We really need to check for code objects
+moving and adjust the pcs as necessary.  I've tried to do this, but the
+check is not correct.  Somehow we need to find out reliably when code
+objects move.  Look in misc.c in dealWithPC for the details.
+
+Come up with an ExecTest that checks for separate compilation and execution
+of a manifest object, like Example/inv[12].m
+
+- Fixed 21 Jun 95
+- Implement unavailable handers
+
+- Fixed 21 Jun 95
+- Implement failure handlers right - the code is generated from the wrong
+- context so branches out of loops fail among other things.
+-
+- The immediate fix involves a branch around the failure handling code in
+- some cases, but it is at least correct.  A better fix that involves
+- generating the code and later relocating it to the end of the operation
+- should be done as a "peephole" optimization on the generated code.
+
+- Fixed 22 Jun 95
+- const RIS <- immutable object RIS
+-   export function of [t : Type] -> [r : Signature]
+-     forall t
+-     r <- typeobject RT
+-       function lowerbound -> [Integer]
+-       function upperbound -> [Integer]
+-       function getelement[Integer] -> [t]
+-     end RT
+-   end of
+- end RIS
+- 
+- should work but dies in invoc.execute because it thinks that the result is
+- going to be an oblit. 
+-
+- Fix was to add an operation to atlits so that they impersonate oblits well
+- enough.
+
+- Done 26Sep95
+- Constraints on types should be allowed to be only typeobjects, not arbitrary
+- expressions.  This makes the rules for matching and the scope rules much
+- more understandable.
+
+- Done 3 Sep 95
+- What if there are two suchthats for the same identifier?
+- Added a flag to syms to indicate that they already have a constraint.
+
+- Why can't it get the types of jc.m, line 63 or strstrm.m, line 23?
+- Must be done, because I don't see these errors any more.
+
+-- Done (I think) 26sep95
+- When there are two type variables it does the type checking at the wrong
+- time.  How should it handle:
+- 
+- const Graph <- immutable object Graph
+-   export function of[N : type, A : type] -> [something : theGraphType]
+
+Things like Array.of[f] inside of op fo[f : Type] don't get code generated
+correctly for them.  And each element of a vector.of[f] inside of op foo[f :
+Type] after x.foo[character] will be stored as a 8 byte thing, not a 1 byte
+thing and so all the other vector.of[char] stuff will break.
+
+- Done 1 Mar 96
+- Discovered 20 Feb 96:
+- When running with threads, global objects are initialized on demand, which
+- breaks make bestCP in EC.  In particular the initialized object of the byte
+- code reader isn't set up since the byte code reader is never invoked so it
+- is never initialized.  The fix:  somehow force all global objects to
+- initialized before the checkpoint.  Perhaps there is a way to yield the
+- processor so these other guys will go?
+- 
+- The fix was to make sure Compilations run at the end, even in the threads 
+- version.
+
+- Discovered Aug 03 1996 Fixed 06 Sep 1996
+- worry about attached literal elements.  Things that are immutable need to be
+- treated as attached.  I think that we need mobility to check this one out.
+- First we need to move the code to a node, then try to run it to see whether
+- the literal list is all there.
+- The literal list is treated as a vector of attached objects because of the
+- special template tag.
+
+- Aug 10 1996
+- In conjunction with the one above, we need to modify read so that references
+- to things by OID that are not present on the node get turned into stubs.
+- But where should these stubs point?  We need a location mechanism.  If we
+- solved this one, then we may not need to solve the above one.
+
+- Aug 05 1996
+- Things with OIDs but that are not referenced either directly or from literal
+- lists could be freed.
+- Done.  These are detected in the local collector if they are immutable.
+- Mutable stuff with an OID can't be detected until the global gc says so.
+
+Aug 10 1996
+When a node A invokes a node B that is no longer up, it seems to tie things
+up so that later invocations to node A will fail.
+
+Aug 11 1996
+Upcall needs to use invoke so that it checks resdnt bits and failed objects
+and stuff like that.
+
+Aug 11 1996
+So does the RemoteInvoke handler in rinvoke.c..
+
+- Fixed Aug 11 1996
+- The fixqueue and allfrozen and processes don't survive gcs.  The keys change
+- when objects move, and the hash tables don't account for that.
+  
+- Now we create new IIScs whenever gc has the potential of moving any objects.
+
+- We need to use incarnation numbers to keep OIDs from wrapping so fast.
+- Done.
+
+A node crash needs to abort all of the outstanding requests to that node
+
+- Moving the code needs to move all of the literals.
+- Done
+
+- We need to create stubs for objects that we know the OID of but don't have.
+- Currently we make them NIL hoping that they will show up before we need them.
+- Done 08 Sep, 1996
+
+- Sep 03, 1996
+- movemetons.x is growing slowly
+- 11 Feb 1998
+- Done.  There was a problem with a missing OIDRemove(some state) so the
+- object table was growing out of control.  That has been eliminated now.
+
+- Sep 11, 1996
+- The context switching code on SPARCs doesn't work, the stack gets
+- corrupted.
+- Seems to be fine now (11 Feb 1998)
+- Done 6 Mar 1998
+- Even better now that we don't use it any more.
+
+- Sep 17, 1996
+- If we follow a forwarding pointer, and the node pointed to is gone, we need
+- to invoke the location service.
+- Done  6 Mar 1998
+- We rely on the last node in the forwarding chain to locate the object
+- aggressively if either it has no forwarding stub or it can't send the
+- message to the node pointer to therein.
+
+- Sep 17, 1996
+- All calls to debug have to ensure that the right thing happens if there is a
+- handler.  Debug always returns 0 at the moment, which certainly is wrong.
+- Done  6 Mar 1998
+- Debug and unavailable have the same return conventions.  They return 0 if
+- the state that was passed in has been updated and should continue to be
+- interpreted, and 1 if the state has been taken care of and interpret
+- should abandon its execution.
+
+- Sep 17, 1996
+- Check out the use of SIGIO in mthreads.  Seems like they should be
+- encouraged and allowed, but not required.
+- Done 6 Mar 1998
+- Fixed.  Got rid of mthreads.
+
+- Sep19, 1996
+- trailer, runner <- runner, runner$next
+- The number of expected results is wrong for the $next invocation
+- Done sometime before 6 Mar 1998
+- Example/tmulti.m demonstrates that it works, and tmulti2.m shows that it
+- does the right thing even if there are 4 byte things on the stack.
+- Remember that we are restricted from having any 4 byte stuff on the stack
+- when we do an invocation.
+
+- Sep 24, 1996
+- Remote checkpoint reads that needed to load code failed because noone
+- checked.  That is now fixed using a preamble that indicates what code to
+- load first.  
+
+- 24 Sep, 1996
+- Worry about concurrency in loading code.
+- Done 6 Mar 1998
+- We deal with the case where two requests for the same object happen.
+
+ 3 Oct, 1996
+Worry about the fact that states are hidden in fixqs on initiallies and they
+need to be removed from such places if they migrate out.
+
+-  8 Oct, 1996
+- Starting a whole bunch of emxs close to the same time, killing them, and
+- then restarting them is a recipe for disaster.  Why?  Perhaps because the
+- same IP, port, and incarnation are reused.
+- Done.  We randomly generate the incarnations.
+
+ 8 Oct, 1996
+Related to the previous.  I need to find all outstanding communication
+pending through a socket when it dies and kill it.  Also at the next level
+up anything waiting for a node to do something (waiting for a reply) has to
+be aborted.
+
+-  4 Dec, 1996
+- Fix makefiles to use Makefile.dep, emmake too.
+- Done by fixing emmake to add it to the list of makefiles.
+
+ 4 Feb, 1998
+Check out remote floats ($e/Example/tremfloat.m).  Use xdr_float as a base
+to figure out how to fix them.
+
+ 4 Feb, 1998
+Think about getting rid of the HASOID bit in the flags field.  The only
+place where we use this heavily is in the garbage collector where each
+forwarded object needs to have its oid info updated.  This could be done
+with a call to OIDOf (slow) or a pass through the object table after we have
+forwarded everything.  If anything pointed to by the object table is being
+forwarded, then we need to update the location information.
+
+ 4 Feb, 1998
+Figure out this locale stuff.  Why does emx compiled in the C locale fail in
+a danish locale? 
+
+-  4 Feb, 1998
+- Compiler should accept 8 bit characters.
+- Done.  And the meta ones are considered letters (because I still don't trust
+- ctype.h).
+
+-  8 Feb, 1998
+- The distributed gc needs to be able to handle nodes that arrive during/after
+- a gc has happened.  A new node during or a node crashing during needs to
+- abort the gc.  When a node enters a world which has already done gcs, it
+- needs to just get up to date.
+- Done.  A node that arrives between gcs just updates its idea of what the
+- next gc will be.  A node that arrives during a gc will join the gc as soon
+- as it finished initializing.  A node that leaves during a gc just gets
+- ignored, as we continually reset the set of nodes that we are considering.
+
+- 10 Feb, 1998
+- When a node fails, and we kill some objects on it, we need to ensure that
+- they haven't moved out before we kill them.  We also need to remove them
+- from the grey list of the distributed gc.  
+- Done.  I've implemented a reliable location service, and use it before
+- declaring an object unavailable.  
+
+- 11 Feb, 1998
+- Remote invoke code needs to fault to the reliable location service if the
+- forwarding pointers fail.  This is easy enough if I can build the invocation
+- message again.  Otherwise, I guess the last node in the chain could take the
+- responsibility.  I'd much rather have it be the source node, though.  It has
+- to be in the source node since the last node in the chain might fail while
+- the source and destination are both up.
+- Fixed 6 Mar, 1998
+- The problems associated with sending the invocation message more than once
+- aren't worth it.  We will rely on the last node in the forwarding chain to
+- send the message, and if it doesn't the invocation will raise unavailable
+- even though the target object is up.  This necessitates a change to the
+- language report.
+
+- 11 Feb, 1998
+- Fixed 27 Feb 1998
+- Unreliable under mt:
+-     Blackdog
+-     Stockholm
+-     Blue
+
+- 12 Feb, 1998
+- Example/tfail.m doesn't compile because nil doesn't have all operations.
+- This needs to be added to the ExecTest and FailTest.
+- Done.  The logic in invoc.m had been changed and now ignored the variable
+- isNone when it got set.
+
+13 Feb, 1998
+When a node fails, we currently aggressivly locate only those objects that
+were believed to be on that node.  However our location information may be
+out of date so we should probably aggressively locate everybody that we have
+outstanding invocations on in order to make sure that we notice their
+unavailabilty in a timely manner.
+6 Mar 1998
+My current thinking on this is that we should just start a distributed gc if
+we aren't in one, or arrange to have one started as soon as we finish the
+current one whenever we detect a node failure.  Any object that is findable
+will be found, and any object that isn't findable will be aggressively
+located and the unavailable stuff should kick in.
+10 Mar 1998
+We actually need to locate the states that hold the continuations for all
+invocations that we have outstanding. 
+30 Apr 1998
+We now have done that for invocations.  Moves and its friends are still a
+concern.
+
+- 25 Feb, 1998
+- Fixed 26 Feb, 1998
+- Polymorphic operations with 2 arguments needs to get their actual types
+- checked against the constraints in parallel.  First establish all
+- variable->value bindings, then type check them all, then revoke them all.
+- Doing them one at a time breaks $e/Example/duska.m.
+
+- 25 Feb, 1998
+- Fixed 26 Feb 98
+- The solution was to deal with the arguments and results that can be
+- sitting at the bottom of the stack. 
+-
+- The very bottom of the stack needs to be rethought.  I have just experienced
+- a situation where scramble.x on 2 nodes generates random failures, one of
+- which was traced to a result variable sitting at the bottom of a stack that
+- wan't dealt with by the garbage collector.  I suspect that under these
+- circumstances I am not getting all the way to the bottom of the stack, and I
+- need to figure out why.
+
+- 27 Feb, 1998
+- Fixed 27 Feb, 1998
+- The garbage collector was failing by overly aggressively deleting concrete
+- types that aren't needed any more, but are still referenced by dead
+- objects.  These can't be collected since we need to be able to see how big
+- the dead objects are.
+
+- 27 Feb, 1998
+- Currently, handling a forwarded invoke insists on finding the object.  This
+- has to be able to deal with the situation where we have gcollected the stub.
+- Done 6 Mar, 1998
+- If we don't have a stub for the state any more, we fake one up, locate it,
+- and then forward the invocation.
+
+- 27 Feb, 1998
+- There are states being left around in the object table.  I don't know where
+- they come from but they need to be removed from the OT when they get
+- deallocated (which appears to be being done).
+- They are coming from stateFetch, which is creating essentially a stub to a
+- remote state.  We need to teach gcollect_old how to find and eliminate
+- them.  We can mark them, and use purgeObjects to nuke 'em.
+- States like these can be hiding in the dependsOn structure (whattodonext),
+- and in SQueues.  The code in gc.c deals with squeues funny.  They can be in
+- monitor locks and conditions, but the code only deals with conditions, and
+- it treats them like objects, which they are not.  They should be invisible
+- to the garbage collector, except that this is the perfect opportunity to
+- find those states that were stateFetched, and get rid of them.
+- They are also hiding in outstandingInvokes, which has a weird structure.
+
+- Fixed.  We clean up states during gcollect_old, and also during
+- distributed gcollection.
+
+27 Feb, 1998
+Failures.  If we have a node failure, lots of stuff is never going to be
+returned to us.  Our move results might get lost.  Our invoke replies might
+never be delivered due to a failure of an intermediate node.  Do I have to
+refresh these, retry them, search for them???????
+
+ 2 Mar 98
+Looks like I am finding that the object in the top activation record is the
+object that is unavailable.  That seems wrong. 
+ Update 4 May 98
+The testunavailable*.m test seem to indicate that I am in fact getting this
+right.  Still needs to be verified more carefully.
+
+ 4 Mar 98
+When an object is in the middle of a remote request, the responsibility for
+fielding the result of that request should go along with the object when it
+is moved.  For example, if the object has performed a remote invocation, the
+new home of the object should have an outstandingInvoke entry in its table.
+Similarly locates, moves, etc.
+
+-  4 Mar 98
+- Unavailable and failure propogation across remote call paths.
+- Should unavailables turn into failures, and if so where in the call path.
+- The current semantics are:
+-   Search on the stack segment on which the unavailable is detected.  If you
+-   can find a handler, invoke it.  Otherwise, turn the unavailable into a
+-   failure and re-search the stack.  If you can find a handler great.  If not
+-   abort. 
+- What should happen is:
+-   Search on the machine (multiple stack segments) on which the unavailable
+-   is detected.  If you can find a handler, invoke it.  Otherwise, turn the
+-   unavailable into a failure and re-search the stack.  If you can find a
+-   handler great.  If not, propagate that failure to the calling machine.
+- Update 6 Mar 1998
+-   The right thing to do is search for unavailable and then failure handlers
+-   in every activation record.  This treats unavailables as a subclass of
+-   failure, and allows a single handler to catch anything.  This just needs
+-   to be propagated across machine boundaries.
+- Done 30 Apr 98
+- This has now been implemented in full.
+
+-  4 Mar 1998
+- Monitored objects that raise failures are not marked as dead.
+- They are now.
+
+-  4 Mar 1998
+- The squeues in monitored and condition object never get freed!  The
+- gcollector needs to get 'em.
+- Done 6 Mar 1998
+- We only keep them allocated if there are processes waiting on them.
+
+ 4 Mar 1998
+The garbage collector should notice conditions that point to broken
+monitored objects and raise a failure in every process waiting on the
+condition.   Note that these condition objects will be kept alive by the
+exitance of the processes waiting on them.
+
+ 4 Mar 1998
+We should work to ensure that a monitored object and its conditions never
+get separated.  Or at least that we notice when they do and do something
+intelligent.  
+
+-  4 Mar 1998
+- Raising unavailable seems to be causing processDone to be called multiple
+- times. 
+- Done 6 Mar, 1998
+- It was.
+
+-  5 Mar 1998
+- Delay causes the non -R kernel to exit when it should stick around.  The
+- conditions for exiting must be rethought now that threads can't tell you
+- what is going on.
+- Done
+- Just have to count the number of sleeping processes, too.
+
+-  5 Mar 1998
+- Invocations that raise unavailable or failure will propagate this back to
+- their calling states in InvokeReply messages with option1 = some weird
+- code.  This code is set (incorrectly) in call.c:338, and never checked.
+- Fixed.
+
+ 6 Mar 1998
+We don't seem to move the queues of processes on conditions when we move a
+condition.  The code is all there for dealing with monitors.
+
+-  6 Mar 1998
+- Update the report to describe the new semantics for unavailables in
+- invocations, moves, and whatever else.  Also to describe the search strategy
+- for unavailable and failure handlers.
+- Done 30 Apr 1998
+
+ 6 Mar 1998
+We need to come up with a complete and effective way of finding out what
+objects are dead and what remote requests have to be "unavailable"d.
+
+This is a lot closer now that states are being remembered more carefully.
+However we still have work to do.
+
+- 10 Mar 1998
+- Test isfixed, remotely.
+- Finally implemented 30 Apr 1998.  There are the usual problems with remote
+- operations that never generate replies.
+
+30 Apr 1998
+While you are at it, test all the remote stuff in
+the cases of the instigator moving before the remote operation succeeds. 
+
+- 10 Mar 1998
+- When we move a state, we need to send along information about what that
+- state is waiting for (rinvoke, move, etc).
+- 
+- On further thought, it appears that we may lose some next-state info if we
+- move a state while it is waiting for a remote invocation or move to
+- complete, and in these cases the state may never get unavilable raised on a
+- failure.
+- 
+- Sure enough, check out $e/Example/testhairy.m on three nodes, killing the
+- node holding target after the main moving inter to two message appears from
+- the main node.  The activation record for the remote invocation moved from
+- main to two along with inter, but the fact that that stack segment depends
+- on another one has been lost in the move.
+- 
+- If you check out testlesshairy.m, you'll see that the move of inter is the
+- culprit. 
+- 
+- Fixed 10 Apr 1998.
+- We send the nsoid and nstoid along with each activation.
+
+- 11 Mar 1998
+- The attached flag was being lost when used by a generic object (like Array
+- or Set) so that their component vectors weren't getting attached.  
+- Fixed by fixing copy in constdcl vardecl param and somewhere else.
+
+13 Mar 1998
+When we find stack segments to fail, we should worry about failing them in
+order - there may be multiple segments of the same stack on the same
+machine.  This should not really be a problem because no more than one of
+them can be remote or something, but I saw a stack segment failing when one
+further UP the stack (more recent) was still sitting around.
+
+A good example of the problem is $e/Example/recursiveunavailable.m, which
+threads a stack through two nodes and then causes one to die.
+
+- 25 Mar 1998
+- When we attempt to move an object onto a dead node, we don't handle the send
+- message failure.  Run ~e/Example/duska8.m on 3 nodes and kill the second one
+- started when the object has just been moved to node 0.  The thirdparty move
+- request goes to 1, it packages the object and sends the message to 2, and
+- since 2 is gone it never gets anywhere.
+Fixed.  
+
+30 Mar 1998
+$e/Example/revarray.m show a problem with type checking a regular invoke
+(not a deferred one) where we need to match the constraint and the param at
+the same time.  The same sort of thing that we did for deferreds needs to be
+done on every invoke with a constraint.  (invoc.m.typeCheck, line 89).
+
+-  9 Apr 1998
+- Example/breakchain.m shows that remote invokes are not being correctly
+- handled as they are being reported as unavailable when they shouldn't be (I
+- think).  Either convince yourself that junk's invocation of target should
+- fail, or fix it so that it gets found on third.
+- 
+-     myr% emx -Rmyr breakchain.x
+-     Emerald listening on port 17123 42e3, epoch 26614 67f6
+-     Starting on myr.cs.ubc.ca
+-     4 nodes active.
+-     Moving target to myr.cs.ubc.ca
+-     Putting target to sleep for 20
+-     Waiting 2
+-     Killing second
+-     Waiting 10
+-     Junk caught target's death
+-     Invoking target
+-     All done
+-     Executed 982 bytecodes in 0.10 seconds
+- 
+- Fixed by doing serious location when an invocation forwarding chain deadends.
+
+5 May 1998
+Make the folding of objects under the control of some preprocessor thing.
+This should get rid of joveisc and jvisc as well as some significant chunk
+of code in read.c
+
+Make the operationname stuff go away.
+
+8 May 1998
+Fix gencctab to not generate the tables for skipped ones, and insert 0 into
+the table.  This will also require that donccall not indirect through 0
+entries in the table.

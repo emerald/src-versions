@@ -1,0 +1,30 @@
+#
+# next specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = `arch`
+
+# (ANSI) C compiler
+CC = cc
+
+# definitions to enable common extensions in headers and libraries
+XCPFLAGS = -DDISTRIBUTED -DTIMESLICE
+
+XLIB =
+
+# Choose from the list of ccalls modules.  You need emstreams, misc, and 
+# string at least.  This should be a list of .o files.  
+CCALLS_OBJ=emstream.o string.o misk.o rand.o
+
+# C preprocessor
+CPP = cc -E 
+
+# dependency generator
+DEPEND = gcc2 -MM
+
+# 
+CFLAGSOPT = -g -O
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)

@@ -1,0 +1,34 @@
+#
+# i86pc (i386 solaris) specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = `arch`
+
+# (ANSI) C compiler
+CC = gcc
+
+# Choose from the list of ccalls modules.  You need emstreams, misc, and 
+# string at least.  This should be a list of .o files.  
+CCALLS_OBJ=emstream.o string.o misk.o rand.o
+
+# definitions to enable common extensions in headers and libraries
+XCPFLAGS = -Di86pc -DDISTRIBUTED -DTIMESLICE -DUSEDISTGC
+
+XLIB = -lsocket -lnsl -lucb -lelf
+
+# C preprocessor
+#CPP = cc -v -E
+CPP = gcc -E
+
+# dependency generator
+DEPEND = gcc -MM
+
+# ranlib.  ar does the work for us so it's not needed
+RANLIB = true
+
+# 
+CFLAGSOPT = -g -R/usr/ucblib -L/usr/ucblib  -fsigned-char
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)

@@ -1,0 +1,30 @@
+#
+# sun4sol specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = `arch`
+
+# (ANSI) C compiler
+CC = gcc
+
+# definitions to enable common extensions in headers and libraries
+XCPFLAGS = -R/usr/ucblib -L/usr/ucblib 
+#-I/usr/ucbinclude
+
+XLIB = -lsocket -lnsl -lucb -lelf
+
+# C preprocessor
+CPP = $(CC) -E
+
+# dependency generator
+DEPEND = $(CC) -MM
+
+# ranlib.  ar does the work for us so it's not needed
+RANLIB = true
+
+# 
+CFLAGSOPT = -O6 -DNDEBUG -DNTRACE -fomit-frame-pointer 
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)

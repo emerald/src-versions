@@ -1,0 +1,125 @@
+
+NOTE: On most machines, Emerald requires the Gnu C compiler (gcc).  If your
+machine has an ANSI compiler (or close) you should probably be ok.  The
+compilers for the Mips (Mips or SGI Iris) are fine.  Sun CC and Ultrix CC
+are not.  The Makefiles are set up to use the native compiler in some
+cases, and gcc (version 2) in the rest.
+
+1.  Create a main Emerald directory
+	mkdir emerald
+
+2.  Cd to the new directory
+	cd emerald
+
+3.  Read the tar tape
+	tar xf ../emerald.tar
+
+4.  Set your Emerald environment
+	setenv EMERALDROOT <whereever_you_put_it>/emerald
+    and architecture
+	setenv EMERALDARCH <architecture>
+
+    The valid <architecture>s are those for which subdirectories
+    exist in bin, lib and vm.
+
+    Place $EMERALDROOT/bin in your path.  This is necessary to find the shell 
+    script emmake.
+
+5.1 Set up the interpreter directory.  This is done in the appropriate vm/
+    subdirectory:
+	vm/3100		(DECStation 3100)
+	vm/hp700	(HP 700 series)
+	vm/i386mach	(PC running Mach 3.0)
+	vm/ibm		(IBM RS6000 running AIX 3.0)
+	vm/m88k		(Motorola 88k running SysVR2)
+	vm/mips		(Mips Magnum and 3260)
+	vm/next
+	vm/sgi
+	vm/sun3
+	vm/sun4
+	vm/sun4sol	(Sun 4 running Solaris)
+	vm/vax
+
+    If you are porting to a new architecture, you may need to create
+    an architecture specific macroMakefile in lib/<architecture>.
+    Look at existing such macroMakefiles in other lib/ subdirectories.
+    Note that your macroMakefile will be sourced after the generic
+    one in lib, and the mechanism that does this is the emmake script
+    in bin.  Also, look at, or use the newarch script in bin.
+
+	a.  cd vm/<whatever>
+	b.  cp ../Makefile . ;  emmake links
+
+5.1 Compile the ccalls library.  This is done in ~emerald/ccalls.  
+    Type "emmake install"
+
+5.2 Compile the interpreter.      
+    To compile, you will need to:
+	a.  cd vm/<whatever>
+	b.  emmake
+	c.  ensure that emx is in your path.  A good way to do this is
+	    to put $EMERALDROOT/bin/$EMERALDARCH in your path and
+	    put a link to emx to the appropriate executable.
+	    cd ../bin/$EMERALDARCH ; rm emx ; ln -s ../../vm/Whatever/emx .
+
+6.  Reset your path
+	set path = ( $path $EMERALDROOT/bin/$EMERALDARCH $EMERALDROOT/bin )
+
+    Consider using the emarch command.  See the setarch script in bin
+    for instructions.
+
+7.  Try a test.
+	cd $EMERALDROOT/Example
+	emx -v first.x
+    The result should be something like:
+	1 2 3 4 5 6 7 8 9 10 
+	Executed 322 bytecodes in 0.22 seconds
+
+8.  Try the compiler.
+	cd $EMERALDROOT/Example
+	mv first.x first.save.x
+	emc
+
+    Execute the following dialog:
+	Command: first.m
+	Compiling first.m
+	Command: q
+	Executed 583755 bytecodes in 5.66 seconds
+
+    Then execute the resulting executable:
+	emx -v first.x
+    or:
+    	first.x -v
+	  (This working is dependent on there being a symbolic link
+	  to emx in the directory containing first.x.  Unix doesn't
+	  search the path when looking for an interpreter.)
+    or, if you get tired of the report on how long it took:
+	first.x
+
+
+Optional steps:
+
+O1. If you want to be able to change the interpreter (vm/vm.d) then you
+    need to compile the virtual machine compiler.
+	cd $EMERALDROOT/vmc
+	make install
+
+O2. If you want to modify the Emerald compiler (which is written in Emerald),
+    then you need to make sure that it is able to compile itself before
+    attempting changes.  The regression shell script recompiles the compiler
+    as long as necessary in order to ensure that it reaches a fixpoint
+    (no more than three times should be necessary).
+
+	cd $EMERALDROOT/EC
+	regression
+
+O3. If you want to modify the Emerald grammar to play with the language, you
+    will require in addition to all of the above stuff our version of yacc
+    which generates parsers written in Emerald rather than C.  This is a
+    piece of code that has been hacked for many generations, and is probably
+    being held together with bubble gum, but it is included in this tar file
+    in the subdirectory emyacc.  If you have problems with it, or in fact
+    with any of this, send mail to:
+    
+    	norm@cs.ubc.ca
+

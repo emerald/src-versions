@@ -1,0 +1,8 @@
+#!/bin/sh
+#
+# returns "filename is a symbolic link"
+# on systems which don't support a symbolic link option to test
+#
+
+if ls -l 2>/dev/null $* | egrep -s "^[lL].* -> " > /dev/null; then true; else false; fi
+

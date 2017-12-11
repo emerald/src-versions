@@ -1,0 +1,6 @@
+Compiling const.m
+  integertype is a primitive type which cannot be conformed to
+  Type stringtype doesn't conform to type integertype
+"const.m", line 5: The initializer type doesn't conform to that declared for the constant
+"const.m", line 6: Attempt to store into constant symbol x
+"const.m", line 7: Attempt to store into constant symbol y

@@ -1,0 +1,11 @@
+Compiling assign.m
+"assign.m", line 15: Found an expression where a statement was expected
+"assign.m", line 16: Found an expression where a statement was expected
+"assign.m", line 11: expected 2 expressions in assignment, found 1
+"assign.m", line 12: expected 1 expressions in assignment, found 2
+"assign.m", line 13: left side of assignment (expression #1) is not a symbol
+"assign.m", line 14: left side of assignment (expression #2) is not a symbol
+"assign.m", line 3: Attempt to store into constant symbol a
+"assign.m", line 4: Attempt to store into constant symbol assign
+"assign.m", line 5: left side of assignment is not a symbol
+"assign.m", line 6: left side of assignment is not a symbol

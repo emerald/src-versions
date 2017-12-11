@@ -1,0 +1,5 @@
+Compiling conform4.m
+"conform4.m", line 25: Parameter 1 to of[1] must be manifest
+  Can't find operation getsignature
+  Type integertype doesn't conform to type typetype
+"conform4.m", line 25: Actual #1 to "of" does not conform to formal

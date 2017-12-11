@@ -1,0 +1,4 @@
+#!/bin/csh -f
+# make full tar archive of Emerald on stdout
+cd $EMERALDROOT
+tar cf - `./bin/allfiles -v` | gzip > emfull.tar.gz

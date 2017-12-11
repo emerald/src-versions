@@ -1,0 +1,85 @@
+/Builtins/1.1.1.1/Wed Jan  5 11:54:06 2005//
+/Compiler/1.1.1.1/Wed Jan  5 11:54:06 2005//
+/Makefile/1.1.1.1/Wed Jan  5 11:54:00 2005//
+/bcdef/1.1.1.1/Wed Jan  5 11:54:00 2005//
+/ccallsMf/1.1.1.1/Wed Jan  5 11:54:06 2005//
+/ccdef/1.1.1.1/Wed Jan  5 11:54:00 2005//
+/jsdef/1.1.1.1/Wed Jan  5 11:54:00 2005//
+/macroMf/1.1.1.1/Wed Jan  5 11:54:06 2005//
+/oid/1.1.1.1/Wed Jan  5 11:54:00 2005//
+/opoid/1.1.1.1/Wed Jan  5 11:54:01 2005//
+/systems/1.1.1.1/Wed Jan  5 11:54:06 2005//
+D/abcon////
+D/alpha////
+D/alphamt////
+D/alphax////
+D/bani////
+D/dec3000////
+D/dec3000mt////
+D/dec3000mtf////
+D/dec3000x////
+D/dos////
+D/hp700////
+D/hp700mt////
+D/hp700mtf////
+D/hp700x////
+D/hp700xf////
+D/hp9000s700////
+D/hp9000s700mt////
+D/hp9000s700x////
+D/hp9000s700xf////
+D/i386////
+D/i386freebsd////
+D/i386freebsdX////
+D/i386freebsdmt////
+D/i386freebsdmtf////
+D/i386freebsdx////
+D/i386freebsdxf////
+D/i386freebsdxt////
+D/i386linux////
+D/i386linuxmt////
+D/i386linuxmtf////
+D/i386linuxx////
+D/i386linuxxf////
+D/i386mt////
+D/i386mtf////
+D/i386netbsd////
+D/i386netbsdmt////
+D/i386netbsdx////
+D/i386x////
+D/i586////
+D/i586x////
+D/i586xf////
+D/i686////
+D/i686mt////
+D/i686x////
+D/i686xf////
+D/i86pc////
+D/i86pcmt////
+D/i86pcmtf////
+D/i86pcx////
+D/i86pcxf////
+D/ibm////
+D/ibmmt////
+D/ibmmtf////
+D/ibmt////
+D/ibmx////
+D/ibmxf////
+D/next////
+D/nextmt////
+D/nextmtf////
+D/nextx////
+D/sgi////
+D/sgimt////
+D/sgimtf////
+D/sgix////
+D/sun4////
+D/sun4mt////
+D/sun4mtf////
+D/sun4sol////
+D/sun4solmt////
+D/sun4solmtf////
+D/sun4solx////
+D/sun4solxf////
+D/sun4x////
+D/sun4xf////

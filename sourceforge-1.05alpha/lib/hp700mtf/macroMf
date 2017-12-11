@@ -1,0 +1,33 @@
+#
+# hp700 specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = `arch`
+
+EXTRALIB = -static
+
+# Choose from the list of ccalls modules.  You need emstreams, misc, and 
+# string at least.  This should be a list of .o files.  
+CCALLS_OBJ=emstream.o string.o misk.o rand.o
+
+# (ANSI) C compiler
+CC = gcc
+
+# definitions to enable common extensions in headers and libraries
+XCPFLAGS = -DSYSTYPE_SYSV -Dunix -Dhp700 -DDISTRIBUTED -DTIMESLICE -DUSEDISTGC
+
+# C preprocessor
+CPP = gcc -E
+
+# dependency generator
+DEPEND = gcc -MM
+
+# ranlib.  ar does the work for us so it's not needed
+RANLIB = true
+
+# 
+CFLAGSOPT = -g -fsigned-char -O6  -DNDEBUG
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)

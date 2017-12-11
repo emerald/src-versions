@@ -1,0 +1,41 @@
+#
+# definitions of Emerald
+# global macros
+#
+
+# global definitions
+
+# instead of $(MAKE), use $(EMMAKE) within Makefiles
+EMMAKE = emmake
+
+# some versions of make (notably sgi's and m88k's) use the user's
+# current shell rather than sh to execute commands by default.
+# Twits.
+SHELL = /bin/sh
+
+
+# source for the garbage collector lives here
+GCDIR = $(EMERALDROOT)/gc
+
+# source for the emerald daemon lives here
+EMDDIR = $(EMERALDROOT)/emd
+
+# source for the ccalls lives here
+CCALLSDIR = $(EMERALDROOT)/ccalls
+
+# lib material; includes live here, and libraries live in architecture
+# specific subdirectories of here
+EMLIBDIR = $(EMERALDROOT)/lib
+
+# defaults.  May be overridden in architecture specific macroMakefiles
+
+# ranlib
+RANLIB = ranlib
+
+# awk
+AWK = awk
+
+# sed
+SED = sed
+
+all:

@@ -1,0 +1,35 @@
+#!/bin/csh -f
+cd $EMERALDROOT
+echo	./Doc/{BinTools,Install,Layout,RCSHowTo,EmeraldStack.eps} \
+	./bin/{changed,*version,regression,make*{tar,zip},allfiles,genccdef,gencctab} \
+	./bin/{emxx,emc,xemc,ec,*/issymlink,emmake,*arch,issymlink*,*.bat,se} \
+	./bin/{makeinstall,makewin32install,ue} \
+	./vm/src/{*.[chS],vm.d,Makefile{,.DOS},emx.???} \
+	./vm/win32/emx.exe \
+	./Builtins/{*.m,Makefile,vec-ed} \
+	./lib/{Builtins,Compiler,Makefile,oid,opoid,macroMf,ccallsMf} \
+	./lib/{bcdef,ccdef,jsdef} \
+	./lib/*/macroMf \
+	./ccalls/{CCall.doc,Makefile,*.h,xsed.c,*/{Makefile,*.c,*.h,*.va}} \
+	./Example/{*.m,first.x} \
+	./ExecTest/{*.m,*.in,*.out,b,Makefile} \
+	./FailTest/{*.m,*.exp,Makefile} \
+	./EC/{*.m,input.?,b,t,input.{all,bst},Makefile,MAKETN,reset.bat} \
+	./EC/{em_ecomp.y} \
+	./vmc/{[a-z]*.[ch],Emain.c,Makefile,MAKETN,vmcpar.y,vmclex.l} \
+	./emyacc/{y?.c,dextern,files,yacchead.m,yaccpar.*} \
+	./emyacc/{yyre*,yystart*,Makefile} \
+	./Report/{*.tex,*.bib,*.sty,*.m,*.bst,Makefile,manytoone.ps} \
+	./X/*.m ./XForms/*.m ./Game/{*.m,*.bmp,*.txt,*.bin} ./Gaggle/*.m ./TODO ./lib/systems
+if (x$1 == x-v) then
+    echo \
+	./bin/{setuser,useemerald,rcssync} \
+	./bin/RCS \
+	./Builtins/RCS \
+	./ccalls/{*/RCS} \
+	./vm/src/RCS \
+	./EC/RCS \
+	./vmc/RCS \
+	./Report/RCS \
+	./X/RCS
+endif

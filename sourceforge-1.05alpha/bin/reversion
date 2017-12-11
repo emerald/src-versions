@@ -1,0 +1,24 @@
+#!/bin/csh -f
+if ($#argv == 0) then
+    echo "Usage: reversion versionnumber comment"
+    exit (1)
+endif
+set versionnumber = $argv[1]
+set newcomment = $argv[2]
+foreach comment (q ok bad aintthere)
+    if (-r CP_$comment$versionnumber) break
+end
+if ($comment == aintthere) then
+    echo "reversion: Can't find files for version $versionnumber."
+    exit (1)
+endif
+if (-r CP_$newcomment$versionnumber) then
+    echo "newversion: version $comment$versionnumber already exists"
+    ls -lt {CP,CPIndex,name,name.idb}_$newcomment$versionnumber
+    exit (1)
+endif
+
+foreach i (CP CPIndex name name.idb)
+    echo mv ${i}_$comment$versionnumber ${i}_$newcomment$versionnumber 
+    mv ${i}_$comment$versionnumber ${i}_$newcomment$versionnumber 
+end

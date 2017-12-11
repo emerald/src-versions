@@ -1,0 +1,6 @@
+#!/bin/sh
+if [ -z "$EMERALDROOT" ]
+	then
+	export EMERALDROOT=/usr/local
+fi
+exec emx -O4m $* $EMERALDROOT/lib/Compiler

@@ -1,0 +1,4 @@
+#!/bin/csh -f
+# make tar archive of Emerald on stdout
+cd $EMERALDROOT
+tar cf - `./bin/allfiles` | gzip > em.tar.gz

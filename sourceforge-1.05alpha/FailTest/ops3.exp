@@ -1,0 +1,4 @@
+Compiling ops3.m
+"ops3.m", line 19: Parameter 1 to of[1] must be manifest
+"ops3.m", line 15: Operation foobar[0] is not defined
+"ops3.m", line 18: Operation foobar[1] is not defined

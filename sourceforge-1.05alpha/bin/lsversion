@@ -1,0 +1,7 @@
+#!/bin/csh -f
+set pattern = (CP_*[0-9]*)
+if (-r bestCP) set pattern = ($pattern bestCP)
+if (-r distCP) set pattern = ($pattern distCP)
+if (-r execCP) set pattern = ($pattern execCP)
+if (-r EMCP)   set pattern = ($pattern EMCP)
+exec ls -tl $pattern

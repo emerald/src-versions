@@ -1,0 +1,8 @@
+Compiling type9.m
+      Immutable mismatch
+      Type anindividualsettype doesn't conform to type settype
+    param 1 to operation = doesn't conform
+    Type anasettype doesn't conform to type anindividualsettype
+  result 1 of operation create doesn't conform
+  Type asettype doesn't conform to type settype
+"type9.m", line 17: type of rhs does not conform to lhs

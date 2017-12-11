@@ -1,0 +1,33 @@
+#
+# hp700gcc specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = `arch`
+
+# (ANSI) C compiler
+CC = gcc
+
+# random is in -lm on hpux
+
+EXTRALIB = 
+
+# definitions to enable common extensions in headers and libraries
+XCPFLAGS = -Dsun4  -DDISTRIBUTED -DTIMESLICE -DUSEDISTGC
+
+XLIB =
+
+# C preprocessor
+CPP = cc -E
+
+# dependency generator
+DEPEND = gcc -MM
+
+# ranlib.  ar does the work for us so it's not needed
+RANLIB = ranlib
+
+# 
+CFLAGSOPT = -g -O6  -DNDEBUG
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)

@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+# returns "filename is a symbolic link"
+# on systems supporting test -h
+#
+
+if [ $# != 1 ] ; then
+  echo "usage: issymlink <filename>"
+  exit 1
+fi
+
+test -h $1
+

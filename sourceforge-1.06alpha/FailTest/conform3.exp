@@ -1,0 +1,4 @@
+Compiling conform3.m
+  Can't find operation =
+  Type anytype doesn't conform to type t
+"conform3.m", line 25: Actual #1 to "of[1]" does not match constraint on formal (deferred)

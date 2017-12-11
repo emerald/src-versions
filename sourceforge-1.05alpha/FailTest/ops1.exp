@@ -1,0 +1,4 @@
+Compiling ops1.m
+"ops1.m", line 7: Only one initially definition is allowed
+"ops1.m", line 16: Only one process definition is allowed
+"ops1.m", line 25: Only one recovery definition is allowed

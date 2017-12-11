@@ -1,0 +1,4 @@
+Compiling lit1.m
+"lit1.m", line 1: syntax error
+const lit <- monitor immutable object lit
+                     ^

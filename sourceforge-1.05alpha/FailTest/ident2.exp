@@ -1,0 +1,4 @@
+Compiling ident2.m
+"ident2.m", line 2: syntax error
+  var typeof : Integer
+      ^

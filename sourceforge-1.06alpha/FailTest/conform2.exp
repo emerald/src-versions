@@ -1,0 +1,10 @@
+Compiling conform2.m
+  integertype is a primitive type which cannot be conformed to
+  Type realtype doesn't conform to type integertype
+"conform2.m", line 6: Actual #1 to "foobar" does not conform to formal
+  integertype is a primitive type which cannot be conformed to
+  Type booleantype doesn't conform to type integertype
+"conform2.m", line 7: Actual #1 to "foobar" does not conform to formal
+  Vector mismatch
+  Type booleantype doesn't conform to type stringtype
+"conform2.m", line 7: Actual #2 to "foobar" does not conform to formal

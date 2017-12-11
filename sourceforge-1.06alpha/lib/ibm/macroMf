@@ -1,0 +1,27 @@
+#
+# ibm specific definitions - using gcc2
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = `arch`
+
+# (ANSI) C compiler
+CC = gcc
+
+# definitions to enable common extensions in headers and libraries
+XCPFLAGS = -Dibm
+
+EXTRALIB = -lisode
+
+# C preprocessor
+CPP = cc -E
+
+# dependency generator
+DEPEND = gcc -MM
+
+# 
+CFLAGSOPT = -O2 -g -fsigned-char -fno-strength-reduce
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)
+

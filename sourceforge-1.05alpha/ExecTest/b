@@ -1,0 +1,18 @@
+load name
+unset dogeneration
+set exporttree
+set compilingbuiltins
+../Builtins/Integer.m
+../Builtins/Char.m
+../Builtins/Boolean.m
+../Builtins/String.m
+../Builtins/Bitchunk.m
+../Builtins/NLElem.m
+../Builtins/Node.m
+../Builtins/NodeL.m
+../Builtins/Vec.m
+../Builtins/IVec.m
+../Builtins/Array.m
+unset compilingbuiltins
+unset exporttree
+set dogeneration

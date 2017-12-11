@@ -1,0 +1,116 @@
+/Makefile.am/1.1.1.1/Wed Jan  5 11:54:00 2005//
+/gencctab.csh/1.1.1.1/Wed Jan  5 11:54:00 2005//
+/gencctab.sh/1.1.1.1/Wed Jan  5 11:54:00 2005//
+D/i386linuxmtf////
+D/abcon////
+D/alpha////
+D/alphamt////
+D/alphax////
+D/dec3000////
+D/dec3000mt////
+D/dec3000mtf////
+D/dec3000x////
+D/hp700////
+D/hp700mt////
+D/hp700mtf////
+D/hp700x////
+D/hp700xf////
+D/hp9000s700////
+D/hp9000s700mt////
+D/hp9000s700x////
+D/hp9000s700xf////
+D/i386////
+D/i386freebsd////
+D/i386freebsdX////
+D/i386freebsdmt////
+D/i386freebsdmtf////
+D/i386freebsdx////
+D/i386freebsdxf////
+D/i386freebsdxt////
+D/i386linux////
+D/i386linuxmt////
+D/i386linuxx////
+D/i386linuxxf////
+D/i386mt////
+D/i386mtf////
+D/i386netbsd////
+D/i386netbsdmt////
+D/i386netbsdx////
+D/i386x////
+D/i586////
+D/i586mt////
+D/i586x////
+D/i586xf////
+D/i686////
+D/i686mt////
+D/i686x////
+D/i686xf////
+D/i86pc////
+D/i86pcmt////
+D/i86pcmtf////
+D/i86pcx////
+D/i86pcxf////
+D/ibm////
+D/ibmmt////
+D/ibmmtf////
+D/ibmt////
+D/ibmx////
+D/ibmxf////
+D/next////
+D/nextmt////
+D/nextmtf////
+D/nextx////
+D/sgi////
+D/sgimt////
+D/sgimtf////
+D/sgix////
+D/sun4////
+D/sun4mt////
+D/sun4mtf////
+D/sun4sol////
+D/sun4solmt////
+D/sun4solmtf////
+D/sun4solx////
+D/sun4solxf////
+D/sun4x////
+D/sun4xf////
+/Makefile.in/1.1.1.1/Wed Jan  5 12:08:33 2005//
+/allfiles/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/changed/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/cmpversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/deletearch/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/emc.bat/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/emmake/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/emx.bat/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/findecversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/findversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/forallarch/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/genccdef/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/issymlink-ls/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/issymlink-testh/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/issymlink-testl/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/latestversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/lsversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/makefulltar/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/makefullzip/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/makeinstall/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/maketar/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/makewin32install/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/makezip/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/newarch/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/newecversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/newversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/odversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/oldversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/regression/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/reversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/rmversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/se/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/setarch/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/ue/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/useversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/whichversion/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/xemc/1.1.1.1/Thu Jan  6 08:30:02 2005//
+/ec/1.1/Thu Jan  6 08:29:57 2005//
+/emxx/1.1/Thu Jan  6 08:29:57 2005//
+/emc/1.2/Wed Feb  2 11:57:59 2005//

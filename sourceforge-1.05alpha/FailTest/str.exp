@@ -1,0 +1,15 @@
+Compiling str.m
+"str.m", line 4: Found an expression where a statement was expected
+"str.m", line 5: Found an expression where a statement was expected
+"str.m", line 6: Found an expression where a statement was expected
+"str.m", line 7: Invocation getelement[1] returns 1 results, 0 are expected
+"str.m", line 8: Invocation getelement[1] returns 1 results, 0 are expected
+  booleantype is a primitive type which cannot be conformed to
+  Type integertype doesn't conform to type booleantype
+"str.m", line 9: boolean required
+"str.m", line 10: Invocation getelement[1] returns 1 results, 0 are expected
+"str.m", line 12: Invocation getelement[1] returns 1 results, 0 are expected
+"str.m", line 15: Invocation getelement[1] returns 1 results, 0 are expected
+  booleantype is a primitive type which cannot be conformed to
+  Type stringtype doesn't conform to type booleantype
+"str.m", line 16: boolean required
