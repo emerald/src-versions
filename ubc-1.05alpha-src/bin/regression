@@ -1,0 +1,24 @@
+#!/bin/csh -f
+@ i = 1
+unset passed
+set old = `latestversion`
+while ($i <= 3)
+    echo "Regression pass $i"
+    useversion $old
+    rm -f bestCP
+    (emmake bestCP && emx -C bestCP) || break
+    useversion best
+    emmake ftffs EMC=xemc || break
+    newversion
+    set new = `latestversion`
+    if { cmp -s CP_q$old CP_q$new } then
+	set passed
+	echo Regression done
+	break
+    endif
+    set old = $new
+    @ i++
+end
+if (! $?passed ) then
+    echo 'Regression failed\!'
+endif

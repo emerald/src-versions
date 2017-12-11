@@ -1,0 +1,6 @@
+#!/bin/csh -f
+if ($#argv != 2) then
+    echo "Usage: cmpversion versionnumber1 versionnumber2"
+    exit (1)
+endif
+cmp CP_[a-z]*$1 CP_[a-z]*$2

@@ -1,0 +1,286 @@
+\section{Statements}
+\label{statements}
+\subsection{Assignment statement}
+\label{assignment statement}
+\begin{quote}\it\begin{tabular}{lcl}
+assignment  & $::=$   & identifierList \terminal{\assign} expressionList \\
+ & $|$ & \opt{identifierList \terminal{\assign}} procedureInvocation
+\end{tabular}\end{quote}
+In the first case, the expression list is evaluated to yield a number of
+objects. In the latter case, the procedure invocation is performed, resulting
+in a number of objects (possibly 0). In both cases, the resulting objects are
+positionally bound to the variables on the
+left side of the assignment operator. The number of variables on the left
+side and the number of resulting objects on the right must be equal and must
+positionally conform in type (see Section~\ref{conformity}).
+
+\subsection{Selection}
+\label{selection stmt}
+\begin{quote}\it\begin{tabular}{lcl}
+ifStatement & $::=$ & \kw{if} expression \kw{then} \\
+            &    & \hspace{0.5in}declarationsAndStatements \\
+            &    & \{ \kw{elseif} expression \kw{then} \\
+            &    & \hspace{0.5in} declarationsAndStatements \} \\
+            &    & {\rm [} \kw{else}\\
+            &    & \hspace{0.5in} declarationsAndStatements {\rm ]} \\
+            &    & \kw{end} \kw{if}
+\end{tabular}\end{quote}
+The expressions following the \kw{if} and optional \kw{elseif} 
+keywords (which must be of type \tn{Boolean}) are evaluated in textual
+order until one evaluates to \kw{true} or they are exhausted. In the
+former case, the statements following the next \kw{then} keyword are
+executed, and in the latter case, the statements following
+the \kw{else} keyword (when present) are executed.
+
+\subsection{Iteration}
+\subsubsection{Loop statement}
+\label{loop stmt}
+\begin{quote}\it\begin{tabular}{lcl}
+loopStatement   & $::=$ & \kw{loop} \\
+                &     & \hspace{0.5in} declarationsAndStatements \\
+                &     & \kw{end} \kw{loop}
+\end{tabular}\end{quote}
+The statements bracketed by \kw{loop} and \kw{end} \kw{loop} are executed
+repeatedly until an exit statement at the same level of nesting is executed.
+
+\subsubsection{Exit statement}
+\begin{quote}\it\begin{tabular}{lcl}
+exitStatement & $::=$ &   \kw{exit} \opt{\kw{when} expression}
+\end{tabular}\end{quote}
+This statement terminates the execution of the  textually inner-most
+enclosing loop; this statement is invalid if there is no such loop. The
+simple \kw{exit} provides an unconditional exit from the loop; the optional
+\kw{when} clause
+permits a conditional exit if the evaluated expression, which must be of type
+\tn{Boolean}, evaluates to \kw{true}.
+
+\subsubsection{For statement}
+\label{for stmt}
+Emerald has two forms of the for statement.  These are conveniences whose
+semantics are defined in terms of their translations as given below.
+
+\begin{quote}\it\begin{tabular}{lcl}
+forStatement   & $::=$ & \kw{for} \terminal{(} initial \terminal{:} condition \terminal{:}  step \terminal{)} \\
+                &     & \hspace{0.5in} declarationsAndStatements \\
+                &     & \kw{end} \kw{for}
+\end{tabular}\end{quote}
+\noindent
+This is equivalent to:
+\begin{quote}\it
+{\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+  \kw{begin}\+\\*{}%
+    initial\\*{}%
+    \kw{loop}\+\\*{}%
+      \kw{exit} \kw{when} $!$condition\\*{}%
+      \kw{begin}\+\\*{}%
+	declarationsAndStatements\-\\*{}%
+      \kw{end}\\*{}%
+      step\-\\*{}%
+    \kw{end} \kw{loop}\-\\*{}%
+  \kw{end}
+\end{tabbing}\end{minipage}}
+\end{quote}
+
+\begin{quote}\it\begin{tabular}{lcl}
+forStatement & $::=$ & \kw{for} identifier \terminal{:} typeExpression initialization \kw{while} condition \kw{by} step\\
+                &     & \hspace{0.5in} declarationsAndStatements \\
+                &     & \kw{end} \kw{for}
+\end{tabular}\end{quote}
+\noindent
+This is equivalent to
+\begin{quote}\it
+{\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+  \kw{begin}\+\\*{}%
+    \kw{var} identifier : typeExpression initialization \\*{}%
+    \kw{loop}\+\\*{}%
+      \kw{exit} \kw{when} $!$condition\\*{}%
+      \kw{begin}\+\\*{}%
+	declarationsAndStatements\-\\*{}%
+      \kw{end}\\*{}%
+      step\-\\*{}%
+    \kw{end} \kw{loop}\-\\*{}%
+  \kw{end}
+\end{tabbing}\end{minipage}}
+\end{quote}
+
+\subsection{Compound statement}
+\label{compound statement}
+\begin{quote}\it\begin{tabular}{lcl}
+compoundStatement &$::=$&\kw{begin} \\
+		  &   &\hspace{0.5in}blockBody \\
+                  &   &\kw{end}\\[1ex]
+blockBody         &$::=$&declarationsAndStatements \\
+	          &   & \opt{unavailableHandler} \\
+                  &   & \opt{failureHandler}
+\end{tabular}\end{quote}
+The compound statement permits several statements to be grouped together as
+one composite statement. In addition, it permits suitable recovery code to
+be attached in the form of handlers dealing with object unavailability
+and failures (cf.~Sections~\ref{unavailable objects} and \ref{failures}).
+
+\subsection{Assertions}
+\begin{quote}\it\begin{tabular}{lcl}
+assertStatement & $::=$ & \kw{assert} expression
+\end{tabular}\end{quote}
+The expression, whose type must be \tn{Boolean}, is evaluated.
+If the result is \kw{false}, a failure occurs (as explained in
+Section~\ref{failures}).  If the result is \kw{true}, the statement has no
+further effect.
+
+\subsection{Concurrency}
+Concurrency features are described in detail in Section~\ref{objects} and
+are briefly outlined here.
+Each object may have an optional process associated with it; this
+process is created after the termination of the object's \kw{initially} section
+and it executes until it reaches the end of its block.
+Any object which is defined as \kw{monitor} guarantees mutual exclusion in
+the execution of all of its operations.  Objects of system-implemented type
+\tn{Condition} 
+may be used for synchronization within monitored objects; the semantics of
+condition waits and signals follows that proposed by Hoare.  Note that a
+condition object used in a wait or signal statement or an
+awaiting expression must be used only inside the monitored object
+by which it was created.
+
+\subsubsection{Wait statement}
+\begin{quote}\it\begin{tabular}{lcl}
+waitStatement &$::=$& \kw{wait} expression
+\end{tabular}\end{quote}
+The wait statement must be executed inside a monitored object, and
+the type of the {\em expression} must be \tn{Condition}.
+The process executing the wait is suspended on the condition
+object, and the monitor
+lock is passed on to the next process waiting to enter the monitor;
+if no process is waiting to enter, the monitor lock is released.
+
+\subsubsection{Signal statement}
+\begin{quote}\it\begin{tabular}{lcl}
+signalStatement &$::=$& \kw{signal} expression
+\end{tabular}\end{quote}
+The type of the {\it expression} must be \tn{Condition}.
+If the condition object has one or more processes suspended on it,
+one of these processes will be resumed, the monitor lock will be
+passed to it, and the signalling process will be placed at the head of the
+monitor entry queue.
+If the condition object does not have any processes suspended on it,
+the signal statement has no effect.
+
+\subsection{Location-related Statements}
+Mobility is an important feature of \emd{} (\cite{Jul88thesis,Jul88tocs})
+and is supported via several language constructs. The
+statements that permit the programmer to specify and change the location of
+objects are discussed below.
+\subsubsection{Fix statement}
+\label{fix statement}
+\begin{quote}\it\begin{tabular}{lcl}
+fixStatement &$::=$& \kw{fix} expression$_{1}$ \kw{at} expression$_{2}$
+\end{tabular}\end{quote}
+The object named by {\it expression}$_{1}$ is moved to the location of
+the object named by {\it expression}$_{2}$, and forced to remain there; the
+{\em unfix} and {\em refix} statements described below permit the movement
+of previously fixed objects.
+Attempts to move or fix
+previously fixed objects result in failures (cf.~Section~\ref{failures}).
+
+\subsubsection{Unfix statement}
+\label{unfix statement}
+\begin{quote}\it\begin{tabular}{lcl}
+unfixStatement &$::=$& \kw{unfix} expression
+\end{tabular}\end{quote}
+The object denoted by the {\it expression} is made free to move.  It is not an
+error to unfix an object not currently fixed at any location.
+
+\subsubsection{Refix statement}
+\label{refix statement}
+\begin{quote}\it\begin{tabular}{lcl}
+refixStatement &$::=$& \kw{refix} expression$_{1}$ \kw{at} expression$_{2}$
+\end{tabular}\end{quote}
+This statement unfixes the object named by $expression_{1}$ and fixes it
+at some (presumably different) location; the refix is performed atomically.
+
+\subsubsection{Move statement}
+\label{move statement}
+\begin{quote}\it\begin{tabular}{lcl}
+moveStatement &$::=$& \kw{move} expression$_{1}$ \kw{to} expression$_{2}$
+\end{tabular}\end{quote}
+The object denoted by {\it expression}$_{1}$ is moved
+to the current location of the
+object denoted by {\it expression}$_{2}$.  The statement fails
+if the object denoted by {\it expression}$_{1}$ is fixed.
+The \kw{move} primitive is actually a hint, i.e., the implementation
+is not required to perform the move suggested. On the other hand,
+the primitives \kw{fix} and \kw{refix} have stronger semantics, and when they
+succeed, the object must stay at the specified destination until explicitly
+unfixed or refixed.
+
+\subsection{The Checkpoint statement}
+\begin{quote}\it\begin{tabular}{lcl}
+checkpointStatement &$::=$& \kw{checkpoint}
+\end{tabular}\end{quote}
+The checkpoint statement permits an object to store its state on permanent
+storage. On node failure and subsequent recovery, the object uses this
+stored state and continues from that state, first performing any
+programmer-specified
+recovery action.
+
+\subsection{The Return Statement}
+\begin{quote}\it\begin{tabular}{lcl}
+returnStatement &$::=$& \kw{return}
+\end{tabular}\end{quote}
+This statement is used to terminate the execution of an operation and return
+to the invoking object.  It may also be used to prematurely terminate an
+initially, process, or recovery section.
+
+\subsection{The ReturnAndFail statement}
+\begin{quote}\it\begin{tabular}{lcl}
+returnAndFailStatement &$::=$& \kw{returnandfail}
+\end{tabular}\end{quote}
+The return and fail statement is analogous to the return statement, but
+in addition, it permits the invoked object to report a failure to the invoking
+object.  The return happens first so the state of the invoked object is not
+affected by the failure (cf.~Section~\ref{failures}).
+
+\subsection{The Primitive Statement}
+\begin{quote}\it\begin{tabular}{lcl}
+primitiveStatement &$::=$& \kw{primitive} \opt{\kw{self}} \opt{\kw{var}}
+primitiveImplementation \\
+&&\terminal{[} identifierList \terminal{]} \assign \terminal{[}
+identifierList \terminal{]} \\
+primitiveImplementation &$::=$& \oseq{stringLiteral $|$ integerLiteral}
+\end{tabular}\end{quote}
+This statement is used to implement lower-level calls to the underlying
+operating system and to implement certain operations on builtin-types.
+Primitive statements are used only in the implementation of the
+builtin Emerald types and should not be used by the Emerald programmer
+directly.  
+
+The optional \kw{self} means that the receiving object ought to be
+pushed onto the stack before the argument variables, otherwise it is not
+pushed.  The optional \kw{var} means that all the things pushed onto the stack
+and all the results are assumed to be variables represented as 2 words:  a
+data pointer and a concrete type pointer.  Otherwise all arguments and
+results are assumed to just be data (1 word).  The strings and integers
+in the primitiveImplementation are placed in
+the instruction stream as a sequence of bytes.  Strings are looked up as
+either names of bytecodes in ``..../lib/bcdef'' or system defined operations
+in ``..../lib/jsdef'' or ``..../lib/ccdef''.
+The list of identifiers on the right provide the
+arguments for the primitive, while the list of identifiers on the left
+get the results of the primitive.  The following code is
+generated:
+
+\begin{itemize}
+  \item{} If self is present, the push the receiving object onto the stack
+  \item{} Push the value of each of the argument identifiers onto the stack,
+      left to right 
+  \item{} Emit the literals in the primitive implementation into the
+      instruction stream
+  \item{} Pop results off the stack storing them in the result identifiers,
+      left to right 
+\end{itemize}
+
+There is no check that the implementation of the primitive actually expects
+the number of arguments or returns the number of results that the
+argument and result identifier lists mention.

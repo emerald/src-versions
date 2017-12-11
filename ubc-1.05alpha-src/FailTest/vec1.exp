@@ -1,0 +1,20 @@
+Compiling vec1.m
+    Immutable mismatch
+    Type anytype doesn't conform to type integertype
+  result 1 of operation getelement doesn't conform
+  Type immutablevectorofanytype doesn't conform to type nv
+"vec1.m", line 7: type of rhs does not conform to lhs
+      Immutable mismatch
+      Type anytype doesn't conform to type integertype
+    result 1 of operation getelement doesn't conform
+    Type immutablevectorofanytype doesn't conform to type nv
+  param 1 to operation catenate doesn't conform
+  Type nv doesn't conform to type immutablevectorofanytype
+"vec1.m", line 8: type of rhs does not conform to lhs
+      Immutable mismatch
+      Type anytype doesn't conform to type integertype
+    result 1 of operation getelement doesn't conform
+    Type immutablevectorofanytype doesn't conform to type immutablevectorofinttype
+  param 1 to operation catenate doesn't conform
+  Type immutablevectorofinttype doesn't conform to type immutablevectorofanytype
+"vec1.m", line 11: type of rhs does not conform to lhs

@@ -1,0 +1,17 @@
+set dieonerror
+unset perfile
+unset exporttree
+unset generateats
+unset generateconcurrent
+unset generateviewchecking
+load name
+unset docompilation
+set dotypecheck
+unset generateviewchecking
+source input.0
+source t
+source input.1
+source input.2
+source input.3
+source input.4
+source input.5

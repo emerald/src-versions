@@ -1,0 +1,118 @@
+\section{Declarations}
+\label{declarations}
+Every identifier used in \emd{} must be
+declared.  There are two (general purpose) declarative forms:
+one for constants and one for variables.
+
+\begin{quote}\it\begin{tabular}{lcl}
+declaration &$::=$& variableDeclaration \\
+& $|$ & constantDeclaration \\
+constantDeclaration &$::=$& \opt{\kw{attached}} \kw{const} identifier
+    \opt{: type} initializer \\
+variableDeclaration &$::=$& \opt{\kw{attached}} \kw{var} 
+    identifierList : type \opt{initializer} \\
+identifierList &$::=$& \sseq{identifier}{\terminal{,}} \\
+initializer &$::=$& \terminal{\assign} expression
+\end{tabular}\end{quote}
+
+A constant declaration introduces an identifier that refers to a
+single object throughout its lifetime.  If the optional type clause is
+present, the type of the identifier is the value of the {\it type}
+expression, and the type of the {\it initializer} expression must
+conform 
+to the type of the identifier.  If the type clause is not present, the type
+of the identifier is the syntactic type of the {\it initializer}
+(cf.~Section~\ref{syntactictype}).
+While a
+constant identifier always refers to the same object;  the object's
+state may change if it is mutable.
+
+A variable declaration introduces a new variable for each element of the
+{\it identifierList}.  The type of each identifier is the value of the {\it
+type} expression.
+When an
+initializer clause is present the type of the {\it initializer} must conform
+to the type of the identifiers, and each variable in the list is assigned the
+value of the {\it initializer} expression.  When not explicitly initialized,
+variables initially name the object \kw{nil}.
+A variable identifier may have its value changed by assignment 
+(cf.~Section~\ref{assignment statement}). 
+
+The optional \kw{attached} permits the programmer to provide one-way
+attachment between objects; the relocation of an object
+additionally relocates all co-located objects attached to it
+(cf.~Section~\ref{move statement}). 
+
+A declaration is an executable construct, and the initialization of
+constants and variables is performed each time the declaration is executed.
+
+\subsection{Scope}
+An identifier name is visible
+throughout the scope in which it is declared, not just textually after
+that declaration.  The following constructs open new scopes for
+identifiers, and identifiers are imported implicitly into nested
+scopes where they are not redefined:
+\begin{itemize}
+  \item{} if, elseif, and else clauses (cf. Section \ref{selection stmt})
+  \item{} loop statement bodies (cf. Section \ref{loop stmt})
+  \item{} blocks, unavailable, and failure handlers (cf. 
+            Section \ref{compound statement})
+  \item{} operation definitions and signatures (cf. Section 
+            \ref{operationSignature})
+  \item{} typeobject constructors (cf. Section \ref{type constructors})
+  \item{} object constructor, process, initially-block and
+           recovery-block definitions (cf. Section \ref{object constructor})
+\end{itemize}
+
+Since object constructors and typeobject constructors create new objects
+that are independent of their enclosing referencing environment (closures), 
+identifiers imported into these constructs
+are treated specially.  When the type or object constructor is
+executed, all imported identifiers are made constant.
+Throughout the lifetime of the created type or object, these
+identifiers will have the values that they had when the object constructor
+was executed. Consider the following example:
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{for} i \CO{} \tn{Integer} \assign{} 0 \kw{while} i $<$ 10 \kw{by} i \assign i $+$ 1\+\\*{}%
+  o \assign{} \kw{object} trivial\+\\*{}%
+    \kw{export} \kw{operation} getI \returns{} \/\LB{}r \CO{} \tn{Integer}\/\RB{}\+\\*{}%
+      r \assign{} i\-\\*{}%
+    \kw{end} getI\-\\*{}%
+  \kw{end} trivial\-\\*{}%
+\kw{end} \kw{for}
+\end{tabbing}\end{minipage}}
+
+This loop creates ten identical objects, except that the value
+of the identifier {\it i} is different for each object.  Once the
+first object (whose {\it i} $=$ 0) is created, changes to the loop
+control variable {\it i} are not visible to it, as the {\it i} that it
+sees was made constant when that object was created.
+
+While identifiers are in scope for the entire block in which they are
+declared (even textually before their declaration), they are normally given
+values as their declarations are executed.  For example, the following
+operation definition is correct as far as scope is concerned, but the
+final value of {\it x} will be \kw{nil} while the final value of of {\it y}
+will be 6.
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{operation} nonintuitive\+\\*{}%
+  \kw{const} x \assign{} y\\*{}%
+  \kw{const} y \assign{} 6\-\\*{}%
+\kw{end} nonintuitive
+\end{tabbing}\end{minipage}}
+
+There are two exceptions to this rule:
+\begin{enumerate}
+  \item{} In a compilation unit, all exported identifiers get their values
+    simultaneously.  This permits the construction of mutually recursive
+    object structures.
+  \item{} When typechecking an invocation of a polymorphic operation, the
+  values of all identifiers introduced in whee and for all clauses get their
+  values simultaneously.  This permits the construction of the mutually
+  recursive type objects that are often necessary when creating polymorphic
+  operations.
+\end{enumerate}

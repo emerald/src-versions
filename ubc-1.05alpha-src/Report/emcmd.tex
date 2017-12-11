@@ -1,0 +1,51 @@
+% Practical shorthands.
+\newcommand{\jl}{Emerald\typeout{Obsolete: jl}} % backward compatability
+\newcommand{\emd}{Emerald}
+\newcommand{\emc}{Emerald Compiler}
+\newcommand{\conforms}{\mbox{$\circ\!\!\!>$}}
+\newcommand{\matches}{\mbox{\large{$\triangleright{}$}}}
+\newcommand{\assign}{\ifmmode\leftarrow\else$\leftarrow$\fi}
+\newcommand{\indx}[1]{#1\index{#1}}
+\newcommand{\newterm}[1]{{\sl #1\/}\index{#1}}
+
+\newcommand{\kw}[1]{{\bf#1}}
+\newcommand{\id}[1]{{\it#1}}
+\newcommand{\returns}{\ifmmode\rightarrow\else$\rightarrow$\fi}
+\newcommand{\defined}{\ifmmode\leftarrow\else$\leftarrow$\fi}
+\newcommand{\lc}{\tt \char '173}
+\newcommand{\rc}{\tt \char '175}
+\newcommand{\cd}{\%}
+\newcommand{\mybackslash}{{\tt \char '134}}
+\newcommand{\myuparrow}{{\tt \char '136}}
+\newcommand{\myunderscore}{{\tt \char '137}}
+\newcommand{\mytilde}{{\char '176}}
+
+\newenvironment{program}{\small\it
+\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+}{\end{tabbing}
+\vspace{-2\topsep}}
+\newcommand{\LB}{{\rm{}[}}
+\newcommand{\RB}{{\rm{}]}}
+\newcommand{\CO}{{\rm{}:}}
+\newcommand{\dollar}{{\rm{}\$}}
+\newcommand{\pair}[2]{\mbox{$<$$#1$, $#2$$>$}}
+\newcommand{\npair}[2]{\mbox{$<$#1, #2$>$}}
+\newcommand{\tn}[1]{{\it #1\/}}
+\newcommand{\tm}{\raisebox{1.0ex}{{\tiny TM}}}
+\newcommand{\lqq}{{\rm ``}}
+\newcommand{\rqq}{"}
+\newcommand{\dqq}{{\char '042}}
+\newcommand{\lrq}[1]{{``$\,${\rm#1}''}}
+\newcommand{\terminal}[1]{{\tt#1}}
+\newcommand{\myvertslash}{\rule{.2mm}{1.5ex}}
+\newcommand{\oseq}[1]{{\rm \{} #1 {\rm \}}}
+\newcommand{\sseq}[2]{ #1 {\rm \{} #2 #1 {\rm \}}}
+\newcommand{\seq}[1]{ #1 {\rm \{} #1 {\rm \}}}
+\newcommand{\opt}[1]{{\rm [}$\;$#1$\;${\rm ]}}
+
+\newlength{\boxlength}
+\setlength{\boxlength}{1in}
+\newcommand{\blbox}[1]{\makebox[\boxlength][l]{#1}}
+\newcommand{\bcbox}[1]{\makebox[\boxlength][c]{\tt #1}}
+

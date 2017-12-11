@@ -1,0 +1,15 @@
+#!/bin/csh -f
+set delay = 2
+if ( `hostname` =~ myr*) then
+  set delay = `hostname | sed -e 's/myr//' -e 's/.cs.ubc.ca//'`
+endif
+if ("$delay" == "") set delay = 2
+foreach a ( $argv[2-] )
+  if ( $a =~ *.x ) @ delay = $delay + 3
+end
+if ( `hostname` =~ ${1}*) then
+  emx -R $argv[2-]
+else
+  sleep $delay
+  emx -R$1 $argv[2-]
+endif

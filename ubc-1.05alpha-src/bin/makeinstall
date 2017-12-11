@@ -1,0 +1,17 @@
+#!/bin/csh -f
+set file = $EMERALDROOT/emerald-${EMERALDVERSION}-bin-${EMERALDARCH}.tar.gz
+rm -rf $EMERALDROOT/tmp/$EMERALDARCH
+mkdir $EMERALDROOT/tmp/$EMERALDARCH
+mkdir $EMERALDROOT/tmp/$EMERALDARCH/lib
+mkdir $EMERALDROOT/tmp/$EMERALDARCH/bin
+mkdir $EMERALDROOT/tmp/$EMERALDARCH/src
+mkdir $EMERALDROOT/tmp/$EMERALDARCH/src/emerald
+cp $EMERALDROOT/vm/$EMERALDARCH/emx $EMERALDROOT/tmp/$EMERALDARCH/bin/
+cp $EMERALDROOT/bin/{emc,ec} $EMERALDROOT/tmp/$EMERALDARCH/bin/
+cp $EMERALDROOT/lib/{opoid,??def,Compiler,Builtins} $EMERALDROOT/tmp/$EMERALDARCH/lib/
+cp $EMERALDROOT/Example/{kilroy,first,count}.m $EMERALDROOT/tmp/$EMERALDARCH/src/emerald/
+cp $EMERALDROOT/Example/kilroy.x $EMERALDROOT/tmp/$EMERALDARCH/src/emerald/
+cd $EMERALDROOT/tmp/$EMERALDARCH
+rm -f $file
+tar cf - lib bin src | gzip --best > $file
+rm -rf $EMERALDROOT/tmp/$EMERALDARCH/*

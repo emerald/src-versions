@@ -1,0 +1,22 @@
+#!/bin/csh -f
+if ($#argv == 0) then
+    echo "Usage: rmversion versionnumber"
+    exit (1)
+endif
+set versionnumber = $argv[1]
+foreach comment (q ok bad aintthere)
+    foreach suffix ("" ".Z" ".gz")
+	if (-r CP_$comment$versionnumber$suffix) then
+	    break; break;
+	endif
+    end
+end
+if ($comment == aintthere) then
+    echo "rmversion: Can't find files for version $versionnumber."
+    exit (1)
+endif
+foreach i (CP CPIndex name name.idb)
+    echo rm -f ${i}_$comment$versionnumber
+    rm -f ${i}_$comment$versionnumber ${i}_$comment$versionnumber$suffix \
+	${i}_$comment${versionnumber}.bak
+end

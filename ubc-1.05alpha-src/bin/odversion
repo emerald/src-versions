@@ -1,0 +1,21 @@
+#!/bin/csh -f
+if ($#argv == 0) then
+    echo "Usage: odversion versionnumber"
+    exit (1)
+endif
+set versionnumber = $argv[1]
+foreach comment (q ok bad aintthere)
+    foreach suffix ("" ".Z" ".gz")
+	if (-r CP_$comment$versionnumber$suffix) then
+	    break; break;
+	endif
+    end
+end
+if ($comment == aintthere) then
+    echo "odversion: Can't find files for version $versionnumber."
+    exit (1)
+endif
+foreach i (CP CPIndex name name.idb)
+    echo mv -f ${i}_$comment$versionnumber .oldversions
+    mv -f ${i}_$comment$versionnumber ${i}_$comment$versionnumber$suffix .oldversions
+end

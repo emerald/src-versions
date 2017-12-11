@@ -1,0 +1,48 @@
+\section{Introduction}
+
+The primary goal of \emd{}
+\cite{Black86-oopsla,Black87-tse,Jul88tocs,Raj90spe} is to simplify distributed
+programming through language support while providing acceptable
+performance and flexibility both in local and distributed environments.
+Emerald also demonstrates that the object-based model of programming can
+be incorporated both elegantly and efficiently in distributed systems.
+\emd{} draws heavily upon the experience gained from
+Smalltalk \cite{Goldberg83}, the Argus Language and System
+\cite{Liskov84-argus} and, in particular, the Eden system
+\cite{Almes85,Black85-eden-experiences} and the Eden Programming
+Language (EPL) \cite{Black85-epl}.
+
+Featuring an object-oriented style of programming, \emd{} presents
+a unified semantic view of objects appropriate for
+private, local, data-only objects as well as shared,
+remote, concurrently-executing objects. The nature of objects in \emd{}
+is similar to that in Smalltalk \cite{Goldberg83}, i.e., all 
+data items are objects with a uniform semantic model for operations
+on them, but \emd{} does not have any notion of {\em class}.
+\emd{} was explicitly
+designed to support data abstraction: all
+typing of objects is at an abstract level and does not depend on the 
+implementation chosen. Abstract typing aids
+in the dynamic construction of distributed programs by allowing any object in
+a large, possibly distributed, program to be replaced by any other
+type-consistent object.
+Type consistency or {\em conformity} is an important
+aspect of Emerald, and is discussed below.
+Another advantage of treating types as first class objects is 
+that it makes polymorphism inherent in \emd{}.
+
+Recognizing {\em location} as an important attribute of an object in
+distributed programs, \emd{} gives the programmer access to the location
+of objects through primitives that permit the inspection and selection of
+location. Alternatively, when desired, the location details may be left
+to the reasonably-chosen system-defaults.
+However, this recognition of the importance of location 
+for distributed programming has its drawbacks, viz., the semantics of \emd{}
+are complicated both because location is apparent and because systems may
+be partially unavailable.
+
+This report defines the Emerald programming language.
+The Emerald
+approach to programming is discussed in \cite{Raj90spe}, where several
+examples of Emerald programs may be found.
+

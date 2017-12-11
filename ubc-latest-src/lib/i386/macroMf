@@ -1,0 +1,47 @@
+#
+# i386freebsd specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = CYGWIN
+
+# threads package
+THREADFLAGS = -DTIMESLICE -DSTDARG_WORKS
+
+#
+# For no threads
+#
+LWPFLA = $(THREADFLAGS)
+LWPOBJ = 
+LWPLIB = $(THREADLIBS)
+LWPSRC = 
+LWPINC = 
+
+# (ANSI) C compiler
+CC = gcc
+
+# Choose from the list of ccalls modules.  You need emstreams, misc, and 
+# string at least.  This should be a list of .o files.  
+CCALLS_OBJ=emstream.o string.o misk.o rand.o
+
+X11LIB = 
+X11FLA = 
+
+# definitions to enable common extensions in headers and libraries
+
+XCPFLAGS = -DCYGWIN -DDISTRIBUTED -DTIMESLICE -DUSEDISTGC
+
+# C preprocessor
+CPP = gcc -E
+
+# dependency generator
+DEPEND = gcc -MM
+
+# ranlib.  ar does the work for us so it's not needed
+RANLIB = true
+
+# 
+CFLAGSOPT = -g -fsigned-char
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)

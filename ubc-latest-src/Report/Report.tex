@@ -1,0 +1,31 @@
+\documentstyle[fleqn,titlepage,normscite]{article}
+%\documentstyle[fleqn,clbiba,titlepage,normscite]{article}
+\input{pagelayout}
+\input{emcmd}
+\begin{document}
+\bibliographystyle{alpha}
+ \input{ubctitle}
+\newpage{}
+\pagenumbering{roman}
+\tableofcontents{}
+\newpage{}
+\pagenumbering{arabic}
+\parindent 0pt
+\parskip 3pt plus 3pt
+\input{intro}
+\input{lexical}
+\input{declarations}
+\input{expressions}
+\input{statements}
+\input{operations}
+\input{types}
+\input{objects}
+\input{reliability}
+\appendix
+%\include{reserved}
+%\include{syntax}
+\include{builtins}
+%\include{compiling}
+%\include{debugging}
+\bibliography{Report}
+\end{document}

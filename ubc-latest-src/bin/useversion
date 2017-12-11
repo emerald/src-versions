@@ -1,0 +1,40 @@
+#!/bin/csh -f
+if ($#argv == 0) then
+    set versionnumber = `latestversion`
+else
+    if (-r ${argv[1]}CP) then
+	echo "Using version ${argv[1]}"
+	rm -f execCP
+	ln -s ${argv[1]}CP execCP
+	exit 0
+    endif
+    set versionnumber = $argv[1]
+endif
+set nonomatch
+if ( `glob "CP_*$versionnumber"` == 'CP_*'$versionnumber'*' && \
+     `glob "CP_*${versionnumber}.Z"` == 'CP_*'${versionnumber}.Z'*' && \
+     `glob "CP_*${versionnumber}.gz"` == 'CP_*'${versionnumber}.gz'*') then
+    if ( $versionnumber == 0 ) then
+	if ( -r distCP ) then
+	    echo Using distributed version
+	    rm -f execCP
+	    ln -s distCP execCP
+	else
+	    echo Can"'"t find a version
+	endif
+    else
+	echo "Can't find version number $versionnumber"
+    endif
+else
+    echo "Using version number $versionnumber"
+    foreach comment (q ok bad aintthere)
+	foreach suffix ("" .Z)
+	    if (-r CP_$comment$versionnumber$suffix) then
+		break ; break
+	    endif
+	end
+    end
+    rm -f execCP
+    ln -s CP_$comment$versionnumber$suffix execCP
+endif
+exit 0

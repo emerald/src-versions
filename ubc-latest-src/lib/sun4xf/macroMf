@@ -1,0 +1,34 @@
+#
+# sun4 specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = `arch`
+
+# (ANSI) C compiler
+CC = gcc
+
+# Choose from the list of ccalls modules.  You need emstreams, misc, and 
+# string at least.  This should be a list of .o files.  
+CCALLS_OBJ=emstream.o string.o misk.o rand.o xforms.o
+
+X11LIB = -L$(EMERALDROOT)/xforms_sun4/FORMS -lforms -L/cs/local/lib/X11R6 -lXpm -lX11 -lm
+X11FLA = -I$(EMERALDROOT)/xforms_sun4/FORMS -I/cs/local/generic/include/X11R6
+
+# definitions to enable common extensions in headers and libraries
+XCPFLAGS = -Dsun4 -fsigned-char
+
+# C preprocessor
+CPP = cc -E
+
+# dependency generator
+DEPEND = gcc -MM
+
+# ranlib.  ar does the work for us so it's not needed
+RANLIB = true
+
+# 
+CFLAGSOPT = -g -O3
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)

@@ -1,0 +1,4 @@
+Compiling export.m
+"export.m", line 1: Can't export such values
+"export.m", line 2: Can't export "sally" as it imports "t" which is not manifest
+"export.m", line 5: Symbol "bob" doesn't have a value

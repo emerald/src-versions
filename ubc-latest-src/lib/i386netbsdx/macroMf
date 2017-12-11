@@ -1,0 +1,28 @@
+#
+# i386netbsd specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = `arch`
+
+# (ANSI) C compiler
+CC = cc
+
+# definitions to enable common extensions in headers and libraries
+XGCCPFLAGS =
+
+XCPFLAGS =
+
+XLIB =
+
+# C preprocessor
+CPP = cc -E
+
+# dependency generator
+DEPEND = cc -MM
+
+# 
+CFLAGSOPT = -g -O4 -DNDEBUG -DNTRACE
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)

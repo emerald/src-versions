@@ -1,0 +1,339 @@
+\section{Types}
+\label{types}
+\label{abstracttypes}
+A type is defined as a collection of operation signatures, where
+each operation signature includes the operation name, and the names and
+types of its arguments and results. Types, being objects, are
+first-class citizens in Emerald. Each type object exports a function without
+arguments called {\em getSignature} that returns an object of the predefined
+\kw{Signature} type. In other words, any object that conforms to 
+the following type:
+{\small\it\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{immutable} \kw{typeobject} \tn{type}\+\\*{}%
+  \kw{function} getSignature \returns{} \/\LB{}\tn{Signature}\/\RB{}\-\\*{}%
+\kw{end} \tn{type}\\*{}%
+\end{tabbing}\vspace{-2\topsep}}
+
+is a type.  Note that each object with type \tn{signature} has a getSignature
+operation that returns self, thus Signatures are Types.
+
+\subsection{Type Constructors}
+\label{type constructors}
+Signatures are created
+using type constructors.  A type constructor has the following
+structure:
+\begin{quote}\it\begin{tabular}{lcl}
+typeConstructor &$::=$& \opt{\kw{immutable}} \kw{typeobject} typeIdentifier \\
+& &\hspace{0.5in}\oseq{operationSignature} \\
+& &\kw{end} typeIdentifier
+\end{tabular}\end{quote}
+Operation signatures have been defined in
+Section~\ref{operationSignature}, however in type constructors, the
+identifiers in parameter declarations may be omitted.
+An immutable type implies that its objects are abstractly immutable, i.e.
+its objects cannot change their state over time. For example, the predefined
+type  
+\kw{Integer} is immutable because its objects represent integer values which
+cannot change; for instance, the integer 3 cannot be changed to the integer
+4.
+
+\subsection{Syntactictypeof and typeof}
+\label{syntactictypeof}
+\label{syntactictype}
+The syntactictypeof operator evaluates to the statically determined type of
+an expression.  That is, the type of the expression as it can be determined
+by the compiler.  This operation is always evaluated at compile time.  In
+contrast the \kw{typeof} operator returns the most
+accurate type of the expression at run time, which can be a wider type than
+the syntactic type, if either implicit or explicit narrowing has occurred.
+This most accurate type is 
+also called the {\it best fitting} type of the expression.
+See section \ref{typeofobjectconstructor}.  It is always the case that for
+any expression {\it e}, \kw{typeof} {\it e} \conforms \kw{syntactictypeof} {\it e}.
+
+\subsection{Conformity}
+\label{conformity}
+Conformity is the basic relationship between types.  
+A type 
+{\it S}
+conforms to a type 
+{\it T}
+(written 
+{\it S}
+\conforms{} 
+{\it T}\/) 
+if:
+\begin{enumerate}
+  \item{} {\it S} is immutable if {\it T} is immutable.
+  \item{} For each operation $o_T$ in {\it T},
+    there exists an operation $o_S$ in {\it S} with the same name and number
+    of arguments, and
+  \item{} $o_T$ and $o_S$ have the same number of results, and
+  \item{} The  types of the results of $o_S$ operations conform to the
+    types of the results of $o_T$, and 
+  \item{} The  types of the arguments of $o_T$ conform to the  types of the
+    arguments of $o_S$ (i.e., arguments must conform in the opposite
+    direction). 
+\end{enumerate}
+
+If either {\it S} or {\it T} is recursive (the definition of at least one of
+its operations uses its own name), then the previous checks must be
+performed under an assumption that {\it S} \conforms{} {\it T}.
+
+This simple description of conformity suffices for all invocations that
+do not involve parametric polymorphism.  Discussion of polymorphic
+operations and the extensions to the type checking rules required to type
+check them is deferred until Section \ref{polymorphism}.
+
+Some types in the system are exceptions to
+the standard rules for conformity.  For ensuring
+correctness, types such as
+\tn{Boolean}, \tn{Condition}, \tn{Node}, \tn{Signature} and \tn{Time} must
+be implemented only by the system. For performance enhancement,
+the types
+\tn{Character}, \tn{Integer}, \tn{Real}, and \tn{String} are also
+restricted to be implemented only by the system.
+
+\subsection{Polymorphism}
+\label{polymorphism}
+Inclusion polymorphism, where one type is a subtype of another and can be
+used in any context in which the supertype is expected, is fundamental to
+Emerald.  Its type system is defined so that the subtyping relation
+(conformity) is as large as possible while still guaranteeing safety: an
+operation will never be performed on an object that doesn't implement that
+operation.
+
+Emerald also supports parametric polymorphism, where types are either
+explicitly or implicitly passed as arguments to invocations.  The cardinal
+rule regarding types is that it must be possible for the compiler at compile
+time to determine the value of every expression that is used in a position
+where a type is required.  Such positions include variable, constant, and
+parameter declarations, and the second argument to view and restrict
+expressions.
+
+Since types are objects, no special type parameterization form is necessary
+in Emerald; types are passed to operations in the same way as are other
+objects.   The operation signature definition syntax is supplemented with
+three clauses that permit:
+\begin{itemize}
+  \item{}  the introduction of dependent types whose values
+    depend on the value of type arguments (the where clause)
+  \item{} the declaration of type variables that may take on the value of
+    the types of other arguments (the for all clause)
+  \item{} the specification of constraints on the values of type
+    variables (the such that clause).  
+\end{itemize}
+
+\subsubsection{For all clause}
+\begin{quote}\it\begin{tabular}{lcl}
+forallClause & $::=$& \kw{forall} identifier \\
+\end{tabular}\end{quote}
+The for all clause defines the {\it identifier} as a type variable without
+constraint.  If the identifier is not defined elsewhere in the operation
+signature, the for all clause also serves to define it.  The type variable
+will take as its value the type value positionally assigned to it during
+invocation.  The primary purpose of the for all clause is to capture the
+type of some other argument to an invocation, as in the following example of
+the polymorphic identity function which returns its argument and in which
+the type of the result is the same as the type of the argument:
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+  \kw{function} identity\/\LB{}a \CO{} t\/\RB{} \returns{} \/\LB{}b \CO{} t\/\RB{}\+\\*{}%
+    \kw{forall} t\\*{}%
+    b \assign{} a\-\\*{}%
+  \kw{end} identity
+\end{tabbing}\end{minipage}}
+
+The for all clause can also be used to introduce a type variable whose value
+is further constrained by a such that clause.
+
+\subsubsection{Where clause}
+\begin{quote}\it\begin{tabular}{lcl}
+whereClause & $::=$& \kw{where} identifier {\assign} typeExpression
+\end{tabular}\end{quote}
+A where clause is semantically equivalent to a constant declaration.  It
+defines the {\it identifier} to have the value of the given {\it
+typeExpression}.  The type expression is evaluated during type checking of
+invocations after type values have been bound to the argument identifiers
+defined in the operation signature and any type variables have also been
+bound to their values.  This permits the construction of dependent types
+whose values depend on the values of type arguments to the invocation, as
+demonstrated in the following example:
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+  \kw{function} makeVector\/\LB{}arg \CO{} argType\/\RB{} \returns{} \/\LB{}res \CO{} resType\/\RB{}\+\\*{}%
+    \kw{forall} argType\\*{}%
+    \kw{where} resType \assign{} \tn{Vector}.of\/\LB{}argType\/\RB{}\\[1.0ex]{}%
+    res \assign{} resType.create\/\LB{}10\/\RB{}\\*{}%
+    \kw{for} i \CO{} \tn{Integer} \assign{} 0 \kw{while} i $<$ 10 \kw{by} i \assign{} i $+$ 1\+\\*{}%
+      res\/\LB{}i\/\RB{} \assign{} arg\-\\*{}%
+    \kw{end} \kw{for}\-\\*{}%
+  \kw{end} makeVector
+\end{tabbing}\end{minipage}}
+
+
+\subsubsection{Such that clause}
+\begin{quote}\it \begin{tabular}{lcl}
+suchthatClause & $::=$ & \kw{suchthat} identifier \matches{} typeLiteral
+\end{tabular}\end{quote}
+
+The such that clause allows the possible values that may be taken on by a
+type variable to be constrained.  Any value bound to the given {\it
+identifier} (which must be a type variable) must match the {\it
+typeExpression}.  This clause allows the programmer to require that an
+argument type have a particular collection of operations, as demonstrated in
+the following example:
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+  \kw{function} inOrder\/\LB{}a \CO{} t, b \CO{} t, c \CO{} t\/\RB{} \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}\+\\*{}%
+    \kw{forall} t\\*{}%
+    \kw{\kw{such}\kw{that}} t \conforms{} \kw{typeobject} comparable\+\\*{}%
+      \kw{function} $<=$\/\LB{}comparable, comparable\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}\-\\*{}%
+    \kw{end} comparable\\[1.0ex]{}%
+    r \assign{} a $<=$ b \kw{and} b $<=$ c\-\\*{}%
+  \kw{end} inOrder
+\end{tabbing}\end{minipage}}
+
+
+\subsection{Typechecking operation definitions}
+In the presence of parametric polymorphism, some of the identifiers defined
+in the signature of an operation definition will be type variables, which
+will take on 
+different values for each invocation of the operation.  In type checking the
+body of the operation, we can assume only that the value of each type
+variable will match its constraint.  Therefore we type check the body of the
+operation with all type variables bound to their constraints.  Once the
+operation body has been shown to be type correct under this assumption, it
+will be type correct for every invocation since the actual type bound to each
+type variable must match the constraint on that type variable.
+
+\subsection{Typechecking invocations}
+In the presence of parametric polymorphism, the simple rules for
+typechecking invocations (that the type of each argument expression must
+conform to the type of its corresponding formal parameter) is insufficient.
+Therefore, when typechecking an invocation involving type variables, the
+following steps are performed:
+\begin{enumerate}
+  \item{} Bind each type variable to its corresponding type value from the
+    actual arguments.  These may be the arguments themselves, or in the case
+    of type variables introduced by for all clauses, the types of the
+    arguments. 
+  \item{} Create the dependent type introduced in each where clauses in the
+    operation signature.  All of these objects are created simultaneously so
+    that recursive type structures can be successfully created.
+  \item{} Check that the value bound to each type variable matches the
+    constraint on that type variable.
+  \item{} Check that the type of each argument conforms to the type of its
+    corresponding formal parameter.
+  \item{} Determine the result types of the invocation by using the current
+    values of any type variables or dependent type identifiers.
+\end{enumerate}
+\subsection{Conformity revisited}
+Parametric polymorphism complicates the conformity rules as well, since it
+introduces type variables and constraints on them.  The previous rules for
+conformity still must be satisfied, but in addition:
+\begin{enumerate}
+  \item[0]{} If either or both of {\it S} and {\it T} is a bound type
+    variable, then consider the values bound to them rather than the type
+    variable when checking the other rules.
+  \item[5]{} If {\it T} is an unbound type variable then {\it S} must be
+    also, and the constraint on {\it S} must match the constraint on {\it T}.
+\end{enumerate}
+\subsection{Matches}
+The matches relation (\matches{}) between types is very similar to the
+conformity relation (\conforms{}).  In fact, if the types being considered
+are not recursive then the two relations are equivalent.  When checking the
+conformity of two recursive types ({\it S} and {\it T}) we must
+first assume that {\it S} \conforms{} {\it T}.  When checking whether {\it
+S} matches {\it T} we assume instead that {\it S} and {\it T} are equivalent
+types ---  that {\it S} \conforms{} {\it T} and that {\it T} \conforms{} {\it
+S} --- because if the types do match then they will be bound together (since
+matches only comes into play in the presence of type variables).
+
+\subsection{Polymorphism Example}
+\label{polymorphismexample}
+\begin{figure}[tbp]
+\begin{center}
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{const} Set \assign{} \kw{immutable} \kw{object} Set\+\\*{}%
+  \kw{export} \kw{function} of\/\LB{}eType \CO{} \tn{type}\/\RB{} \returns{} \/\LB{}result \CO{} NewSetType\/\RB{}\+\\*{}%
+    \kw{\kw{such}\kw{that}}\+\\*{}%
+      eType \matches\+\\*{}%
+	\kw{immutable} \kw{typeobject} eType\+\\*{}%
+	  \kw{function} $=$\/\LB{}eType\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}\-\\*{}%
+	\kw{end} eType\-\-\\*{}%
+    \kw{where}\+\\*{}%
+      NewSetType \assign{}\+\\*{}%
+	\kw{immutable} \kw{typeobject} NewSetType\+\\*{}%
+	  \kw{operation} empty \returns{} \/\LB{}NewSet\/\RB{}\\*{}%
+	  \kw{operation} singleton\/\LB{}eType\/\RB{} \returns{} \/\LB{}NewSet\/\RB{}\\*{}%
+	  \kw{operation} create\/\LB{}sequenceOfeType\/\RB{} \returns{} \/\LB{}NewSet\/\RB{}\-\\*{}%
+	\kw{end} NewSetType\-\-\\*{}%
+    \kw{where}\+\\*{}%
+      sequenceOfeType \assign{}\+\\*{}%
+	\kw{immutable} \kw{typeobject} sequenceOfeType\+\\*{}%
+	  \kw{function} lowerbound \returns{} \/\LB{}\tn{Integer}\/\RB{}\\*{}%
+	  \kw{function} upperbound \returns{} \/\LB{}\tn{Integer}\/\RB{}\\*{}%
+	  \kw{function} getElement\/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}eType\/\RB{}\-\\*{}%
+	\kw{end} sequenceOfeType\-\-\\*{}%
+    \kw{where}\+\\*{}%
+      NewSet \assign{}\+\\*{}%
+	\kw{immutable} \kw{typeobject} NewSet\+\\*{}%
+	  \kw{function} contains\/\LB{}eType\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}\\*{}%
+	  \kw{function} $+$\/\LB{}NewSet\/\RB{} \returns{} \/\LB{}NewSet\/\RB{}\\*{}%
+	  \kw{function} $*$\/\LB{}NewSet\/\RB{} \returns{} \/\LB{}NewSet\/\RB{}\\*{}%
+	  \kw{function} $-$\/\LB{}NewSet\/\RB{} \returns{} \/\LB{}NewSet\/\RB{}\\*{}%
+	  \kw{function} cardinality \returns{} \/\LB{}\tn{Integer}\/\RB{}\-\\*{}%
+	\kw{end} NewSet\-\-\\*{}%
+    result \assign{} \+\\*{}%
+      \kw{object} SetCreator\+\\*{}%
+	\kw{export} \kw{operation} create\/\LB{}v \CO{} sequenceOfeType\/\RB{}\returns{} \/\LB{}result \CO{} NewSet\/\RB{}\+\\*{}%
+	  result \assign{}\+\\*{}%
+	    \kw{object} NewSet\+\\*{}%
+	      \kw{const} repType \assign{} \tn{Vector}.of\/\LB{}eType\/\RB{}\\*{}%
+	      \kw{var} rep \CO{} repType\\[1.0ex]{}%
+	      \cd{} The implementation of the operations and functions.\-\-\\*{}%
+	  \kw{end} NewSet\-\\*{}%
+	\kw{end} create\\*{}%
+	\kw{export} \kw{operation} empty \returns{} \/\LB{}r \CO{} NewSet\/\RB{}\+\\*{}%
+	  r \assign{} self.create\/\LB{}\kw{nil}\/\RB{}\-\\*{}%
+	\kw{end} new\\*{}%
+	\kw{export} \kw{operation} singleton\/\LB{}e \CO{} eType\/\RB{} \returns{} \/\LB{}r \CO{} NewSet\/\RB{}\+\\*{}%
+	  r \assign{} self.create\/\LB{}{e}\/\RB{}\-\\*{}%
+	\kw{end} singleton\-\\*{}%
+      \kw{end} SetCreator\-\-\\*{}%
+  \kw{end} of\-\\*{}%
+\kw{end} Set
+\end{tabbing}\end{minipage}}
+\end{center}
+\caption{A Polymorphic Set Object}
+\label{polymorphicset}
+\end{figure}
+To demonstrate the polymorphism present in \emd{}, a polymorphic {\em Set}
+object is presented in Figure~\ref{polymorphicset}. {\em Set} 
+has an
+operation {\em of} that takes a type as an argument and returns
+an object that can be used as the abstract type of, as well as a creator
+of, sets of things conforming to the original argument to the operation
+{\em of}.  The element type for a set (the type passed to the {\it of}
+function) must be immutable and must
+implement an $=$ operation that returns a \kw{Boolean} object. With this
+{\em Set} definition, we can define creators for sets of integers and
+strings as:
+{\small\it\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{const} IntSet \defined{} Set.of\/\LB{}\tn{Integer}\/\RB{}\\*{}%
+\kw{const} StringSet \defined{} Set.of\/\LB{}\tn{String}\/\RB{}\\*{}%
+\end{tabbing}\vspace{-2\topsep}}
+\noindent
+and we can create singleton sets of integers and strings as:
+{\small\it\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{const} i \defined{} IntSet.singleton\/\LB{}6\/\RB{}\\*{}%
+\kw{const} s \defined{} StringSet.singleton\/\LB{}\terminal{"}abc\terminal{"}\/\RB{}\\*{}%
+\end{tabbing}\vspace{-2\topsep}}

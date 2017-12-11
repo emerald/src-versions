@@ -1,0 +1,3 @@
+Compiling ops2.m
+"ops2.m", line 7: Operation foobar[0] is multiply defined
+"ops2.m", line 15: Operation foobar[0] is multiply defined

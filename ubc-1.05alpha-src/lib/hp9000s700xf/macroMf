@@ -1,0 +1,41 @@
+#
+# hp700gcc specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = `arch`
+
+# (ANSI) C compiler
+CC = gcc
+
+# random is in -lm on hpux
+
+# use -static for portability between HPUX releases
+
+# Choose from the list of ccalls modules.  You need emstreams, misc, and
+# string at least.  This should be a list of .o files.  
+# IF YOU CHANGE THIS LIST, YOU MUST DELETE THE cctab.c file in your kernel
+# build directory! 
+CCALLS_OBJ=emstream.o string.o misk.o rand.o xforms.o
+
+EXTRALIB = reax.o writx.o selecx.o /usr/lib/end.o -L$(HOME)/xforms/FORMS -lforms -lX11 -lm
+
+# definitions to enable common extensions in headers and libraries
+XCPFLAGS = -DSYSTYPE_SYSV -Dunix -Dhp700 
+
+XLIB =
+
+# C preprocessor
+CPP = cc -E
+
+# dependency generator
+DEPEND = gcc -MM
+
+# ranlib.  ar does the work for us so it's not needed
+RANLIB = true
+
+# 
+CFLAGSOPT = -g -O3
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)

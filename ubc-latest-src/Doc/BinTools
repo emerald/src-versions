@@ -1,0 +1,65 @@
+
+Emerald Tools
+============
+
+The bin directory contains a fair number of tools, and the architecture 
+specific subdirectories contain a few more. Here's a quick reference to 
+them: 
+
+
+Architecture specific tools (found in bin/$arch)
+-----------------------------------------------
+
+emx          - emerald interpreter, built in vm/$arch, linked to bin
+emyacc       - emerald emitting version of yacc
+issymlink    - script to determine if a directory entry is a symbolic
+	       link, used in Makefiles
+vmc          - virtual machine compiler
+
+
+Architecture independent tools
+-----------------------------
+
+user tools
+---------
+emc          - stable Emerald compiler
+xemc         - experimental Emerald compiler
+emmake       - Emerald specific make, includes appropriate architecture
+	       specific and independent definitions expected by
+	       Makefiles within the Emerald source tree
+forallarch   - script to build architecture specific components on all
+	       supported Emerald architectures
+newarch      - script to create support for a new architecture
+setarch      - script to set emerald architecture, used by emarch alias
+setuser      - script to set emerald user, used by emuser alias
+useemerald   - script to setup things for a new user
+
+
+version control
+--------------
+findversion       - scripts to support maintaing backup versions
+latestversion       of Emerald compiler and (soon) builtins
+lsv, lsversion
+newv, newversion
+odversion
+oldversion
+regression
+rev, reversion
+rmv, rmversion
+usev, useversion
+whichv, whichversion
+
+other tools (not for user use)
+----------
+issymlink-ls      - one of these is linked into each
+issymlink-testh     bin/$arch directory, as appropriate for
+issymlink-testl     the Unix flavour run on that architecture
+
+broken tools (ignore)
+--------------------
+changed
+distribute
+makefulltar
+maketar
+makextar
+

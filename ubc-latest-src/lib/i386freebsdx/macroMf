@@ -1,0 +1,32 @@
+#
+# i386freebsd with mt and XWindows specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = `arch`
+
+# (ANSI) C compiler
+CC = gcc
+
+XCPFLAGS = -Di386freebsd
+
+XLIB =
+
+# C preprocessor
+CPP = gcc -E
+
+# dependency generator
+DEPEND = cc -MM
+
+# 
+CFLAGSOPT = -g -O -Wall -Wstrict-prototypes
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)
+
+X11LIB = /usr/X11R6/lib/libX11.a
+X11INC = sisc.h
+X11SRC = xsys.c sisc.c
+X11OBJ = xsys.o sisc.o
+X11FLA = -DXWindows -I/usr/X11R6/include
+

@@ -1,0 +1,188 @@
+\section{Expressions}
+\label{expressions}
+Expressions are \emd{} constructs that denote objects.
+
+\subsection{Literals and Identifier Expressions}
+\begin{quote}\it\begin{tabular}{lcl}
+expression &$::=$& literal \\
+    & $|$ & constantIdentifier \\
+    & $|$ & variableIdentifier
+\end{tabular}\end{quote}
+A literal expression directly denotes an object.
+A constant identifier names the object it was initialized to while a variable
+identifier names the object most recently bound to it. 
+
+\subsection{Operator Expressions}
+Before examining \emd{} expressions that involve operators, we define the
+precedence of the operators used. In Table~\ref{precedences},
+the operators are ordered by increasing
+precedence.  Operators of the same 
+precedence level are evaluated from left to right.
+
+\begin{table} 
+\begin{center}
+\begin{tabular}{||c|l|l||}
+    \hline
+     Precedence & Operator  & Operation                         \\
+     Level      &           &                                   \\
+    \hline
+    \hline
+     1      & \kw{view}-\kw{as} & Narrow or widen object's type    \\
+            & \kw{restrict}-\kw{to} & Permanently narrow or widen object's type    \\
+     2      & \myvertslash{}    & Logical or                    \\
+            & \kw{or}           & Logical conditional (short-circuit) or  \\
+     3      & \&                & Logical and                   \\
+            & \kw{and}          & Logical conditional (short-circuit) and \\
+     4      & !                 & Logical negation              \\
+     5      & ==, !==           & Object identity and distinction \\
+            & \conforms         & Type conformity           \\
+            & $=,\;!=,\;<,\;<=,\;>=,\;>$& Relational operators   \\
+     6      & $+$,$-$           & Additive operators              \\
+     7      & *, /              & Multiplicative operators        \\
+            & \#                & Modulus                         \\
+            & User-defined      &             \\
+     8 	    & $-$, \mytilde{}        & Arithmetic negation		\\
+            & \kw{isfixed}      & Checks if object is fixed at node    \\
+            & \kw{islocal}      & Checks if object is on the local node    \\
+            & \kw{locate}       & Finds a possible location of the operand  \\
+            & \kw{awaiting}     & Processes waiting on condition \\
+            & \kw{codeof}       & Concrete type (implementation) of an object \\
+            & \kw{nameof}       & Name of an object \\
+            & \kw{typeof}       & Type of an object \\
+            & \kw{syntactictypeof}       & Compile time type of an expression\\
+    \hline
+\end{tabular}
+\end{center}
+    \caption{Precedence of Emerald Operators}
+    \label{precedences}
+\end{table}
+
+\subsection{Reserved Operators}
+The reserved operators have meanings defined by the language, and may not be
+redefined.  
+
+\begin{quote}\it\begin{tabular}{lcl}
+expression &$::=$& \sseq{expression}{reservedop} \\
+reservedop &$::=$& \bcbox{$==$} $|$ \bcbox{$!==$} $|$ \bcbox{\conforms} $|$
+	      \bcbox{\kw{or}} $|$ \bcbox{\kw{and}}
+\end{tabular}\end{quote}
+$==$ evaluates to \kw{true} if the two
+expressions denote the same object; $!==$ is its opposite.
+The \conforms{}  operator
+compares its two operands (each of type \tn{type})
+for conformity,
+i.e., it evaluates to \kw{true} if the left operand conforms to
+the right operand (cf. Section~\ref{conformity}).
+
+The operator \kw{and} is a {\em conditional and} and evaluates as
+follows: if the left operand evaluates to 
+\kw{false}, the result is \kw{false};
+otherwise, the result is the value of the right expression. The
+operator \kw{or} is a {\em conditional or} and evaluates as follows:
+if the left operand evaluates to \kw{true}, the result is \kw{true};
+otherwise, the result is the value of the right expression.
+
+\begin{quote}\it\begin{tabular}{lcl}
+expression &$::=$& \kw{locate} expression \\
+& $|$ & \kw{isfixed} expression \\
+& $|$ & \kw{islocal} expression \\
+& $|$ & \kw{awaiting} expression \\
+& $|$ & \kw{codeof} expression \\
+& $|$ & \kw{nameof} expression \\
+& $|$ & \kw{typeof} expression \\
+& $|$ & \kw{syntactictypeof} expression 
+\end{tabular}\end{quote}
+\kw{isfixed} {\it e\/} evaluates to \kw{true} if {\it e\/}
+is currently fixed at a site, otherwise it evaluates to \kw{false}.
+\kw{islocal} {\it e\/} evaluates to true if {\it e\/} is currently on the
+local node, and \kw{false} otherwise.
+\kw{locate} {\it e\/} evaluates to an object (of type \tn{Node}) that
+gives a location of the operand object during the execution of this 
+expression. This is
+explained in detail in Section~\ref{locatics}.
+
+The \kw{awaiting} operator takes as its operand an expression of
+type \tn{Condition} and returns \kw{true} if at least one process
+is suspended on the operand condition, and
+\kw{false} otherwise (cf. Section~\ref{objects}).
+
+\kw{codeof}, \kw{nameof}, and \kw{typeof} 
+\label{operator typeof}
+return the concrete type object (a \tn{ConcreteType}), the name (a \tn{String}), or
+the type (a \tn{Signature}) of any object (including \kw{nil}).
+\kw{syntactictypeof} an expression returns the compile time type of an
+expression (cf. Section~\ref{syntactictypeof}).  See
+Appendix~\ref{builtin objects}
+for a description of these builtin types.
+
+\subsection{Invocations}
+\begin{quote}\it\begin{tabular}{lcl}
+expression & ::= & invocation
+\end{tabular}\end{quote}
+Any invocation which returns exactly one object may be used as an
+expression.  Invocations are discussed in Section~\ref{operations}.
+
+\subsection{Other Operators}
+All other operators are translated into object invocations.  Each occurrence
+of a unary operator is 
+translated into an invocation of the operand with the invocation name being
+the name of the operator and with no arguments.  Each occurrence of a binary
+operator is translated into an invocation of the left operand with the
+invocation name being the name of the operator and with a single argument
+which is the right operand.  For example: {$!${\it e}} is translated as {{\it
+e\/}.$!$}, and {{\it a\/} $+$ {\it b\/}} is translated as {{\it {\it a\/}.$+$\LB{}b\/}\RB}.
+
+
+\subsection{Field selection}
+\emd{} supports syntactic sugar to facilitate accessing the data components
+of objects.  Conventionally, a visible data component named {\it f}
+will have an operation named {\it getF} which returns the value of the
+component and an operation {\it setF} which modifies the value of the
+component.  Two syntactic forms support this convention by making the
+invocation of get and set operations more convenient.
+
+\begin{quote}\it\begin{tabular}{lcl}
+  fieldSelection & $::=$ & expression \terminal{\$} identifier \\
+\end{tabular}\end{quote}
+
+In an expression context (as an r-value) {{\it a}\${\it f}} is translated as 
+{{\it a\/}.{\it getF}} while in an assignment context (as an l-value) {{\it
+a}\${\it f} \assign{} c}  is translated as {a.setF\/\LB{}c\/\RB{}}.  The get operation
+always takes no arguments and returns one result, while the set operation
+always takes one argument and returns no results.
+\subsection{Subscripts}
+By convention, subscriptable values like \tn{Vectors} and \tn{Arrays} will
+have an operation {\it getElement} to retrieve values and an operation {\it
+setElement} to store values.  This convention is supported by the
+subscripting expression syntax:
+
+\begin{quote}\it\begin{tabular}{lcl}
+  subscript      & $::=$ & expression \terminal{[}
+    \sseq{expression}{\terminal{,}} \terminal{]}
+\end{tabular}\end{quote}
+
+The variable number of expressions inside the square brackets may be used to
+support subscriptable values of higher dimension, or to select ranges of
+values.  Such interpretation is up to the implementor of the subscripted
+object.  
+
+In an expression context (as an r-value) {{\it a\/}\/\LB{\it b, c, d}\/\RB}
+is translated as {{\it a\/}.{\it getElement}\LB{}{\it b, c, d}\RB}, while in
+an assignment context (as an l-value) {a\/\LB{}b, c, d\/\RB{} \assign{} e}
+is translated as {a\/.setElement\LB{}b, c, d, e\RB}.
+
+\subsection{Type widening and narrowing}
+\label{view expression}
+\begin{quote}\it\begin{tabular}{lcl}
+expression &$::=$& \kw{view} expression  \kw{as}  typeExpression \\
+ &$|$& \kw{restrict} expression  \kw{to}  typeExpression
+\end{tabular}\end{quote}
+
+The \kw{view} expression permits an
+object to be regarded as being of a different type, subject to
+the restriction that no object expression be viewed as a type it does
+not conform to. In other words, this expression permits the user to narrow
+or widen the type of an object.  The restrict expression is similar, except
+that it is later impossible to widen the type of the resulting object
+reference to a type wider than that denoted by {\it typeExpression}.
+

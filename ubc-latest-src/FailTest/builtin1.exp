@@ -1,0 +1,4 @@
+Compiling builtin1.m
+  integertype is a primitive type which cannot be conformed to
+  Type myintegertype doesn't conform to type integertype
+"builtin1.m", line 73: The initializer type doesn't conform to that declared for the constant

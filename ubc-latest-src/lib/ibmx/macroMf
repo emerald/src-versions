@@ -1,0 +1,27 @@
+#
+# ibm specific definitions
+# of commonly-used macros (not tested)
+#
+
+# architecture definition
+ARCH = `arch`
+
+# (ANSI) C compiler
+CC = cc
+
+# definitions to enable common extensions in headers and libraries
+XCPFLAGS = -Dibm -qchars=signed -Dinline=
+
+XLIB = -lisode
+
+# C preprocessor
+CPP = cc -E
+
+# dependency generator
+DEPEND = gcc -MM
+
+# 
+CFLAGSOPT = -O3 -DNDEBUG -DNTRACE
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)
+

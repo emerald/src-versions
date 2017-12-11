@@ -1,0 +1,16 @@
+Compiling stat.m
+"stat.m", line 23: Operation getsignature[0] is not defined
+"stat.m", line 4: Found an expression where a statement was expected
+"stat.m", line 7: Found an expression where a statement was expected
+"stat.m", line 9: Found an expression where a statement was expected
+"stat.m", line 11: Found an expression where a statement was expected
+"stat.m", line 14: Found an expression where a statement was expected
+  booleantype is a primitive type which cannot be conformed to
+  Type integertype doesn't conform to type booleantype
+"stat.m", line 15: boolean required
+  booleantype is a primitive type which cannot be conformed to
+  Type realtype doesn't conform to type booleantype
+"stat.m", line 16: boolean required
+"stat.m", line 20: boolean required
+"stat.m", line 21: boolean required
+"stat.m", line 22: Operation getsignature[0] is not defined

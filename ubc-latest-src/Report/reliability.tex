@@ -1,0 +1,106 @@
+\section{Location and Reliability}
+\label{location and reliability}
+\label{locatics}
+\emd{} was developed primarily to facilitate the construction of distributed
+application programs.  To be resilient to machine crashes, these programs
+should be capable of detecting and recovering from such crashes. They should
+also be able to control the location of component objects so that the
+available nodes in the system are optimally exploited. This section
+discusses the \emd{} location-related constructs.
+
+\label{location}
+There are two \emd{} concepts that concern location.  These correspond to
+two desires that motivate application programmers to deal with location.  As
+stated previously, invocation in \emd{} is location independent.  This means
+that the location of an object need not be determined in order to invoke it.
+There are however two considerations that we expect to motivate application
+programmers to concern themselves with location: performance and
+reliability/availability.
+\subsubsection*{Performance}
+Since remote invocation will necessarily be at least an order of magnitude
+more expensive than local invocation, the placement of \emd{} objects may
+seriously affect their performance.  In order to provide the programmer with
+control over the placement of objects the move statement (see Section
+\ref{move statement}) is provided.  In addition, the call-by-move
+implementation strategy for arguments to invocations (see Section
+\ref{call by move}) allows further optimizations.
+\subsubsection*{Reliability and Availability}
+Since an object may be moved at arbitrary times by any other object with a
+reference to it, a more permanent binding between objects and locations is
+often required.  In particular, in order to implement an available
+replicated service, it is necessary to place the replicas on differing
+machines and not allow them to move.  This allows the programmer to
+guarantee that a single machine failure will not cause more than one of his
+replicas to become unavailable.
+
+In order to provide for this requirement, the fix and unfix statements
+(see Sections \ref{fix statement} and \ref{unfix statement}) may be used.
+An object, once fixed at a particular location, may not be moved from there.
+Any attempt to do so will fail (see subsection \ref{failures}).
+\subsection{Unavailable objects}
+\label{unavailable objects}
+Due to machine crashes or communication network failures, objects may be
+temporarily or permanently unavailable.
+\emd{} provides unavailable handlers to allow
+programmers to detect such situations and attempt recovery.
+\begin{quote}\it\begin{tabular}{lcl}
+unavailableHandler & $::=$ & \kw{unavailable} \opt{\terminal{[}identifier \terminal{]}}\\
+  &  &  \hspace*{0.5in}blockBody \\
+  &  & \kw{end} \kw{unavailable}
+\end{tabular}\end{quote}
+An object is regarded as being unavailable when it cannot be located
+at any available node following suitable system action \cite{Jul88tocs}. 
+When an attempt is made to invoke an object which is unavailable, the
+appropriate hander is located in a manner similar to that for failures (see
+Section~\ref{failures}), the 
+unavailable object is bound to the identifier declared in that unavailable
+handler (if present), and the body of the handler is executed.  The type of
+the identifier in the handler definition is \tn{Any}.
+
+While invoking an object which is unavailable results in an unavailable
+exception, the typeof, codeof, and nameof expressions will correctly
+identify even
+unavailable objects.
+
+\subsection{Failures}
+\label{failures}
+Failures can result from a number of causes; these include
+attempting to invoke a \kw{nil} reference, assertion failures, divide-by-zero
+and subscript-range errors.
+\begin{quote}\it\begin{tabular}{lcl}
+failureHandler & $::=$ & \kw{failure} \\
+  &  &  \hspace*{0.5in}blockBody \\
+  &  & \kw{end} \kw{failure}
+\end{tabular}\end{quote}
+After a failure is detected, the following action is taken.
+\begin{enumerate}
+\item{} The appropriate failure handler to execute is found.  This handler is
+the handler attached to the smallest block containing the statement.  Note
+that failures are considered a ``superclass'' of unavailables, and so when
+an unavailable exception has been raised, each block that may have a handler
+is first searched for an unavailable handler, and then a failure handler,
+and only if no handler can be found is the next larger enclosing block
+searched.  Similarly when propagating an unavailable exception up the call
+stack, each block is first searched for an unavailable handler and then for
+a failure handler.
+\item{} If the block body of a monitored operation,
+the initially section, or the recovery section of an object fails,
+then
+the object is said to have failed.  Any subsequent invocation attempted on the
+object will fail, and any invocations that have started but have not yet
+completed also fail.
+\item{} An unhandled failure in the block body of an operation is propagated
+by causing the corresponding invocation to fail.
+\item{} An unhandled failure in an initially section implies that
+the object creation has failed; this is propagated by causing
+the statement containing the object constructor expression to fail.
+\item{} An unhandled failure in the block body of a recovery section cannot be
+propagated because  its execution did not result from an invocation.
+\item{} An unhandled failure in a process block body cannot be propagated.
+The process is terminated, but the object itself does not fail.
+\item{} When an object fails, no attempt is made to immediately track down
+and fail all processes (including the one contained in the object) that have
+threads of control that have passed through the object.  When these threads
+of control return to the body of any operation inside the object, they
+will then fail.
+\end{enumerate}

@@ -1,0 +1,23 @@
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\cd{} This program first creates a stack named myStack \kw{by} invoking Stack.create.\\*{}%
+\cd{} It pushes 4 integers into myStack, \kw{and} \kw{then} pops \kw{and} prints them.\\[1.0ex]{}%
+\kw{const} Tester \assign{} \kw{object} Tester\+\\*{}%
+  \kw{process}\+\\*{}%
+    \kw{const} myStack\CO{} Stack \assign{} Stack.create\\[1.0ex]{}%
+    \kw{for} i \CO{} \tn{Integer} \assign{} 0 \kw{while} i $<$ 4 \kw{by} i \assign{} i $+$ 1\+\\*{}%
+      stdout.PutString\/\LB{}``Pushing " $|$$|$ i.asString $|$$|$ " \kw{on} my stack.\mybackslash{}n''\/\RB{}\\*{}%
+      myStack.Push\/\LB{}i\/\RB{}\-\\*{}%
+    \kw{end} \kw{for}\\[1.0ex]{}%
+    stdout.PutString\/\LB{}``Printing in reverse order.\mybackslash{}n''\/\RB{}\\*{}%
+    \kw{loop}\+\\*{}%
+      \kw{var} x\CO{} \tn{Integer}\\*{}%
+      \kw{exit} \kw{when} myStack.Empty\\*{}%
+      x \assign{} myStack.Pop\\*{}%
+      stdout.PutString\/\LB{}``Popped " $|$$|$ x.asString $|$$|$ " from my stack.\mybackslash{}n''\/\RB{}\-\\*{}%
+    \kw{end} \kw{loop}\\*{}%
+    stdout.close\\*{}%
+    stdin.close\-\\*{}%
+  \kw{end} \kw{process}\-\\*{}%
+\kw{end} Tester
+\end{tabbing}\end{minipage}}

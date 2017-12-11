@@ -1,0 +1,126 @@
+#include "xta.h"
+#include "threads.h"
+
+
+#define XTARGSSIZE 100
+#define EMSTRINGARGTYPE 0
+#define EMINTARGTYPE 1
+
+Display *mXtOpenDisplay(XtAppContext appContext, String n, String o)
+{
+  int one = 1;
+  char *arg = "foo";
+  return XtOpenDisplay(appContext, "", n, o, NULL, 0, &one, &arg);
+}
+
+Widget mXtAppCreateShell(String n, String m, int x, Display *d, Arg *args, int nargs)
+{
+  return XtAppCreateShell(n, m, applicationShellWidgetClass, d, args, nargs);
+}
+
+Widget mXtVaAppInitialize(char *name)
+{
+  static XtAppContext app;
+  int zero = 0;
+  static int which = 0;
+  if (which == 0) {
+    which = 1;
+    return XtVaAppInitialize(&app, name, NULL, 0, &zero, NULL, NULL, NULL);
+  } else {
+    which = 0;
+    return (Widget)app;
+  }
+}
+
+static semaphore up, down;
+static Widget cb_widget;
+static XtPointer cb_client_data, cb_call_data;
+
+int mXtRetrieveCallback(void)
+{
+  static int which = 0;
+  switch(which) {
+  case 0:
+    MTSemP(&up);
+    which = 1;
+    return (int)cb_widget;
+  case 1:
+    which = 2;
+    return (int)cb_client_data;
+  case 2:
+    which = 3;
+    return (int)cb_call_data;
+  case 3:
+    which = 0;
+    MTSemV(&down);
+    return 0;
+  }
+}
+  
+void mXtCallbackHelper(Widget widget, XtPointer client_d, XtPointer call_d)
+{
+  cb_widget = widget;
+  cb_client_data = client_d;
+  cb_call_data = call_d;
+  MTSemV(&up);
+  MTSemP(&down);
+}
+
+void mXtAddCallback(Widget w, String name, XtPointer client_d)
+{
+  XtAddCallback(w, name, mXtCallbackHelper, client_d);
+}
+
+struct {
+  int argtype;
+  char *thearg;
+} _mxtlocal[XTARGSSIZE];
+
+char* _mxtargs[XTARGSSIZE];
+
+void mXtSetArgInt(int i,int value)
+{
+  if ((i>=0) || (i<=(XTARGSSIZE-1))) {
+    _mxtlocal[i].argtype= EMINTARGTYPE;
+    _mxtlocal[i].thearg= (char*) value;
+  }
+  else
+    exit(1001); /* Out of index bound in function call. */
+}
+
+void mXtSetArgString(int i,char * value)
+{
+  if ((i>=0) || (i<=(XTARGSSIZE-1))) {
+    _mxtlocal[i].argtype= EMSTRINGARGTYPE;
+    _mxtlocal[i].thearg = value;
+  }
+  else
+    exit(1002); /* Out of index bound in function call. */
+}
+
+void mXtClearArg(int i)
+{
+  /* Not needed in the current implementation, but it might be needed
+     later. */
+  int j=0;
+
+  while (j<i) {
+    if (_mxtlocal[j].argtype == EMSTRINGARGTYPE)
+      vmFree(_mxtlocal[j].thearg);
+    j++;
+  }
+}
+
+Widget mXtVaCreateManagedWidget(char * name, int widget_class,
+                                int parent, int index)
+{
+  ARGSSETUP(index);
+  switch (widget_class) {
+  case 0 :
+    return XtVaCreateManagedWidget(name, (WidgetClass) xmPushButtonWidgetClass, (Widget) parent, ...);
+    break;
+  case 1 : 
+    return XtVaCreateManagedWidget(name, (WidgetClass) xmMainWindowWidgetClass, (Widget) parent, ...);
+    break;
+  }
+}

@@ -1,0 +1,12 @@
+#!/bin/csh -f
+set max = 0
+set nonomatch
+set all = ( CP_*[0-9]* )
+unset nonomatch
+if ( "$all" != 'CP_*[0-9]*') then
+    foreach i ( $all )
+	set this = `echo $i | sed -e 's/CP_[a-zA-Z]*//' -e 's/\.Z$//' -e 's/\.gz$//' -e 's/\.bak$//'`
+	if ($this > $max) set max = $this
+    end
+endif
+echo $max

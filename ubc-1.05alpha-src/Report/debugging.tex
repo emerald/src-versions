@@ -1,0 +1,72 @@
+\section{Debugging Emerald Programs}
+\label{debugger appendix}
+
+This appendix presents the interface to the Emerald debugger, edb.  Edb is
+built into the interpreter and is enabled by invoking the interpreter with
+the -i option, as either:
+\begin{quote}
+  emx -i broken.x
+\end{quote}
+or
+\begin{quote}
+  broken.x -i
+\end{quote}
+
+\subsection{Breakpoints}
+The debugger currently does not support breakpoints, but it does allow one
+to continue past a failed assertion.  Therefore the user may insert
+breakpoints by:
+\begin{enumerate}
+  \item{} Inserting an assertion into the source program.  For a conditional
+    breakpoint, assert the negation of the condition that you want to cause
+    the program to stop.  For an unconditional breakpoint, assert false.
+  \item{} Recompile the program.  Note that if you are compiling a large
+    system, using ``unset perfile'' will cause all generated code to be
+    added to a single file, named CP (for checkpoint), and later added code
+    will overwrite previous code.
+  \item{} Run the code.  When the breakpoint happens, you can poke around,
+    and continue using the continue command.
+\end{enumerate}
+
+\subsection{Commands}
+The debugger supports the following commands:
+\begin{description}
+  \item[quit]{}~
+  \item[q]{}~\\
+    Terminate both the debugger and the interpreter.
+  \item[where]{}~\\
+    Provide a brief stack backtrace of the current process.
+  \item[dump]{}~\\
+    Provide a complete stack backtrace of the current process.  This
+    backtrace includes instance variable of the target of each invocation as
+    well as parameters, results, and local variables in each invocation.
+  \item[processes]{}~\\
+    List all the processes in the current program.  For each, the location
+    of the bottom (most recent) invocation is given.
+  \item[process n]{}~\\
+    Switch the debugger's attention to the stack of process number n.  The
+    available processes are given using the ``processes'' command.
+  \item[continue]{}~
+  \item[cont]{}~
+  \item[c]{}~\\
+    Continue execution of the target program.  This will likely cause
+    tremendous problems if the cause of the program's stop was anything
+    other than a failed assertion.  Segmentation faults can be expected for
+    continuing through other failures.
+  \item[print e]{}~
+  \item[p e]{}~\\
+    Display the value of the expression e.  Expressions take the form of
+    identifier\{.identifier\}.  Spaces are not permitted in expressions.
+    The current call stack is searched for the first identifier, additional
+    identifiers are taken to be instance variables with that object.  The
+    debugger prints as much information as it can determine about the named
+    object.  To look at the current object (the one that was invoked at the
+    current stack level) use the name ``self''.
+  \item[up]{}~\\
+    Move up the call stack (towards older activations) one level.
+  \item[down]{}~\\
+    Move down the call stack (towards younger activations) one level.
+  \item[look]{}~
+  \item[info]{}~\\
+    Print as much information as is available about the current activation.
+\end{description}

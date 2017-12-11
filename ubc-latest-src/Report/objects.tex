@@ -1,0 +1,480 @@
+\section{Objects}
+\label{objects}
+Emerald provides a single general purpose object constructor which creates
+all objects, as well as a number of syntactic shorthands for commonly
+occurring usage patterns.
+
+\subsection{Object Constructors}
+\label{object constructor}
+An object constructor defines the complete representation, operations, and
+active behaviour of
+a single object. Objects are created when an
+object constructor is executed. In other words, object constructors
+are expressions. The form of a constructor shown below
+demonstrates its generality, i.e.,
+all \emd{} objects may be defined using this feature.
+\begin{quote}\it\begin{tabular}{lcl}
+objectConstructor &$::=$& \opt{\kw{immutable}} \opt{\kw{monitor}} \kw{object} identifier \\
+& &\hspace{0.5in}\oseq{declaration} \\
+& &\hspace{0.5in}\oseq{operation $|$ initially $|$ process $|$ recovery} \\
+& &\kw{end} identifier \\[1ex]
+
+process &$::=$& \kw{process} \\
+& &\hspace{0.5in}blockBody \\
+& & \kw{end} \kw{process} \\[1ex]
+
+initially &$::=$&\kw{initially} \\
+& &\hspace{0.5in}blockBody \\
+& &\kw{end} \kw{initially} \\[1ex]
+
+recovery &$::=$&\kw{recovery} \\
+& &\hspace{0.5in}blockBody \\
+& &\kw{end}\kw{recovery}
+\end{tabular}\end{quote}
+
+Each object in \emd{} owes its existence to either an implicit or explicit
+execution of an object constructor. The object constructor provides the
+necessary information about the object's implementation, i.e.,
+\begin{itemize}
+\item{} Representation declarations for data and processes that are
+contained in the object. 
+\item{} A collection of operation bodies containing both the signature as
+well as the implementation of each operation that the object is capable of
+executing.
+\end{itemize}
+The type of an object constructor expression is determined by including in
+the type the signature of every exported operation in the constructor.  This
+defines the {\it 
+best fitting type}, and may be retrieved during execution by the \kw{typeof}
+expression.\label{typeofobjectconstructor}
+
+\subsubsection{Initialization}
+When an object constructor is executed, the newly created object is
+initialized by performing the following steps in order:
+\begin{enumerate}
+  \item{} Initialize any implicitly created constants holding the values
+    of imported identifiers.
+  \item{} Initialize all variables and constants declared in the constructor
+    in textual order.
+  \item{} Execute the declarations and statements in the initially section,
+    if present.
+\end{enumerate}
+Any attempt to invoke any operation on the object is deferred until
+its initialization is complete.  The only exception to his rule is that
+invocations of the object by itself during initialization are allowed.
+
+Once initialization is complete, the process defined by the object
+constructor is started and then the execution of the object constructor
+expression terminates.  The value of the expression is a reference to the
+newly created object.  
+
+\subsubsection{Recovery}
+When an Emerald node on which objects have previously checkpointed recovers,
+all checkpointed object have their state restored as of the time of the most
+recently completed checkpoint, and then the declarations and statements in
+the recovery section of the object constructor that caused the creation of
+the object are executed.  During recovery, invocations on the object are
+deferred as during initialization.  When the execution of the recovery block
+is complete, the process defined by the object constructor is started anew.
+
+\subsubsection{Object creators}
+An object whose primary purpose is the creation of other object is termed an
+object creator.  No additional language mechanisms are needed to program
+object creators; one simply nests one object constructor inside another, but
+see also Section~\ref{classes}.
+
+\subsection{Objects as Types}
+\label{objectsastypes}
+Type constructors are the basic method for
+constructing abstract types in \emd{} (cf.~Sec\-tion~\ref{abstracttypes}). 
+Since typing in Emerald is based entirely on the signatures of operations,
+any object which conforms to the type
+
+{\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{immutable} \kw{typeobject} \tn{type}\+\\*{}%
+  \kw{function} getSignature \returns{} \/\LB{}\tn{Signature}\/\RB{}\-\\*{}%
+\kw{end} \tn{type}
+\end{tabbing}\end{minipage}}
+
+is a type.  Thus objects which serve other useful purposes can also be used
+as types.  Object creators in particular can take advantage of this to
+allow a single object to serve as both a creator and a type.
+
+\subsection{Classes}
+\label{classes}
+Emerald does not have a notion of {\it class\/}.  That is, it is not
+possible to distinguish a class object from some other object.  Or, stated
+differently again, Emerald does not have a type {\it class} which class
+objects conform to but other objects do not.  However, Emerald does have a
+syntactic construct called a class that provides the functionality normally
+expected of classes.
+\begin{quote}\it\begin{tabular}{lcl}
+class &$::=$& \opt{\kw{immutable}} \opt{\kw{monitor}} \kw{class} identifier \\
+& & \hspace{0.5in} \opt{\terminal{(} baseClass \terminal{)}} \opt{parameterList}\\
+& & \hspace{0.5in} \oseq{classoperation} \\
+& & \hspace{0.5in} \oseq{declaration} \\
+& & \hspace{0.5in} \oseq{operation $|$ initially $|$ process $|$ recovery} \\
+& & \kw{end} identifier\\
+baseClass &$::=$& identifier\\
+classoperation  &$::=$& \kw{class} operation
+\end{tabular}\end{quote}
+
+Classes are expanded syntactically into two nested object constructors.  The
+outer object (the class, factory, or creator object) is immutable and
+declares a single constant, a \tn{Signature} which represents the type of
+the instances and 
+whose name is derived from the name of the type with the string ``type''
+appended.  This signature object contains the
+signature of each operation that is exported from the inner object
+constructor (which defines the instances), and is the {\it best fitting}
+type of those instances.
+The class exports operations {\it getSignature} and {\it create} in 
+addition to the class operations defined by the programmer.  
+The
+{\it getSignature} operation returns the signature constant described above.
+The {\it
+parameterList} specifies the parameter list to the {\it create} operation;
+the body of the create operation is a single assignment statement which
+returns the result of executing the inner object constructor.
+The inner object constructor is given the name of the class prefixed with
+the string ``a'' (or ``an'' as appropriate).  
+The rest of the components of
+the class construct become the body of the inner object constructor and
+thereby define the class's instances.
+
+This is most easily understood through examples.  Suppose we write the
+following declaration: 
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{const} Complex \assign{} \kw{immutable} \kw{class} Complex\/\LB{}r \CO{} \tn{Real}, i \CO{} \tn{Real}\/\RB{}\+\\*{}%
+  \kw{class} \kw{export} \kw{operation} fromReal\/\LB{}a \CO{} \tn{Real}\/\RB{} \returns{} \/\LB{}e \CO{} Complex\/\RB{}\+\\*{}%
+    e \assign{} self.create\/\LB{}a, 0.0\/\RB{}\-\\*{}%
+  \kw{end} fromReal\\*{}%
+  \kw{export} \kw{function} $+$\/\LB{}other \CO{} Complex\/\RB{} \returns{} \/\LB{}e \CO{} Complex\/\RB{}\+\\*{}%
+    e \assign{} Complex.create\/\LB{}other.getReal $+$ r, other.getImag $+$ i\/\RB{}\-\\*{}%
+  \kw{end} $+$\\*{}%
+  \kw{export} \kw{function} getReal \returns{} \/\LB{}e \CO{} \tn{Real}\/\RB{}\+\\*{}%
+    e \assign{} r\-\\*{}%
+  \kw{end} getReal\\*{}%
+  \kw{export} \kw{function} getImag \returns{} \/\LB{}e \CO{} \tn{Real}\/\RB{}\+\\*{}%
+    e \assign{} i\-\\*{}%
+  \kw{end} getImag\-\\*{}%
+\kw{end} Complex
+\end{tabbing}\end{minipage}}
+
+This is rearranged into the following:
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{const} Complex \assign{} \kw{immutable} \kw{object} Complex\+\\*{}%
+  \kw{const} ComplexType \assign{} \kw{immutable} \kw{typeobject} ComplexType\+\\*{}%
+    \kw{function} $+$\/\LB{}ComplexType\/\RB{} \returns{} \/\LB{}ComplexType\/\RB{}\\*{}%
+    \kw{function} getReal \returns{} \/\LB{}ComplexType\/\RB{}\\*{}%
+    \kw{function} getImag \returns{} \/\LB{}ComplexType\/\RB{}\-\\*{}%
+  \kw{end} ComplexType\\*{}%
+  \kw{export} \kw{function} getSignature \returns{} \/\LB{}r \CO{} \tn{Signature}\/\RB{}\+\\*{}%
+    r \assign{} ComplexType\-\\*{}%
+  \kw{end} getSignature\\*{}%
+  \kw{export} \kw{operation} fromReal\/\LB{}a \CO{} \tn{Real}\/\RB{} \returns{} \/\LB{}e \CO{} Complex\/\RB{}\+\\*{}%
+    e \assign{} self.create\/\LB{}a, 0.0\/\RB{}\-\\*{}%
+  \kw{end} fromReal\\*{}%
+  \kw{export} \kw{operation} create\/\LB{}r \CO{} \tn{Real}, i \CO{} \tn{Real}\/\RB{} \returns{} \/\LB{}e \CO{} Complex\/\RB{}\+\\*{}%
+    e \assign{} \kw{immutable} \kw{object} aComplex\+\\*{}%
+      \kw{export} \kw{function} $+$\/\LB{}other \CO{} Complex\/\RB{} \returns{} \/\LB{}e \CO{} Complex\/\RB{}\+\\*{}%
+	e \assign{} Complex.create\/\LB{}other.getReal $+$ r, other.getImag $+$ i\/\RB{}\-\\*{}%
+      \kw{end} $+$\\*{}%
+      \kw{export} \kw{function} getReal \returns{} \/\LB{}e \CO{} \tn{Real}\/\RB{}\+\\*{}%
+	e \assign{} r\-\\*{}%
+      \kw{end} getReal\\*{}%
+      \kw{export} \kw{function} getImag \returns{} \/\LB{}e \CO{} \tn{Real}\/\RB{}\+\\*{}%
+	e \assign{} i\-\\*{}%
+      \kw{end} getImag\-\\*{}%
+    \kw{end} aComplex\-\\*{}%
+  \kw{end} create\-\\*{}%
+\kw{end} Complex
+\end{tabbing}\end{minipage}}
+
+\subsubsection*{Inheritance}
+Emerald supports {\em single inheritance}.  That is, every class may have at
+most one superclass from which it inherits.  There are three kinds of
+components that may be
+inherited from the parent class:
+\begin{itemize}
+  \item{} class operations
+  \item{} instance declarations (constants and variables)
+  \item{} instance operations including any initially, recovery, and process
+  \item{} parameters to the class.
+\end{itemize}
+The parameters to the subclass are concatenated to the end of the list of
+parameters to the
+superclass in order to form the final parameter list for the subclass.
+
+Inheritance of the other three kinds of components is performed by
+considering in turn each component of the 
+superclass, and searching for an identically named component of the same
+kind in the subclass.  If the subclass contains the component then the
+superclass component is ignored, otherwise the superclass component is added
+to the subclass.
+
+There is no support for changing the visibility of a component (exporting in
+the subclass an
+operation that is private in the superclass or making private in the
+subclass an operation
+that is exported in the superclass), nor is there support for deleting a
+component.  Because subclass components completely replace those from the
+superclass, changing the visibility of a component may be accomplished by
+copying the component from the superclass manually and changing the
+visibility of the copy.
+A data component may be effectively deleted by declaring an
+identically named constant in the subclass whose value is sufficiently
+simple that it need not be stored (an excellent choice of value is 0).
+
+Because any component of the superclass may be redefined in the subclass,
+there is no guarantee that either the type of the subclass will conform to
+the type of the superclass, or that the type of instances of the subclass
+will conform to the type of instances of the superclass.
+The objects resulting from inheritance do not
+retain at run time any record of their inheritance relationships.  That is,
+there is no operation that can be performed on a class object to retrieve
+its superclass.  This is a
+side effect of the fact that there is no type {\it class}.  Such operations
+can easily be implemented, if desired, as in the following example:
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{const} parent \assign{} \kw{class} parent \\*{}%
+\kw{end} parent\\[1.0ex]{}%
+\kw{const} child \assign{} \kw{class} child (parent)\+\\*{}%
+  \kw{class} \kw{export} \kw{function} getSuperClass \returns{} \/\LB{}r \CO{} \tn{Any}\/\RB{}\+\\*{}%
+    r \assign{} parent\-\\*{}%
+  \kw{end} getSuperClass\-\\*{}%
+\kw{end} child
+\end{tabbing}\end{minipage}}
+  
+
+\subsection{Enumerations}
+\begin{quote}\it\begin{tabular}{lcl}
+enum &$::=$& \kw{enumeration} identifier\\
+& & \hspace{0.5in} \sseq{enumIdentifier}{\terminal{,}} \\
+& & \kw{end} identifier
+\end{tabular}\end{quote}
+An enumeration is a class that represents an ordered collection of
+identifiers.  The operations on the class consist of:
+\begin{itemize}
+  \item{} a function getSignature, which returns a \tn{Signature} describing
+    the type of the enumeration instances
+  \item{} for each enumeration identifier $a$, a creation operation named
+    $a$ that returns an object representing that element of the enumeration
+  \item{} {\it first\/} and {\it last\/} that return the first and last
+    elements of the enumeration, respectively
+  \item{} an operation named {\it create} that takes an integer argument
+    {\it n} and returns the {\it n}\/th element of the enumeration, with the
+    numbering starting at 0.
+\end{itemize}
+Each instance of the class implements the following operations:
+\begin{itemize}
+  \item{} the comparison functions $<$, $<=$, $=$, $!=$, $>=$, $>$
+  \item{} functions {\it succ\/} which returns the successor object (or
+    fails if invoked on the last element of the enumeration) and {\it
+    pred\/} which returns the predecessor object (or fails if invoked on the
+    first element of the enumeration)
+  \item{} a function {\it ord\/} which returns the position of the element
+    in the enumeration ordering, starting at 0
+  \item{} a function {\it asString} which returns the name of the element as
+    a \tn{String}.
+\end{itemize}
+    
+All instance of enumeration classes are immutable.
+To be concrete, consider the declaration:
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{const} colors \assign{} \kw{enumeration} colors red, blue, green \kw{end} colors
+\end{tabbing}\end{minipage}}
+
+The class object {\it colors\/} will have type:
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{immutable} \kw{typeobject} ColorCreatorType\+\\*{}%
+  \kw{function}  getSignature \returns{} \/\LB{}\tn{Signature}\/\RB{}\\*{}%
+  \kw{operation} create\/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}ColorType\/\RB{}\\*{}%
+  \kw{operation} first \returns{} \/\LB{}ColorType\/\RB{}\\*{}%
+  \kw{operation} last \returns{} \/\LB{}ColorType\/\RB{}\\*{}%
+  \kw{operation} red \returns{} \/\LB{}ColorType\/\RB{}\\*{}%
+  \kw{operation} green \returns{} \/\LB{}ColorType\/\RB{}\\*{}%
+  \kw{operation} blue \returns{} \/\LB{}ColorType\/\RB{}\-\\*{}%
+\kw{end} ColorCreatorType
+\end{tabbing}\end{minipage}}
+
+and each element of the enumeration will have type:
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{immutable} \kw{typeobject} ColorType\+\\*{}%
+  \kw{function} $<$\/\LB{}ColorType\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}\\*{}%
+  \kw{function} $<=$\/\LB{}ColorType\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}\\*{}%
+  \kw{function} $=$\/\LB{}ColorType\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}\\*{}%
+  \kw{function} $!=$\/\LB{}ColorType\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}\\*{}%
+  \kw{function} $>=$\/\LB{}ColorType\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}\\*{}%
+  \kw{function} $>$\/\LB{}ColorType\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}\\*{}%
+  \kw{function} succ \returns{} \/\LB{}ColorType\/\RB{}\\*{}%
+  \kw{function} pred \returns{} \/\LB{}ColorType\/\RB{}\\*{}%
+  \kw{function} ord \returns{} \/\LB{}\tn{Integer}\/\RB{}\\*{}%
+  \kw{function} asString \returns{} \/\LB{}\tn{String}\/\RB{}\-\\*{}%
+\kw{end} ColorType
+\end{tabbing}\end{minipage}}
+
+\subsection{Fields}
+\begin{quote}\it\begin{tabular}{lcl}
+field &$::=$& 
+  \opt{\kw{attached}} \kw{const} \kw{field} identifier \terminal{:} type initializer\\
+& $|$ &  \opt{\kw{attached}} \kw{field} identifier \terminal{:} type \opt{initializer}
+\end{tabular}\end{quote}
+
+It is often convenient to declare an externally accessible data element of
+\label{fields}
+an object.  A field declaration does exactly this.  Field declarations can
+only occur within the declaration part of an object constructor.
+Constant field declarations expand to a constant declaration and an operation
+to get the value of the constant.  Variable fields expand to a variable
+declaration and operations to both get and set the value of the variable.
+The expansion of the constant field: 
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{attached} \kw{const} \kw{field} f \CO{} t \assign{} init
+\end{tabbing}\end{minipage}}
+
+is
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{attached} \kw{const} f \CO{} t \assign{} init\\*{}%
+\kw{export} \kw{function} getF \returns{} \/\LB{}x \CO{} t\/\RB{}\+\\*{}%
+  x \assign{} f\-\\*{}%
+\kw{end} getF
+\end{tabbing}\end{minipage}}
+
+And the expansion of the variable field:
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{attached} \kw{field} f \CO{} t \assign{} init
+\end{tabbing}\end{minipage}}
+
+is
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{attached} \kw{var} f \CO{} t \assign{} init\\*{}%
+\kw{export} \kw{operation} setF\/\LB{}x \CO{} t\/\RB{}\+\\*{}%
+  f \assign{} x\-\\*{}%
+\kw{end} setF\\*{}%
+\kw{export} \kw{function} getF \returns{} \/\LB{}x \CO{} t\/\RB{}\+\\*{}%
+  x \assign{} f\-\\*{}%
+\kw{end} getF
+\end{tabbing}\end{minipage}}
+
+\subsection{Records}
+
+\begin{quote}\it\begin{tabular}{lcl}
+record &$::=$& \opt{\kw{immutable}} \kw{record} identifier \\
+& & \hspace{0.5in} \seq{recordfield} \\
+& & \kw{end} identifier \\
+recordfield & $::=$ & \opt{\kw{attached}} \opt{\kw{var}} fieldIdentifier : type
+\end{tabular}\end{quote}
+
+A record is a class that contains a field for each element of the record,
+and a {\it create} function that takes as its parameters initial values for
+each field.  If the record is defined as immutable, then the class will be
+immutable as well, and each field will be a constant field.  For example,
+the declaration of the mutable record:
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{record} aRecord\+\\*{}%
+  a \CO{} Integer\\*{}%
+  c \CO{} String\-\\*{}%
+\kw{end} aRecord
+\end{tabbing}\end{minipage}}
+
+expands to a class:
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{class} aRecord\/\LB{}xa \CO{} Integer, xc \CO{} String\/\RB{}\+\\*{}%
+  field a \CO{} Integer \assign{} xa\\*{}%
+  field c \CO{} String \assign{} xc\-\\*{}%
+\kw{end} aRecord
+\end{tabbing}\end{minipage}}
+
+Given the above declaration, the following code
+declares and initializes a record variable.
+
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+  \kw{var} a \CO{} aRecord\\[1.0ex]{}%
+  a \assign{} aRecord.create\/\LB{}34, ``A string''\/\RB{}
+\end{tabbing}\end{minipage}}
+
+\subsection{Predefined objects}
+\emd{} implements a number of pre-defined
+objects; these objects are outlined in Table~\ref{BuiltinsTable}
+and specified in greater detail in
+Appendix~\ref{builtin objects}.
+
+
+\begin{table} 
+\begin{center}
+\it
+\begin{tabular}{||l|p{3.5in}||}
+    \hline
+Predefined Type           & Type Description \\
+    \hline
+    \hline
+\tn{Any}		& Has no operations.\\
+\tn{Array}		& A polymorphic, flexible array.\\
+\tn{AOpVector}		& A sequence of operation signatures in a Signature.\\
+\tn{AOpVectorE}		& A single operation signature in a Signature.\\
+\tn{AParamList}		& A list of parameters in an operation Signature.\\
+\tn{BitChunk}		& A container of bits supporting bit-level operations.\\
+\tn{Boolean}		& Logical values with literals \kw{true} 
+			  and \kw{false}.\\
+\tn{Character}		& Individual characters with operations such as
+			  $<$, $>$, $=$, ord, etc.\\
+\tn{ConcreteType}	& A container for the executable code of an object.\\
+\tn{Condition} 		& Condition variables satisfying Hoare monitor semantics.\\
+\tn{COpVector}		& A sequence of operation definitions in a ConcreteType.\\
+\tn{COpVectorE}		& A single operation definition in a ConcreteType.\\
+\tn{Directory}		& An object defining the type of primitive name server directories.\\
+\tn{Handler}		& An object defining the type of objects capable of receiving Node state change updates from the run time system.\\
+\tn{InterpreterState}	& An internal object capturing the state of the execution of a process.\\
+\tn{ImmutableVector}    & Read-only vector.\\
+\tn{ImmutableVectorOfAny}    & Read-only vector of Any.\\
+\tn{ImmutableVectorOfInt}    & Read-only vector of Integers.\\
+\tn{InStream}		& Input streams.\\
+\tn{Integer} 		& Signed integers.\\
+\tn{Node}		& Objects representing machines.\\
+\tn{NodeList}           & Immutable vectors of node descriptions.\\
+\tn{NodeListElement}	& Immutable node descriptions.\\
+\tn{None}		& The type of \kw{nil}.\\
+\tn{OutStream}		& Output streams.\\
+\tn{Real}		& Approximations of real numbers.\\
+\tn{RISA}		& Readable Indexed Sequence of Any.\\
+\tn{RISC}		& Readable Indexed Sequence of Character.\\
+\tn{Signature}		& Primitive abstract type\\
+\tn{String}		& Character strings.\\
+\tn{Time}		& Times and dates\\
+\tn{Type}		& The type of all types.\\
+\tn{Vector}		& Fixed sized polymorphic vectors.\\
+\tn{VectorOfChar}	& Vector.of[Character].\\
+\tn{VectorOfInt}	& Vector.of[Integer].\\
+    \hline
+\end{tabular}
+\end{center}
+\caption{Built-in Types}
+\label{BuiltinsTable}
+\end{table}

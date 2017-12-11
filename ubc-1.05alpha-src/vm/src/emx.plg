@@ -1,0 +1,201 @@
+--------------------Configuration: emx - Win32 Release--------------------
+Begining build with project "C:\emerald\vm\src\emx.dsp", at root.
+Active configuration is Win32 (x86) Console Application (based on Win32 (x86) Console Application)
+
+Project's tools are:
+			"32-bit C/C++ Compiler for 80x86" with flags "/nologo /Zp4 /ML /W3 /GX /O2 /I "c:\emerald\vm\src" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "DISTRIBUTED" /D "USEDISTGC" /D inline= /D "COUNTBYTECODES" /D "TIMESLICE" /D "STDARG_WORKS" /D EMERALDROOT="\"c:\\emerald\"" /Fo"Release/" /Fd"Release/" /FD /c "
+			"Win32 Resource Compiler" with flags "/l 0x409 /d "NDEBUG" "
+			"Browser Database Maker" with flags "/nologo /o"Release/emx.bsc" "
+			"COFF Linker for 80x86" with flags "Wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:no /pdb:"Release/emx.pdb" /machine:I386 /out:"Release/emx.exe" "
+			"Custom Build" with flags ""
+			"<Component 0xa>" with flags ""
+
+Creating temp file "C:\WINDOWS\TEMP\RSPE282.TMP" with contents </nologo /Zp4 /ML /W3 /GX /O2 /I "c:\emerald\vm\src" /D "NDEBUG" /D "WIN32" /D "_CONSOLE" /D "_MBCS" /D "DISTRIBUTED" /D "USEDISTGC" /D inline= /D "COUNTBYTECODES" /D "TIMESLICE" /D "STDARG_WORKS" /D EMERALDROOT="\"c:\\emerald\"" /Fo"Release/" /Fd"Release/" /FD /c 
+"C:\emerald\vm\src\array.c"
+"C:\emerald\vm\src\bufstr.c"
+"C:\emerald\vm\src\call.c"
+"C:\emerald\vm\src\cctab.c"
+"C:\emerald\vm\src\conform.c"
+"C:\emerald\vm\src\creation.c"
+"C:\emerald\vm\src\debug.c"
+"C:\emerald\vm\src\dist.c"
+"C:\emerald\vm\src\distgc.c"
+"C:\emerald\ccalls\emstream\emstream.c"
+"C:\emerald\vm\src\filestr.c"
+"C:\emerald\vm\src\gaggle.c"
+"C:\emerald\vm\src\gc.c"
+"C:\emerald\vm\src\globals.c"
+"C:\emerald\vm\src\iisc.c"
+"C:\emerald\vm\src\iixsc.c"
+"C:\emerald\vm\src\ilist.c"
+"C:\emerald\vm\src\io.c"
+"C:\emerald\vm\src\iosc.c"
+"C:\emerald\vm\src\iset.c"
+"C:\emerald\vm\src\joveisc.c"
+"C:\emerald\vm\src\jsys.c"
+"C:\emerald\vm\src\jvisc.c"
+"C:\emerald\vm\src\locate.c"
+"C:\emerald\vm\src\main.c"
+"C:\emerald\vm\src\misc.c"
+"C:\emerald\ccalls\misk\misk.c"
+"C:\emerald\vm\src\move.c"
+"C:\emerald\vm\src\mqueue.c"
+"C:\emerald\vm\src\oidtoobj.c"
+"C:\emerald\vm\src\oisc.c"
+"C:\emerald\vm\src\ooisc.c"
+"C:\emerald\vm\src\read.c"
+"C:\emerald\vm\src\remote.c"
+"C:\emerald\vm\src\rinvoke.c"
+"C:\emerald\vm\src\sisc.c"
+"C:\emerald\vm\src\squeue.c"
+"C:\emerald\vm\src\storage.c"
+"C:\emerald\vm\src\streams.c"
+"C:\emerald\ccalls\string\string.c"
+"C:\emerald\vm\src\timer.c"
+"C:\emerald\vm\src\trace.c"
+"C:\emerald\vm\src\upcall.c"
+"C:\emerald\vm\src\vm.c"
+"C:\emerald\vm\src\write.c"
+>
+Creating command line "cl.exe @C:\WINDOWS\TEMP\RSPE282.TMP" 
+Creating temp file "C:\WINDOWS\TEMP\RSPE283.TMP" with contents <Wsock32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:no /pdb:"Release/emx.pdb" /machine:I386 /out:"Release/emx.exe" 
+.\Release\array.obj
+.\Release\bufstr.obj
+.\Release\call.obj
+.\Release\cctab.obj
+.\Release\conform.obj
+.\Release\creation.obj
+.\Release\debug.obj
+.\Release\dist.obj
+.\Release\distgc.obj
+.\Release\emstream.obj
+.\Release\filestr.obj
+.\Release\gaggle.obj
+.\Release\gc.obj
+.\Release\globals.obj
+.\Release\iisc.obj
+.\Release\iixsc.obj
+.\Release\ilist.obj
+.\Release\io.obj
+.\Release\iosc.obj
+.\Release\iset.obj
+.\Release\joveisc.obj
+.\Release\jsys.obj
+.\Release\jvisc.obj
+.\Release\locate.obj
+.\Release\main.obj
+.\Release\misc.obj
+.\Release\misk.obj
+.\Release\move.obj
+.\Release\mqueue.obj
+.\Release\oidtoobj.obj
+.\Release\oisc.obj
+.\Release\ooisc.obj
+.\Release\read.obj
+.\Release\remote.obj
+.\Release\rinvoke.obj
+.\Release\sisc.obj
+.\Release\squeue.obj
+.\Release\storage.obj
+.\Release\streams.obj
+.\Release\string.obj
+.\Release\timer.obj
+.\Release\trace.obj
+.\Release\upcall.obj
+.\Release\vm.obj
+.\Release\write.obj>
+Creating command line "link.exe @C:\WINDOWS\TEMP\RSPE283.TMP" 
+Compiling...
+array.c
+bufstr.c
+call.c
+C:\emerald\vm\src\call.c(384) : warning C4101: 'o' : unreferenced local variable
+cctab.c
+conform.c
+creation.c
+C:\emerald\vm\src\creation.c(168) : warning C4013: 'tryToFindState' undefined; assuming extern returning int
+debug.c
+dist.c
+C:\emerald\vm\src\dist.c(78) : warning C4018: '==' : signed/unsigned mismatch
+C:\emerald\vm\src\dist.c(83) : warning C4018: '<' : signed/unsigned mismatch
+C:\emerald\vm\src\dist.c(249) : warning C4013: 'getuid' undefined; assuming extern returning int
+C:\emerald\vm\src\dist.c(512) : warning C4018: '!=' : signed/unsigned mismatch
+C:\emerald\vm\src\dist.c(603) : warning C4013: 'random' undefined; assuming extern returning int
+distgc.c
+emstream.c
+C:\emerald\ccalls\emstream\emstream.c(117) : warning C4013: 'open' undefined; assuming extern returning int
+C:\emerald\ccalls\emstream\emstream.c(125) : warning C4013: 'close' undefined; assuming extern returning int
+C:\emerald\ccalls\emstream\emstream.c(137) : warning C4013: 'isatty' undefined; assuming extern returning int
+C:\emerald\ccalls\emstream\emstream.c(152) : warning C4013: 'read' undefined; assuming extern returning int
+C:\emerald\ccalls\emstream\emstream.c(172) : warning C4013: 'write' undefined; assuming extern returning int
+filestr.c
+C:\emerald\vm\src\filestr.c(100) : warning C4013: 'open' undefined; assuming extern returning int
+C:\emerald\vm\src\filestr.c(107) : warning C4013: 'close' undefined; assuming extern returning int
+C:\emerald\vm\src\filestr.c(149) : warning C4013: 'read' undefined; assuming extern returning int
+C:\emerald\vm\src\filestr.c(217) : warning C4013: 'write' undefined; assuming extern returning int
+gaggle.c
+gc.c
+globals.c
+iisc.c
+iixsc.c
+ilist.c
+io.c
+C:\emerald\vm\src\io.c(125) : warning C4013: 'gettimeofday' undefined; assuming extern returning int
+C:\emerald\vm\src\io.c(206) : warning C4018: '==' : signed/unsigned mismatch
+C:\emerald\vm\src\io.c(207) : warning C4013: 'read' undefined; assuming extern returning int
+C:\emerald\vm\src\io.c(217) : warning C4018: '==' : signed/unsigned mismatch
+iosc.c
+iset.c
+joveisc.c
+jsys.c
+C:\emerald\vm\src\jsys.c(61) : warning C4013: 'gettimeofday' undefined; assuming extern returning int
+jvisc.c
+locate.c
+main.c
+C:\emerald\vm\src\main.c(406) : warning C4013: 'srandom' undefined; assuming extern returning int
+misc.c
+C:\emerald\vm\src\misc.c(270) : warning C4013: '_open' undefined; assuming extern returning int
+C:\emerald\vm\src\misc.c(274) : warning C4013: '_read' undefined; assuming extern returning int
+C:\emerald\vm\src\misc.c(294) : warning C4013: '_close' undefined; assuming extern returning int
+misk.c
+C:\emerald\ccalls\misk\misk.c(5) : warning C4013: 'getenv' undefined; assuming extern returning int
+C:\emerald\ccalls\misk\misk.c(5) : warning C4047: 'return' : 'char *' differs in levels of indirection from 'int '
+move.c
+mqueue.c
+oidtoobj.c
+oisc.c
+ooisc.c
+read.c
+remote.c
+C:\emerald\vm\src\remote.c(249) : warning C4013: 'gettimeofday' undefined; assuming extern returning int
+C:\emerald\vm\src\remote.c(813) : warning C4018: '<' : signed/unsigned mismatch
+rinvoke.c
+sisc.c
+squeue.c
+storage.c
+streams.c
+string.c
+timer.c
+C:\emerald\vm\src\timer.c(58) : warning C4013: 'die' undefined; assuming extern returning int
+C:\emerald\vm\src\timer.c(165) : warning C4013: 'gettimeofday' undefined; assuming extern returning int
+trace.c
+C:\emerald\vm\src\trace.c(202) : warning C4013: 'gettimeofday' undefined; assuming extern returning int
+upcall.c
+vm.c
+C:\emerald\vm\src\vm.c(493) : warning C4013: 'random' undefined; assuming extern returning int
+write.c
+Generating Code...
+C:\emerald\vm\src\vm.c(1189) : warning C4761: integral size mismatch in argument; conversion supplied
+C:\emerald\vm\src\vm.c(1960) : warning C4761: integral size mismatch in argument; conversion supplied
+C:\emerald\vm\src\vm.c(1975) : warning C4761: integral size mismatch in argument; conversion supplied
+C:\emerald\vm\src\vm.c(1978) : warning C4761: integral size mismatch in argument; conversion supplied
+C:\emerald\vm\src\vm.c(1979) : warning C4761: integral size mismatch in argument; conversion supplied
+C:\emerald\vm\src\vm.c(1982) : warning C4761: integral size mismatch in argument; conversion supplied
+C:\emerald\vm\src\vm.c(1985) : warning C4761: integral size mismatch in argument; conversion supplied
+C:\emerald\vm\src\gc.c(1849) : warning C4700: local variable 'lasto' used without having been initialized
+C:\emerald\vm\src\dist.c(610) : warning C4761: integral size mismatch in argument; conversion supplied
+Linking...
+
+
+
+emx.exe - 0 error(s), 42 warning(s)

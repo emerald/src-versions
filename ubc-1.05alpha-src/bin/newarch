@@ -1,0 +1,134 @@
+#!/bin/csh -fv
+#
+# newarch
+#
+# create appropriate directories to support a new architecture for
+# Emerald use.  Run this script on a machine of the new architecture.
+# A new architecture is called for when a new instance of emx, for
+# new hardware, or using a different compiler or options, is needed.
+#
+# usage: newarch [newarch [parentarch]]
+#
+# where newarch is the name of the new architecture, and parentarch
+# is the name of an existing architecture to use for templates and
+# make links to.  If no newarch is specified, the arch command is
+# used to determine it.  If no parent arch is specified and the new
+# architecture is an obvious derivative from the standard architecure, then
+# use the standard architecture as the parent.
+#
+# ToDo:
+# - deal better with existing files/directories
+# - add -f switch to force recreation from scratch, deleting existing stuff
+# - add -c switch to do compilation, rather than just print out what
+#   needs doing
+#
+
+unset needvmc
+unset needemyacc
+unset docompilation
+
+# if an architecture is supplied, use it.  Otherwise, use output of arch
+if ($#argv >= 1) then
+  set arch = $argv[1]
+  shift argv
+else
+  set arch = `arch`
+endif
+
+# if an existing architecture is supplied, use it to inherit from
+if ($#argv >= 1) then
+  set parent = $argv[1]
+  shift argv
+else if ($arch != `arch` && $arch =~ `arch`* && -d $EMERALDROOT/lib/`arch`) then
+  set parent = `arch`
+else
+  set parent = no
+endif
+
+# Check for -c switch
+while ($#argv >= 1)
+  switch ($argv[1])
+    case "-c":
+      set docompilation
+      breaksw
+    default:
+      echo "Unknown flag $argv[1]"
+      breaksw
+  endsw
+  shift argv
+end
+
+# setarch checks that architecture exists, mkdir bin/$arch fools it
+mkdir $EMERALDROOT/bin/$arch
+chmod 775 $EMERALDROOT/bin/$arch
+chmod g+s $EMERALDROOT/bin/$arch
+eval `$EMERALDROOT/bin/setarch $arch`
+
+# inform about intentions
+echo "EMERALDROOT is $EMERALDROOT"
+echo "Architecture is $arch"
+if ($parent == no) then
+  echo "No parent architecture"
+else
+  echo "Parent architecture is $parent"
+endif
+
+# fill newly created bin directory
+echo "creating bin/$arch..."
+cd $EMERALDROOT/bin/$arch
+ln -s ../../vm/$arch/emx .
+if ($parent == no) then
+  ln -s ../issymlink-ls issymlink
+  set needvmc
+  set needemyacc
+else
+  ln -s ../$parent/issymlink .
+  ln -s ../$parent/vmc .
+  ln -s ../$parent/emyacc .
+endif
+
+# make a lib directory and fill it
+# copy the macroMf from i386freebsd, changing the name of the architecture
+echo "creating lib/$arch..."
+mkdir $EMERALDROOT/lib/$arch
+chmod 775 $EMERALDROOT/lib/$arch
+chmod g+s $EMERALDROOT/lib/$arch
+cd $EMERALDROOT/lib/$arch
+if ($parent == no) then
+  sed -e "s/# i386freebsd specific/# $EMERALDARCH specific/" \
+      ../i386freebsd/macroMf >macroMf
+else
+  cp ../$parent/macroMf .
+endif
+
+# make a vm directory and fill it.  Since a new architecture always
+# implies a new emx, we don't care if there's a parent architecture
+echo "creating vm/$arch..."
+mkdir $EMERALDROOT/vm/$arch
+chmod 775 $EMERALDROOT/vm/$arch
+chmod g+s $EMERALDROOT/vm/$arch
+cd $EMERALDROOT/vm/$arch
+ln -s ../src/Makefile .
+(cd $EMERALDROOT/vm/$arch ; emmake links)
+# (cd $EMERALDROOT/vm/$arch ; emmake install)
+
+if ($?docompilation) then
+  if ($?needvmc) then
+    (cd $EMERALDROOT/vmc ; emmake clean ; emmake install)
+  endif
+  if ($?needemyacc) then
+    (cd $EMERALDROOT/emyacc ; emmake clean ; emmake install)
+  endif
+  (cd $EMERALDROOT/vm/$arch ; emmake emx install)
+else
+  echo "You still need to:"
+  echo "  execute emarch"
+  if ($parent == no) then
+    echo "  make sure $EMERALDROOT/bin/$arch/issymlink is right"
+    ls -ld $EMERALDROOT/bin/$arch/issymlink
+    echo "  cd $EMERALDROOT/vmc ; emmake clean ; emmake install"
+    echo "  cd $EMERALDROOT/emyacc ; emmake clean ; emmake install"
+  endif
+  echo "  edit $EMERALDROOT/lib/$arch/macroMf"
+  echo "  cd $EMERALDROOT/vm/$arch ; emmake emx install"
+endif

@@ -1,0 +1,2 @@
+#!/bin/sh
+exec emx -O4m $* $EMERALDROOT/lib/Compiler

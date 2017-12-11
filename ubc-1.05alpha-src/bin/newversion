@@ -1,0 +1,29 @@
+#!/bin/csh -f
+# If your copy doesn't grok -p, then set P to the null string
+
+set P = -p
+if ($#argv == 0) then
+    set versionnumber = `findversion`
+    if ("$versionnumber" == "") set versionnumber = 1
+    echo "Creating version number $versionnumber"
+else
+    set versionnumber = $argv[1]
+endif
+set comment = q
+if ($#argv > 1) then
+    set comment = $argv[2]
+endif
+if (-r CP_$comment$versionnumber) then
+    echo "newversion: version number $versionnumber already exists"
+    ls -lt {CP,CPIndex,name,name.idb}_$comment$versionnumber
+    exit (1)
+endif
+if (! -r CP || ! -r CPIndex || ! -r name || ! -r name.idb) then
+    echo "  Not all of the required files exist"
+    exit (1)
+endif
+foreach i (CP CPIndex name name.idb)
+   echo cp $P $i ${i}_$comment$versionnumber
+   cp $P $i ${i}_$comment$versionnumber
+   chmod -w ${i}_$comment$versionnumber
+end

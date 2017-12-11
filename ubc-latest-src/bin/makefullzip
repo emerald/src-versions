@@ -1,0 +1,4 @@
+#!/bin/csh -f
+# make zip archive of Emerald in em.zip
+cd $EMERALDROOT
+zip -r emfull.zip `./bin/allfiles -v`

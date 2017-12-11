@@ -1,0 +1,96 @@
+\section{Operations}
+\label{operations}
+\emd{} objects communicate with one another only through the invocation of
+operations. This section describes the definition and invocation of
+operations.
+
+\subsection{Defining operations}
+\label{operationSignature}
+\begin{quote}\it\begin{tabular}{lcl}
+operationSignature &$::=$& operationKind operationName \opt{parameterList} \\
+& & \hspace{0.5in}\opt{\lrq{\returns} resultList} \oseq{clause} \\
+operation &$::=$& \opt{\kw{export}} operationSignature\\
+& & \hspace{0.5in}blockBody \\
+& & \kw{end} operationName \\
+operationKind &$::=$& \kw{op} $|$ \kw{operation} $|$ \kw{function} \\
+parameterList &$::=$& \terminal{[} \sseq{parameter}{\terminal{,}} \terminal{]} \\
+resultList &$::=$& parameterList\\
+parameter &$::=$&	\opt{\kw{attached}} \opt{identifier :} type \\
+clause &$::=$ & whereClause \\
+	& $|$ & forallClause \\
+	& $|$ & suchthatClause
+\end{tabular}
+\end{quote}
+\emd{} provides two kinds of operations: procedural and functional. 
+Procedural operations are heralded by the keyword \kw{operation} or \kw{op},
+while the keyword \kw{function} indicates a
+functional operation.  In declaring a functional operation, 
+the programmer asserts that the operation
+is side-effect free, i.e., the abstract state of the system
+is not modified by the execution of the operation\footnote{Note that \emd{}
+does not rule out the possibility of the operation having concrete
+side-effects (sometimes termed {\em beneficial} or {\em benevolent}
+side-effects).}.  Note that the burden is on the programmer;  the Emerald
+system may perform optimizations on function invocations that are incorrect if
+the operation has side effects.
+
+The operation signature (cf.~Section~\ref{abstracttypes})
+includes the operation name and the number, names
+and abstract types of its arguments and results.  
+An object may implement multiple operations with the same name, provided
+that the number of arguments that they accept is different.
+Where clauses serve to
+introduce new names for types whose scope is the entire operation signature
+(and body if present).  For all clauses declare new type identifiers.
+Such that clauses impose
+constraints on the formal parameters.
+These clauses are primarily useful for the implementation of
+polymorphic types and are defined in Section~\ref{polymorphism}.
+
+\subsection{Parameter Passing}
+The \emd{} language uses call-by-object-reference semantics for all
+invocations, local or remote.  That is, a reference to the argument object
+is passed to the called procedure.  There are no restrictions on the types
+of objects that can be passed.
+
+\subsection{Making Invocations}
+\begin{quote}\it\begin{tabular}{lcl}
+procedureInvocation &$::=$& expression \terminal{.} operationName \opt{argumentList} \\
+operationName &$::=$& identifier  $|$  operator \\
+argumentList  &$::=$& \terminal{[} \sseq{argument}{\terminal{,}} \terminal{]} \\
+argument & $::=$ &  \opt{\kw{move} $|$ \kw{visit}} expression
+\end{tabular}\end{quote}
+
+An invocation specifies the target object, the operation to be
+invoked, and any arguments. When
+an invocation returns results, they are assigned to variables using an
+assignment (see~Section~\ref{assignment statement}).
+
+\label{call by move}
+Because Emerald objects are mobile, it may be possible to optimize an
+invocation by
+avoiding many
+remote references by moving argument objects to the site of a
+remote invocation. 
+The keywords \kw{move} and \kw{visit} suggest that the
+expression be physically moved to the same node as the invoked object;
+\kw{visit} further suggests that the expression be moved back when the
+invocation returns.
+These two 
+parameter passing modes are called
+{\em call-by-move} and {\em call-by-visit} respectively.
+Neither mode
+affects the location-independent semantics of
+the invoked operation.
+
+
+Executing an operation invocation involves:
+\begin{itemize}
+\item{} evaluating the invocation target expression,
+\item{} evaluating the argument objects and then positionally
+assigning them to the formal parameters of the operation,
+\item{} executing the body of the operation in the
+context of the target object of the invocation, and
+\item{} returning the final values of any output parameters of the
+invocation.
+\end{itemize}

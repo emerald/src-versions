@@ -1,0 +1,27 @@
+#
+# alpha specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = `arch`
+
+# (ANSI) C compiler
+CC = cc -std1 -xtaso_short -taso -Dinline= -Dalpha
+
+# definitions to enable common extensions in headers and libraries
+XCPFLAGS =
+
+XLIB =
+
+# C preprocessor
+CPP = $(CC) -E
+
+# dependency generator
+DEPEND = $(CC) -MM
+
+# 
+CFLAGSOPT = -O4 -g3 -DNDEBUG
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT) -Olimit 1000
+

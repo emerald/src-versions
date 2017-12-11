@@ -1,0 +1,8 @@
+Compiling vec2.m
+      Immutable mismatch
+      Type anytype doesn't conform to type integertype
+    result 1 of operation getelement doesn't conform
+    Type nv doesn't conform to type immutablevectorofinttype
+  param 1 to operation catenate doesn't conform
+  Type immutablevectorofinttype doesn't conform to type nv
+"vec2.m", line 17: Actual #1 to "printv" does not conform to formal

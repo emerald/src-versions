@@ -1,0 +1,36 @@
+#!/bin/csh -f
+set pattern = "$1"
+shift
+foreach p ($*)
+    set pattern = "$pattern"'|'"$*"
+end
+set srcfiles = `emmake sources`
+set files = `egrep -l "$pattern" $srcfiles`
+foreach f ($files)
+    set dotofile = $f:t
+    set dotofile = ${dotofile:r}.o
+    if (-r $dotofile) then
+	echo rm $dotofile
+	rm $dotofile
+    endif
+end
+
+set incfiles = `emmake includes`
+set files = `egrep -l "$pattern" $incfiles`
+if ($#files > 0) then
+    set pattern = $files[1]
+    shift files
+    foreach f ($files)
+#	echo $f
+	set pattern = "$pattern"'|'"$f"
+    end
+    set files = `egrep -l "^#[ 	]*include.*($pattern)" $srcfiles`
+    foreach f ($files)
+	set dotofile = $f:t
+	set dotofile = ${dotofile:r}.o
+	if (-r $dotofile ) then
+	    echo rm $dotofile
+	    rm $dotofile
+	endif
+    end
+endif

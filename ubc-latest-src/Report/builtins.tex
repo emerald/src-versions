@@ -1,0 +1,995 @@
+\section{Built-in Objects}
+\label{builtin objects}
+This appendix defines the built-in objects.  These descriptions will mention
+that an object is a type rather than explicitly refering to the object's
+immutability and its getSignature operation.
+\newcommand{\opd}[1]{\makebox[1cm]{#1}}
+
+\subsection{Any}
+\label{builtin Any}
+Any is the type that requires no operations; every Emerald object has type
+Any.
+
+\subsection{Array}
+\label{builtin Array}
+Arrays implement expandable indexable storage.  The of operation on
+Array takes a Type, and returns an array creator.  As arrays
+can expand and shrink, common data types such as Stacks and Queues can
+be implemented using Arrays:  Stacks use addUpper and removeUpper,
+while Queues use addUpper and removeLower.
+
+\newenvironment{desc}
+               {\list{}{\itemsep 0pt \parsep 0pt \labelwidth 0pt \itemindent-\leftmargin\labelsep 0pt
+                        \let\makelabel\desclabel}}
+               {\endlist}
+\newcommand*\desclabel[1]{\hspace\labelsep\it #1}
+
+\noindent The object Array is immutable and has the following interface:
+\begin{desc}
+  \item[\kw{function} of\/\LB{}T \CO{} \tn{type}\/\RB{} \returns{}
+  \/\LB{}aNewArrayCreatorType\/\RB{} \kw{forall} T]
+\end{desc}
+
+\noindent The object resulting from {\it \tn{Array}.of\/\LB{}T\/\RB{}} (with
+type aNewArrayCreatorType) 
+is a creator as well as a type.  It is immutable and has the following
+interface:
+
+\begin{desc}
+  \item[\kw{operation} empty \returns{} \/\LB{}aNewArrayType\/\RB{}]~\\
+    Return a new empty \tn{Array}.
+  \item[\kw{operation} literal\/\LB{}Sequence.of\/\LB{}T\/\RB\/\RB{} \returns{} \/\LB{}aNewArrayType\/\RB{}]~\\
+    Return a new \tn{Array} initialized with all the elements
+    from the given sequence.
+  \item[\kw{operation} create\/\LB{}size \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}aNewArrayType\/\RB{}]~\\
+    Return a new \tn{Array} with size elements all initialized to \kw{nil}.
+\end{desc}
+
+\noindent Objects with type {\it \tn{Array}.of\/\LB{}T\/\RB{}} have the
+following interface, named aNewArrayType: 
+
+\begin{desc}
+  \item[\kw{function}  getElement\/\LB{}index \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}T\/\RB{}]~\\
+    Get the element indexed by {\it index}, failing if {\it index} is out of range.
+  \item[\kw{operation} setElement\/\LB{}index \CO \tn{Integer}, value \CO T\/\RB{}]~\\
+    Set the element indexed by {\it index} to {\it value}, failing if {\it index} is out of range.
+  \item[\kw{function}  upperbound \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the highest valid index.
+  \item[\kw{function}  lowerbound \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the lowest valid index.
+  \item[\kw{function}  getElement\/\LB{}lb \CO{} \tn{Integer}, length \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}aNewArrayType\/\RB{}]~\\
+    Return a new \tn{Array}, a, with lower bound {\it lb}, and length {\it length}, such that for lb $\leq$ i $\leq$ lb + length - 1\CO{} self\LB{}i\/\RB{} $==$ a\LB{}i\/\RB{}.
+    Fail if lb or lb + length - 1 is out of range.
+  \item[\kw{function}  getSlice\/\LB{}lb \CO \tn{Integer}, length \CO \tn{Integer}\/\RB{} \returns{} \/\LB{}aNewArrayType\/\RB{}]~\\
+    Same as getElement.
+  \item[\kw{operation} setElement\/\LB{}lb \CO{} \tn{Integer}, length \CO{}
+  \tn{Integer}, a \CO{} RIS\/\RB{}]~\\
+    Set the elements indexed starting at {\it lb} for {\it length} elements,
+    so that for each such i in that range\CO{}
+    self\/\LB{}i\/\RB{} $==$ a\/\LB{}i\/\RB{}. Fail if
+    lb or lb + length - 1 is out of range. 
+  \item[\kw{operation} setSlice\/\LB{}lb \CO{} \tn{Integer}, length \CO{}
+  \tn{Integer}, a \CO{} Sequence.of\/\LB{}T\/\RB{}\/\RB{}]~\\
+    Same as setElement.
+  \item[\kw{operation} slideTo\/\LB{}newlb \CO{} \tn{Integer}\/\RB{}]~\\
+    Change the valid indices for self so that the new lowerbound is {\it newlb}.
+  \item[\kw{operation} addUpper\/\LB{}value \CO{} T\/\RB{}]~\\
+    Extend the set of valid indices, changing ub to 
+    ub $+$ 1, and setting the element indexed by the new
+    ub to be {\it value}.
+  \item[\kw{operation} removeUpper \returns{} \/\LB{}T\/\RB{}]~\\
+    Return the element indexed by ub, after contracting 
+    the set of valid indices to lb $\leq$ i $\leq$ ub $-$ 1.
+  \item[\kw{operation} addLower\/\LB{}value \CO{} T\/\RB{}]~\\
+    Extend the set of valid indices, changing lb to 
+    lb $-$ 1, and setting
+    the element indexed by the new lb to be {\it value}.
+  \item[\kw{operation} removeLower \returns{} \/\LB{}T\/\RB{}]~\\
+    Return the element indexed by lb, after contracting 
+    the set of valid indices to lb $+$ 1 $\leq$ i $\leq$ ub.
+  \item[\kw{function}  empty \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if lb $==$ ub $+$ 1.
+  \item[\kw{operation} catenate\/\LB{}a \CO{} RIS\/\RB{} \returns{} \/\LB{}r \CO{} aNewArrayType\/\RB{}]~\\
+    Create a new array like self, and then add (using addUpper) each element
+    in {\it a} to that new array.
+\end{desc}
+
+\subsection{BitChunk}
+\label{builtin BitChunk}
+BitChunks allow the manipulation of arbitrarily sized sequences of bits.
+There are operations to set or retrieve collections of bits at arbitrary bit
+positions with lengths up to 32 bits.
+BitChunk is a type with the following interface:
+
+\begin{desc}
+  \item[\kw{export} \kw{operation} create\/\LB{}n \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}Bitchunk\/\RB{}]~\\
+    Create a bitChunk large enough to hold {\it n\/} bytes of information.
+\end{desc}
+
+An object whose type is BitChunk has the following interface:
+
+\begin{desc}
+  \item[\kw{function}  getSigned\/\LB{}off\CO{} \tn{Integer}, len\CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the bits at offset {\it off} for length {\it len} as a signed
+    \tn{Integer} (treat the highest order bit as a sign bit).
+  \item[\kw{function}  getUnsigned\/\LB{}off \CO{} \tn{Integer}, len \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the bits at offset {\it off} for length {\it len} as an unsigned \tn{Integer}
+  \item[\kw{function}  getElement\/\LB{}\tn{Integer}, \tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Equivalent to getUnsigned.
+  \item[\kw{operation} setSigned\/\LB{}off\CO{}\tn{Integer}, len\CO{}\tn{Integer}, val\CO{}\tn{Integer}\/\RB{}]~\\
+    Set the bits at offset {\it off} for length {\it len} to the low order bits of {\it val}.
+  \item[\kw{operation} setUnsigned\/\LB{}\tn{Integer}, \tn{Integer}, \tn{Integer}\/\RB{}]~\\
+    Equivalent to setSigned.
+  \item[\kw{operation} setElement\/\LB{}\tn{Integer}, \tn{Integer}, \tn{Integer}\/\RB{}]~\\
+    Equivalent to setSigned.
+  \item[\kw{operation} ntoh\/\LB{}off \CO{} \tn{Integer}, len \CO{} \tn{Integer}\/\RB{}]~\\
+    Convert the bits at offset {\it off} with length {\it len} from network to host
+    byte order.  Len must be either 16 or 32.
+\end{desc}
+
+\subsection{Boolean}
+\label{builtin Boolean}
+In addition to the operations on Booleans listed here, Booleans are
+involved in the evaluation of the conditional and (\kw{and}) and
+conditional or (\kw{or}) expressions.
+The immutable object Boolean has the following interface:
+
+\begin{desc}
+  \item[\kw{function} create\/\LB{}ord \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+    If ord is 0 then return {\bf false}, otherwise return {\bf true}.
+\end{desc}
+
+\noindent
+Objects whose type is \tn{Boolean} are immutable with the following interface:
+Comparisons are based on the ordinal values as given by ord
+
+\begin{desc}
+  \item[\kw{function} \opd{$>$} \/\LB{}\tn{Boolean}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$>=$} \/\LB{}\tn{Boolean}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$<$} \/\LB{}\tn{Boolean}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$<=$} \/\LB{}\tn{Boolean}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$=$} \/\LB{}\tn{Boolean}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$!=$} \/\LB{}\tn{Boolean}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+  Comparison functions.
+  \item[\kw{function} \opd{$\&$} \/\LB{}\tn{Boolean}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+    Logical and.
+  \item[\kw{function} \opd{$|$} \/\LB{}\tn{Boolean}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+    Logical or.
+  \item[\kw{function} \opd{$!$}  \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+    Logical negation.
+  \item[\kw{function} ord \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return 0 when invoked on \kw{false}, 1 when invoked on \kw{true}.
+  \item[\kw{function} asString \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return either ``true" or ``false''.
+  \item[\kw{function} hash \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    return self.ord
+\end{desc}
+
+
+
+\subsection{Character}
+\label{builtin Character}
+\noindent The immutable object Character has the following interface:
+
+\begin{desc}
+  \item[\kw{function} Literal\/\LB{}o \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Character}\/\RB{}]~\\
+    Return the \tn{Character} whose ordinal is given by o.
+\end{desc}
+
+\noindent Objects whose type is Character are immutable and have the
+following interface:
+
+\begin{desc}
+  \item[\kw{function} \opd{$>$} \/\LB{}\tn{Character}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$>=$} \/\LB{}\tn{Character}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$<$} \/\LB{}\tn{Character}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$<=$} \/\LB{}\tn{Character}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$=$} \/\LB{}\tn{Character}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$!=$} \/\LB{}\tn{Character}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+  Comparison functions.
+  \item[\kw{function} asString \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return a single character string ``c'' when invoked on a character `c'.
+  \item[\kw{function} ord \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the character's ordinal number.
+  \item[\kw{function} hash \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return self.ord.
+  \item[\kw{function} isalpha \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the character appears in the alphabet.
+  \item[\kw{function} isupper \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the character is upper case.  
+  \item[\kw{function} islower \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the character is lower case.  
+  \item[\kw{function} isdigit \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the character is a decimal digit.
+  \item[\kw{function} isxdigit \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the character is a hexadecimal digit.
+  \item[\kw{function} isalnum \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the character is alphanumeric.
+  \item[\kw{function} isspace \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the character is white space (blank, tab, newline, etc).
+  \item[\kw{function} ispunct \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the character is a punctuation mark.
+  \item[\kw{function} isprint \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the character is printable.
+  \item[\kw{function} isgraph \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the character is visible when printed.
+  \item[\kw{function} iscntrl \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the character is a control character.
+  \item[\kw{function} toupper \returns{} \/\LB{}r \CO{} \tn{Character}\/\RB{}]~\\
+    If the character is a lower case alphabetic, return the upper case
+    letter corresponding to it, otherwise return the character itself.
+  \item[\kw{function} tolower \returns{} \/\LB{}r \CO{} \tn{Character}\/\RB{}]~\\
+    If the character is an upper case alphabetic, return the lower case
+    letter corresponding to it, otherwise return the character itself.
+\end{desc}
+
+\subsection{ConcreteType}
+\label{builtin ConcreteType}
+A ConcreteType captures the implementation of some other object.  It
+contains all the information required to create and operate on the
+collection of objects created from a single object constructor.
+ConcreteTypes can only be usefully created by the compiler.
+The object ConcreteType is a type and has the following interface:
+
+\begin{desc}
+  \item[\kw{operation} create\/\LB{}]~\\
+    instanceSize \CO{} \tn{Integer},
+    instanceTagMask \CO{} \tn{Integer},
+    ops \CO{} COpVector,
+    name \CO{} \tn{String},
+    filename \CO{} \tn{String},
+    template \CO{} \tn{String}\/\RB{} \returns{} \/\LB{}ConcreteType\/\RB{}
+\end{desc}
+
+Objects whose type is ConcreteType are immutable and have the following
+interface. All of these operations return information describing all of the
+objects that could ever be created using this object constructor.
+
+\begin{desc}
+  \item[\kw{function}  getInstanceSize \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the size in bytes of the data area of the object.
+  \item[\kw{function}  getInstanceTagMask \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return a collection of flag bits that include whether the objects are
+    immutable and how they are represented by the interpreter.
+  \item[\kw{function}  getOps \returns{} \/\LB{}COpVector\/\RB{}]~\\
+    Return a list of the operations defined for the objects.
+  \item[\kw{function}  getName \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return the name of the object constructor.
+  \item[\kw{function}  getFileName \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return the file name of the Emerald source file that contained the
+    typeobject from which I was created.
+  \item[\kw{function}  getTemplate \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return the template that describes the data area of the
+    objects.  The format of the template string is private.
+  \item[\kw{function}  getLiterals \returns{} \/\LB{}\tn{ImmutableVectorOfInt}\/\RB{}]~\\
+    Return a list of literals that are referenced by the code for operations
+    on the object.  The format of this structure is private.
+\end{desc}
+
+\label{builtin COpVector}
+COpVector is ImmutableVector.of[COpVectorE].
+
+\label{builtin COpVectorE}
+A COpVectorE describes an operation.  COpVectorE is a type with
+the following interface:
+
+\begin{desc}
+  \item[\kw{operation} create\/\LB{}]~\\
+    id \CO{} \tn{Integer},
+    nArgs \CO{} \tn{Integer},
+    nRess \CO{} \tn{Integer},
+    name \CO{} \tn{String},
+    template \CO{} \tn{String},
+    code \CO{} \tn{String}\/\RB{} \returns{} \/\LB{}n \CO{} COpVectorEType\/\RB{}
+\end{desc}
+
+Objects whose type is COpVectorE are immutable and have the following
+interface:
+
+\begin{desc}
+  \item[\kw{function}  getID \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the internal id of the operation.    
+  \item[\kw{function}  getNArgs \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the number of arguments to the operation.
+  \item[\kw{function}  getNRess \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the number of results returned by the operation.
+  \item[\kw{function}  getName \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return the name of the operation.
+  \item[\kw{function}  getTemplate \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return the template that describes the activation record of the
+    operation.  The format of the template string is private.
+  \item[\kw{function}  getCode \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return the code for the operation, as a string.
+\end{desc}
+
+\label{builtin InterpreterState}
+The internal representation of the state of the interpreter.  
+InterpreterState is a type with the following interface:
+
+\begin{desc}
+  \item[\kw{operation} create\/\LB{}]~\\
+    pc \CO{} \tn{Integer},
+    sp \CO{} \tn{Integer},
+    fp \CO{} \tn{Integer},
+    sb \CO{} \tn{Integer},
+    o \CO{} \tn{Any},
+    e \CO{} \tn{Any}\/\RB{} 
+  \returns{} \/\LB{}InterpreterState\/\RB{}
+\end{desc}
+
+Objects whose type is InterpreterState have the following interface:
+
+\begin{desc}
+  \item[\kw{function}  getPC \returns{} \/\LB{}\tn{Integer}\/\RB{}]
+  \item[\kw{operation} setPC\/\LB{}\tn{Integer}\/\RB{}]
+  \item[\kw{function}  getSP \returns{} \/\LB{}\tn{Integer}\/\RB{}]
+  \item[\kw{operation} setSP\/\LB{}\tn{Integer}\/\RB{}]
+  \item[\kw{function}  getFP \returns{} \/\LB{}\tn{Integer}\/\RB{}]
+  \item[\kw{operation} setFP\/\LB{}\tn{Integer}\/\RB{}]
+  \item[\kw{function}  getO \returns{} \/\LB{}\tn{Any}\/\RB{}]
+  \item[\kw{operation} setO\/\LB{}\tn{Any}\/\RB{}]
+  \item[\kw{function}  getSB \returns{} \/\LB{}\tn{Integer}\/\RB{}]
+  \item[\kw{operation} setSB\/\LB{}\tn{Integer}\/\RB{}]
+  \item[\kw{function}  getE \returns{} \/\LB{}\tn{Any}\/\RB{}]
+  \item[\kw{operation} setE\/\LB{}\tn{Any}\/\RB{}]
+\end{desc}
+
+PC is the program counter, SP is the stack pointer, FP is the frame pointer,
+and SB is the base of the stack.  O is the current object, and E is the
+environment of the current process.  Each Emerald process has a per-
+process environment which can be used at the programmer's discretion.
+
+\subsection{Condition}
+\label{builtin Condition}
+
+A condition object may only be used within the monitor within
+which it was created.
+The object Condition is immutable, and has the following interface:
+
+\begin{desc}
+  \item[\kw{operation} create \returns{} \/\LB{}\tn{Condition}\/\RB{}]
+\end{desc}
+
+Objects whose type is Condition have no operations;  wait, signal, and
+awaiting are language primitives.
+
+\subsection{InStream}
+\label{builtin instream}
+InStream objects provide the ability to read files.  The InStream object is
+immutable and has the following interface:
+
+\begin{desc}
+  \item[\kw{operation} fromUnix\/\LB{}fn \CO{} \tn{String}, mode \CO{} \tn{String}\/\RB{} \returns{} \/\LB{}InStream\/\RB{}]~\\
+    Return a new input stream attached to the given operating system file.
+    Mode is as in fopen in C, and must begin with `r'.
+    The operation fails if the file does not exist or cannot be opened.
+  \item[\kw{operation} create\/\LB{}file \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}InStream\/\RB{}]~\\
+    Return a new input stream attached to the given file descriptor.
+\end{desc}
+
+\noindent
+All of the input operations on InStream objects fail if the operation cannot
+be performed.  In particular, they fail upon reaching end-of-file or if the
+stream has been closed.
+Objects whose type is InStream have the following interface:
+
+\begin{desc}
+  \item[\kw{operation} getChar \returns{} \/\LB{}\tn{Character}\/\RB{}]~\\
+    Return the next character from the input source.  Fail if the stream is
+    closed or eos has been reached.
+  \item[\kw{operation} unGetChar\/\LB{}c \CO{} \tn{Character}\/\RB{}]~\\
+    Push the character on the the front of the input stream.  There is no
+    requirement that the character be one previously read from the stream.
+    Only the amount of available memory limits the amount of data that can
+    be pushed back on a stream.
+  \item[\kw{operation} getString \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return one line of input, including the terminating newline
+    character, if any.
+  \item[\kw{function} eos \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the end of the input stream has been reached.  Note
+    that this predicate will block for terminal input on a terminal stream
+    if necessary in order to determine whether the end of the stream has
+    been reached.
+  \item[\kw{operation} close]~\\
+    Close the stream.
+  \item[\kw{function} isAtty \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the underlying Unix file is a tty.
+  \item[\kw{operation} fillVector\/\LB{}VectorOfChar\/\RB{} \returns{} \/\LB{}Integer\/\RB{}]~\\
+    Reads up to one line from the input, placing the characters in the
+    provided vector.  Returns the number of characters read.  The vector
+    will contain the newline character that caused reading to terminate
+    unless no newline 
+    character is read before the vector is full.
+  \item[\kw{operation} rawRead\/\LB{}VectorOfChar\/\RB{} \returns{} \/\LB{}Integer\/\RB{}]~\\
+    Reads from the input placing the characters in the
+    provided vector.  Returns the number of characters read.  
+\end{desc}
+
+\subsection{Integer}
+\label{builtin Integer}
+Conversion between integers and reals is accomplished by the asReal
+operation on Integers, and the asInteger operation on Reals.  
+The immutable object Integer has the following interface:
+
+\begin{desc}
+  \item[\kw{function} literal\/\LB{}rep \CO{} \tn{String}\/\RB{} \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the integer parsed from the front of the string {\it rep}.  The C
+    function strtol is used to parse the integer.
+\end{desc}
+
+\noindent
+Objects whose type is Integer are immutable, and have the following
+interface.  For those operations that manipulate bits, bit numbering starts at
+0, which represents the high order bit of the integer.
+
+\begin{desc}
+  \item[\kw{function} \opd{$+$} \/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Integer}\/\RB{}]
+  \item[\kw{function} \opd{$-$} \/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Integer}\/\RB{}]
+  \item[\kw{function} \opd{$*$} \/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Integer}\/\RB{}]
+  \item[\kw{function} \opd{$/$} \/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Integer}\/\RB{}]
+  \item[\kw{function} \opd{\#} \/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Arithmetic functions.  \# represents modulus.
+  \item[\kw{function} \opd{$>$} \/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$>=$} \/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$<$} \/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$<=$} \/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$=$} \/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$!=$} \/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+  Comparison functions.
+  \item[\kw{function} \opd{\tt\mytilde} \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Negation.
+  \item[\kw{function} \opd{$-$} \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Negation, identical to {\tt\mytilde}.
+  \item[\kw{function} asString \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return a \tn{String} representing the value of the \tn{Integer} with no
+    leading zeros in decimal.
+  \item[\kw{function} hash \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return self.
+  \item[\kw{function} abs \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the absolute value of self.
+  \item[\kw{function} asReal \returns{} \/\LB{}\tn{Real}\/\RB{}]~\\
+    Return a \tn{Real} value representing the same value as self.
+  \item[\kw{function} \opd{$\&$} \/\LB{}other \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the bitwise and of self and {\it other}.
+  \item[\kw{function} \opd{$|$} \/\LB{}other \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the bitwise or of self and {\it other}.
+  \item[\kw{function} setBit\/\LB{}o \CO{} \tn{Integer}, v \CO{} \tn{Boolean}\/\RB{} \returns{} \/\LB{}r \CO{} \tn{Integer}\/\RB{}]~\\
+    Return an \tn{Integer} like self except in the {\it o}'th bit position, 
+    where it has the bit {\it v}.  
+  \item[\kw{function} getBit\/\LB{}o \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}r \CO{} \tn{Boolean}\/\RB{}]~\\
+    Return the bit in {\it o}'th bit position.
+  \item[\kw{function} setBits\/\LB{}o \CO{} \tn{Integer}, l \CO{} \tn{Integer}, v \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}r \CO{} \tn{Integer}\/\RB{}]~\\
+    Return an \tn{Integer} like self except in the {\it o} through $o+l-1$'th positions, where
+    the bits represent the low order bits of the \tn{Integer} v.
+  \item[\kw{function} getBits\/\LB{}o \CO{} \tn{Integer}, l \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}r \CO{} \tn{Integer}\/\RB{}]~\\
+    Return the bits in the {\it o} through $o+l-1$'th bit positions, without
+    sign extension.
+\end{desc}
+
+\subsection{Node, NodeList, NodeListElement, Directory, Handler}
+\label{builtin Node}
+The nodeEventHandler entries allow appropriate operations to be
+invoked when the node detects changes in the network topology.  The
+operations that query network topology use the auxiliary types
+NodeList and NodeListElement which are described below.  
+The object Node is a type with the following interface:
+
+\begin{desc}
+  \item[\kw{operation} getStdin \returns{} \/\LB{}InStream\/\RB{}]~\\
+    Return an InStream representing the current \tn{Node}'s standard input.
+  \item[\kw{operation} getStdout \returns{} \/\LB{}OutStream\/\RB{}]~\\
+    Return an OutStream representing the current \tn{Node}'s standard output.
+\end{desc}
+
+\noindent Objects with type Node are mutable, are fixed at their initial
+locations, and have the following interface:
+
+\begin{desc}
+  \item[\kw{operation} getActiveNodes \returns{} \/\LB{}NodeList\/\RB{}]~\\
+    Return a list containing information about all nodes in the Emerald
+    environment that are known to be functioning.
+  \item[\kw{operation} getAllNodes \returns{} \/\LB{}NodeList\/\RB{}]~\\
+    Return a list containing information about all nodes in the Emerald
+    environment, whether they are functioning or not.
+  \item[\kw{operation} getNodeInformation \returns{} \/\LB{}NodeListElement\/\RB{}]~\\
+    Return information about the node.  This is not currently implemented.
+  \item[\kw{operation} getTimeOfDay \returns{} \/\LB{}Time\/\RB{}]~\\
+    Return an object of type \tn{Time } representing the current wall clock
+    time.
+  \item[\kw{operation} delay\/\LB{}howlong \CO{} Time\/\RB{}]~\\
+    Put the current process to sleep until the amount of time specified by
+    {\it howlong} has passed.
+  \item[\kw{operation} waitUntil\/\LB{}untilwhen \CO{} Time\/\RB{}]~\\
+    Put the current process to sleep until the absolute time specified by
+    {\it untilwhen} has arrived.
+  \item[\kw{operation} getLoadAverage \returns{} \/\LB{}\tn{Real}\/\RB{}]~\\
+    Return a \tn{Real} number representing the load on the machine on which
+    the target node is executing.  This is not currently implemented.
+  \item[\kw{operation} setNodeEventHandler\/\LB{}h \CO{} HandlerType\/\RB{}]~\\
+    Register {\it h} as an additional handler to receive notification when
+    nodes come up or do down.  This is not currently implemented.
+  \item[\kw{operation} removeNodeEventHandler\/\LB{}h \CO{} HandlerType\/\RB{}]~\\
+    Unregister h as a node event handler.  This is not currently implemented.
+  \item[\kw{operation} getStdin \returns{} \/\LB{}InStream\/\RB{}]~\\
+    Return an InStream representing the target \tn{Node}'s standard input.
+  \item[\kw{operation} getStdout \returns{} \/\LB{}OutStream\/\RB{}]~\\
+    Return an OutStream representing the target \tn{Node}'s standard output.
+  \item[\kw{function} getLNN \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the current node's Logical Node Number.  This value is not
+    interesting.
+  \item[\kw{function} getName \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return a string containing the name of the current host.  If the current
+    host name cannot be determined (as on DOS) return a string containing as
+    much information as is available.
+  \item[\kw{function} getRootDirectory \returns{} \/\LB{}\tn{Directory}\/\RB{}]~\\
+    Return the root directory of the Emerald universe.  Each cooperationg
+    collection of Emerald nodes has a single root directory which is the
+    root of the name service.
+\end{desc}
+
+\noindent A NodeListElement is an immutable record with 4 fields that
+provide information about a node:
+
+\begin{desc}
+  \item[\kw{function} getTheNode \returns{} \/\LB{}\tn{Node}\/\RB{}]
+  \item[\kw{function} getUp \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} getIncarnationTime \returns{} \/\LB{}Time\/\RB{}]
+  \item[\kw{function} getLNN \returns{} \/\LB{}\tn{Integer}\/\RB{}]
+\end{desc}
+
+\noindent NodeList is 
+{\it ImmutableVector.of\/\LB{}NodeListElement\/\RB{}}.
+
+Directory is the type of name service directories.  Directory is a type with
+interface:
+\begin{desc}
+  \item[\kw{operation} create \returns{} \/\LB{}r \CO{} Directory\/\RB{}]~\\
+    Return a new directory.
+\end{desc}
+
+\noindent Objects whose type is Directory have the following
+interface:
+
+\begin{desc}
+  \item[\kw{operation} insert\/\LB{}name \CO{} \tn{String}, value \CO{} \tn{Any}\/\RB{}]~\\
+    Insert the object {\it value} in the directory under the name {\it name}.
+  \item[\kw{function} lookup\/\LB{}name \CO{} \tn{String}\/\RB{} \returns{} \/\LB{}\tn{Any}\/\RB{}]~\\
+    Return the object in the directory stored under the name {\it name}.  If
+    there is no object stored under that name, return \kw{nil}.
+  \item[\kw{operation} delete\/\LB{}\tn{String}\/\RB{}]~\\
+    Delete the object in the directory stored under the name {\it name}.
+    It is not an error to delete a nonexistent entry.
+  \item[\kw{function} list \returns{} \/\LB{}ImmutableVectorOfString\/\RB{}]~\\
+    Return a list of all of the names defined in the directory.
+\end{desc}
+
+Handler represents the type of objects that can register to be informed when
+Nodes come up and go down.  Such objects must conform to the type Handler,
+which is:
+
+{\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{typeobject} HandlerType\+\\*{}%
+  \kw{operation} nodeUp\/\LB{}\tn{Node}, Time\/\RB{}\\*{}%
+  \kw{operation} nodeDown\/\LB{}\tn{Node}, Time\/\RB{}\-\\*{}%
+\kw{end} HandlerType
+\end{tabbing}\end{minipage}}
+
+\subsection{None}
+\label{builtin None}
+None is the type that supports all operations, and is therefore
+implemented only by the \kw{nil} object.  It is defined to complete the
+lattice structure of \emd{} types; None represents the top element of the
+type lattice.
+
+\subsection{OutStream}
+\label{builtin outstream}
+OutStream objects provide the ability to write files.  The OutStream object
+is a type with the following interface:
+
+\begin{desc}
+  \item[\kw{operation} toUnix\/\LB{}fn \CO{} \tn{String}, mode \CO{} \tn{String}\/\RB{} \returns{} \/\LB{}OutStream\/\RB{}]~\\
+    Return a new output stream attached to the given operating system file.
+    Mode is as in fopen in C, and must begin with `w' or `a'.
+    The operation fails if the file cannot be opened in the given mode.
+  \item[\kw{operation} create\/\LB{}file \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}OutStream\/\RB{}]~\\
+    Return a new output stream attached to the given file descriptor. 
+\end{desc}
+
+\noindent Objects with type OutStream have the following interface.
+All of the output operations on OutStream objects fail if the requested
+operation cannot be performed.  
+
+\begin{desc}
+  \item[\kw{operation} putChar\/\LB{}c \CO{} \tn{Character}\/\RB{}]~\\
+    Append the character {\it c} on the stream.
+  \item[\kw{operation} putInt\/\LB{}n \CO{} \tn{Integer}, width \CO{} \tn{Integer}\/\RB{}]~\\
+    Append the decimal string representation of the \tn{Integer} {\it n} on the
+    stream, right justified in a field {\it width} wide.  If the value n
+    cannot be accurately represented in width characters, then the width
+    specification will be treated as infinity.
+  \item[\kw{operation} writeInt\/\LB{}n \CO{} \tn{Integer}, size \CO{} \tn{Integer}\/\RB{}]~\\
+    Write the binary representation of the \tn{Integer} {\it n} in {\it
+    size} bytes, in network byte order.  Size must be 1, 2, or 4.
+  \item[\kw{operation} putReal\/\LB{}x \CO{} \tn{Real}\/\RB{}]~\\
+    Append the decimal string representation of the \tn{Real} {\it x} on the
+    stream.  A representation of the value of x will be chosen so as to not
+    lose accuracy.
+  \item[\kw{operation} putString\/\LB{}s \CO{} \tn{String}\/\RB{}]~\\
+    Append the \tn{String} {\it s} on the stream.
+  \item[\kw{operation} flush]~\\
+    Flush any buffered output.
+  \item[\kw{operation} close]~\\
+    Close the stream, flushing any buffered output and preventing any
+    further output.
+\end{desc}
+
+\subsection{Real}
+\label{builtin Real}
+The Real type is implemented as a 32-bit floating-point number.
+The object Real is a type with the following interface:
+
+\begin{desc}
+  \item[\kw{function} literal\/\LB{}s \CO{} \tn{String}\/\RB{} \returns{} \/\LB{}\tn{Real}\/\RB{}]~\\
+    Return a Real number parsed from the string {\it s}.  The C language
+    function atof is used to parse the string.
+\end{desc}
+
+\noindent Objects with type Real are immutable and have the following
+interface:
+
+\begin{desc}
+  \item[\kw{function} \opd{$+$} \/\LB{}\tn{Real}\/\RB{} \returns{} \/\LB{}\tn{Real}\/\RB{}]
+  \item[\kw{function} \opd{$-$} \/\LB{}\tn{Real}\/\RB{} \returns{} \/\LB{}\tn{Real}\/\RB{}]
+  \item[\kw{function} \opd{$*$} \/\LB{}\tn{Real}\/\RB{} \returns{} \/\LB{}\tn{Real}\/\RB{}]
+  \item[\kw{function} \opd{$/$} \/\LB{}\tn{Real}\/\RB{} \returns{} \/\LB{}\tn{Real}\/\RB{}]~\\
+  Arithmetic functions.
+  \item[\kw{function} \opd{$\myuparrow$} \/\LB{}\tn{Real}\/\RB{} \returns{} \/\LB{}\tn{Real}\/\RB{}]~\\
+  Exponentiation. $a \myuparrow{} b$ returns $a$ raised to the exponent $b$.
+  \item[\kw{function} \opd{$>$} \/\LB{}\tn{Real}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$>=$} \/\LB{}\tn{Real}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$<$} \/\LB{}\tn{Real}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$<=$} \/\LB{}\tn{Real}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$=$} \/\LB{}\tn{Real}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$!=$} \/\LB{}\tn{Real}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+  Comparison functions.
+  \item[\kw{function} \opd{\tt\mytilde} \returns{} \/\LB{}\tn{Real}\/\RB{}]~\\
+    Return the negation of self.
+  \item[\kw{function} \opd{$-$} \returns{} \/\LB{}\tn{Real}\/\RB{}]~\\
+    Return the negation of self, same as {\tt\mytilde}.
+  \item[\kw{function} asString \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return a string representing my value.  The C language function
+    sprintf's \cd{}g specification is used.
+  \item[\kw{function} asInteger \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return an integer as close as possible to, but lower than my value.
+\end{desc}
+
+\subsection{Sequence, SequenceOfAny, SequenceOfString}
+Sequence represents indexable sequences.  The object Sequence is immutable
+and has interface:
+\begin{desc}
+  \item[\kw{function} of\/\LB{}T \CO{} \tn{type}\/\RB{} \returns{}
+  \/\LB{}aNewSequenceType \CO{} Type\/\RB{} \kw{forall} T]
+\end{desc}
+
+\noindent The object resulting from {\it \tn{Sequence}.of\/\LB{}T\/\RB{}}
+is a \tn{Signature} defined as follows:
+
+{\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\kw{typeobject} aNewSequence\+\\*{}%
+  \kw{function} lowerbound \returns{} \/\LB{}\tn{Integer}\/\RB{}\\*{}%
+  \kw{function} upperbound \returns{} \/\LB{}\tn{Integer}\/\RB{}\\*{}%
+  \kw{function} getElement\/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}T\/\RB{}\-\\*{}%
+\kw{end} aNewSequence
+\end{tabbing}\end{minipage}}
+
+\label{builtin SequenceOfAny}
+SequenceOfAny is Sequence of Any.  
+Vector.of[Any], ImmutableVector.of[Any], and Array.of[Any]
+all conform to SequenceOfAny.
+
+\label{builtin SequenceOfCharacter}
+SequenceOfCharacter is Sequence of Character.  
+Vector.of[Character], ImmutableVector.of[Character], and Array.of[Character]
+all conform to SequenceOfCharacter.
+
+\subsection{Signature, AOpVector, AOpVectorE, AParamList}
+\label{builtin Signature}
+Signature is the type of the object constructed by the compiler as the
+result of a typeobject constructor.  Signature has no interesting operations.
+
+\noindent Objects whose type is Signature are types, and have the
+following interface, all of which operations return information about the
+typeobject constructor that was used in the creation of the signature.
+
+\begin{desc}
+  \item[\kw{function} getIsImmutable \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the typeobject is immutable.
+  \item[\kw{function} getIsTypeVariable \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the typeobject is a type variable which resulted
+    from a for all or such that clause.
+  \item[\kw{function} getOps \returns{} \/\LB{}AOpVector\/\RB{}]~\\
+    Return a list of the operations in the typeobject.      
+  \item[\kw{function} getName \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return the name of the typeobject.
+  \item[\kw{function} getFileName \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return the file name of the Emerald source file that contained the
+    typeobject from which I was created.
+\end{desc}
+
+\label{builtin AParamList}
+AParamList is ImmutableVector.of[Signature].
+
+\label{builtin AOpVector}
+AOpVector is ImmutableVector.of[AOpVectorE].
+
+\label{builtin AOpVectorE}
+An AOpVectorE describes an operation in a Signature.  AOpVectorE is a type with
+the following interface: 
+
+\begin{desc}
+  \item[\kw{operation} create\/\LB{}]~\\
+    id \CO{} \tn{Integer},
+    NArgs \CO{} \tn{Integer},
+    NRess \CO{} \tn{Integer},
+    isFunction \CO{} \tn{Boolean},
+    name \CO{} \tn{String},
+    arguments \CO{} AParamList,
+    results \CO{} AParamList\/\RB{} \returns{} \/\LB{}AOpVectorE\/\RB{}
+\end{desc}
+
+Objects whose type is AOpVectorE are immutable and have the following
+interface:
+
+\begin{desc}
+  \item[\kw{function}  getID \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the internal id of the operation.
+  \item[\kw{function}  getNArgs \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the number of arguments to the operation.
+  \item[\kw{function}  getNRess \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the number of results returned by the operation.
+  \item[\kw{function}  getIsFunction \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+    Return \kw{true} if the operation is a function.
+  \item[\kw{function}  getName \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return the name of the operation.
+  \item[\kw{function}  getArguments \returns{} \/\LB{}AParamList\/\RB{}]~\\
+    Return a list of the argument types.    
+  \item[\kw{function}  getResults   \returns{} \/\LB{}AParamList\/\RB{}]~\\
+    Return a list of the result types.
+\end{desc}
+
+\subsection{String}
+\label{builtin String}
+
+The object String is a type and has the following interface:
+
+\begin{desc}
+  \item[\kw{operation} Literal\/\LB{}rep \CO{} Sequence.of\/\LB{}Character\/\RB{}, offset \CO{} \tn{Integer}, len \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return a \tn{String} with the characters from the given sequence of
+    characters. 
+  \item[\kw{operation} FLiteral\/\LB{}rep \CO{} VectorOfChar, offset \CO{} \tn{Integer}, len \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Same as literal, but with a more restrictive argument type (it must be a
+    \tn{Vector}), which makes the implementation more efficient.
+\end{desc}
+
+\noindent Objects whose type is String are immutable and have the following
+interface:
+
+\begin{desc}
+  \item[\kw{function} \opd{$>$} \/\LB{}\tn{String}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$>=$} \/\LB{}\tn{String}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$<$} \/\LB{}\tn{String}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$<=$} \/\LB{}\tn{String}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$=$} \/\LB{}\tn{String}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$!=$} \/\LB{}\tn{String}\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+    Comparison functions.
+  \item[\kw{function} getElement\/\LB{}index \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{Character}\/\RB{}]~\\
+    Return the character at position {\it index}, numbering from 0.
+  \item[\kw{function} getSlice\/\LB{}lb \CO{} \tn{Integer}, length \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return a substring of the string, starting at position {\it lb}, for
+    {\it length} characters.
+  \item[\kw{function} getElement\/\LB{}lb \CO{} \tn{Integer}, length \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Same as getSlice, but can use the convenient subscript syntax.
+  \item[\kw{function} length \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the length of the string.
+  \item[\kw{function} \opd{$|$$|$} \/\LB{}more \CO{} \tn{String}\/\RB{} \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return the result of concatenating the string {\it more} at the end of
+    self. 
+  \item[\kw{function} asString \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return self.
+  \item[\kw{function} lowerbound \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return 0.
+  \item[\kw{function} upperbound \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return self.length $-$ 1
+  \item[\kw{function} hash \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return a characteristic \tn{Integer}.  The hash function is chosen to
+    make the probability of two distinct strings having the same hash value
+    quite small.
+  \item[\kw{function} index\/\LB{}ch \CO{} \tn{Character}\/\RB{} \returns{} \/\LB{}r \CO{} \tn{Integer}\/\RB{}]~\\
+    Return the first position in the string at which the character {\it ch}
+    appears.  If ch does not appear, then return \kw{nil}.
+  \item[\kw{function} rindex\/\LB{}ch \CO{} \tn{Character}\/\RB{} \returns{}
+	  \/\LB{}r \CO{} \tn{Integer}\/\RB{}]~\\ 
+    Return the last position in the string at which the character {\it ch}
+    appears.  If ch does not appear, then return \kw{nil}.
+  \item[\kw{function} span\/\LB{}s \CO{} \tn{String}\/\RB{} \returns{} \/\LB{}r \CO{} \tn{Integer}\/\RB{}]~\\
+    Return the first position in the string at which a character not in the
+    string {\it s} appears.  If all characters are in s, then return the
+    length of the string.
+  \item[\kw{function} cspan\/\LB{}s \CO{} \tn{String}\/\RB{} \returns{} \/\LB{}r \CO{} \tn{Integer}\/\RB{}]~\\
+    Return the first position in the string at which a character in the
+    string {\it s} appears.  If no character in s appears in the string,
+    then return the length of the string.
+  \item[\kw{function} str\/\LB{}s \CO{} \tn{String}\/\RB{} \returns{} \/\LB{}r \CO{} \tn{Integer}\/\RB{}]~\\
+    Return the first position in the string at which the string {\it s}
+    appears as a substring.  If s is not a substring of the string, then
+    return \kw{nil}.
+  \item[\kw{operation} token\/\LB{}sep \CO{} \tn{String}\/\RB{} \returns{} \/\LB{}token \CO{} \tn{String}, rest\CO{} \tn{String}\/\RB{}]~\\
+    Parse a token from the front of the string.  Leading characters that
+    appear in the string {\it sep} are skipped, the first sequence of
+    characters that do not appear in the string sep are returned in the
+    result variable {\it token}.  If any additional characters appear in the
+    string after the token, then return the rest of the string after the token
+    in the result variable {\it rest}, otherwise return \kw{nil} in rest.
+    If there is no token in the string (all characters are in the string
+    sep), then return \kw{nil} as both token and rest.
+\end{desc}
+
+
+\subsection{Time}
+\label{builtin Time}
+Times represent times and dates.  They are stored as a number of
+seconds (since Jan 1, 1970 when interpreted as dates) and a number of
+microseconds.  They can be 
+used as either dates or times, and the standard arithmetic operations
+are defined on them (where they make sense).  The object Time is a type
+and has the following interface: 
+
+\begin{desc}
+  \item[\kw{operation} create\/\LB{}seconds \CO{} \tn{Integer}, microseconds \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}Time\/\RB{}]~\\
+    Create a new time object with the given values for its seconds and
+    microseconds fields.
+\end{desc}
+    
+\noindent Objects with type Time are immutable and have the following
+interface:
+
+\begin{desc}
+  \item[\kw{function} \opd{$+$} \/\LB{}Time\/\RB{} \returns{} \/\LB{}Time\/\RB{}]
+  \item[\kw{function} \opd{$-$} \/\LB{}Time\/\RB{} \returns{} \/\LB{}Time\/\RB{}]
+  \item[\kw{function} \opd{$*$} \/\LB{}n \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}Time\/\RB{}]
+  \item[\kw{function} \opd{$/$} \/\LB{}\tn{Integer}\/\RB{} \returns{} \/\LB{}Time\/\RB{}]~\\
+    Arithmetic functions.
+  \item[\kw{function} \opd{$>$} \/\LB{}Time\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$>=$} \/\LB{}Time\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$<$} \/\LB{}Time\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$<=$} \/\LB{}Time\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$=$} \/\LB{}Time\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]
+  \item[\kw{function} \opd{$!=$} \/\LB{}Time\/\RB{} \returns{} \/\LB{}\tn{Boolean}\/\RB{}]~\\
+    Comparison functions.
+  \item[\kw{function} getSeconds \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the seconds component.
+  \item[\kw{function} getMicroSeconds \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the microseconds component.
+  \item[\kw{function} asString \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return a string representing the number of seconds and microseconds
+    formatted in decimal, as in 6:002342.
+  \item[\kw{function} asDate \returns{} \/\LB{}\tn{String}\/\RB{}]~\\
+    Return a string representing the value of the time as a date.  The
+    string has the form: Sat Aug 17 20:19:50 PDT 1996.
+\end{desc}
+
+\subsection{Type}
+\label{builtin Type}
+The object \tn{Type} represents the type of all types.  It has no other
+useful operations.
+
+\subsection{Vector, VectorOfInt, VectorOfChar, }
+\label{builtin Vector}
+Vector is the name of an object with a polymorphic operation of that creates
+mutable vectors.  Vectors provide the most
+primitive mechanism for acquiring indexable storage.  The builtin
+object Array is implemented entirely in Emerald, using the facilities
+offered by Vector.  The object Vector is immutable and has the following
+interface: 
+
+\begin{desc}
+  \item[\kw{function} of\/\LB{}T \CO{} \tn{Type}\/\RB{} \returns{} \/\LB{}aNewVectorCreatorType\/\RB{}]
+    \kw{forall} T
+\end{desc}
+
+\noindent The creator object resulting from {\it \tn{Vector}.of\/\LB{}T\/\RB{}}
+is a type with the following interface, named aNewVectorCreatorType:
+
+\begin{desc}
+  \item[\kw{operation} create\/\LB{}length \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}aNewVectorType\/\RB{}]~\\
+    Create a new vector of length {\it length}, all of whose elements are
+    \kw{nil}. 
+\end{desc}
+
+\noindent Objects with type {\it \tn{Vector}.of\/\LB{}T\/\RB{}} have the
+following interface, called aNewVectorType:
+
+\begin{desc}
+  \item[\kw{function}  getElement\/\LB{}index \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}T\/\RB{}]~\\
+    Return the element at {\it index}.
+  \item[\kw{operation} setElement\/\LB{}index \CO{} \tn{Integer}, value \CO{} T\/\RB{}]~\\
+    Set the element at {\it index} to {\it value}.
+  \item[\kw{function}  lowerbound \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return 0.
+  \item[\kw{function}  upperbound \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the largest valid index.
+  \item[\kw{function}  getSlice\/\LB{}lb \CO{} \tn{Integer}, length\CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}aNewVectorType\/\RB{}]~\\
+    Return a new object with type aNewVectorType containing the {\it length}
+    elements starting at position {\it lb}.
+  \item[\kw{function}  getElement\/\LB{}lb \CO{} \tn{Integer}, length\CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}aNewVectorType\/\RB{}]~\\
+    The same as getSlice, but is able to use the subscript notation.
+\end{desc}
+
+\label{builtin VectorOfInt}
+VectorOfInt is Vector.of[Integer].
+
+\label{builtin VectorOfChar}
+VectorOfChar is Vector.of[Character].
+
+\subsection{ImmutableVector, ImmutableVectorOfAny, ImmutableVectorOfInt, ImmutableVectorOfString}
+\label{builtin ImmutableVector}
+
+ImmutableVector is the name of an object that creates immutable vectors.
+The object
+ImmutableVector is immutable and has the following interface:
+
+\begin{desc}
+  \item[\kw{function} of\/\LB{}T \CO{} \tn{Type}\/\RB{} \returns{} \/\LB{}aNewVectorCreatorType\/\RB{}]\kw{forall} T
+\end{desc}
+
+\noindent The object resulting from 
+{\it \tn{ImmutableVector}.of\/\LB{}T\/\RB{}}
+is a type and a creator with the following interface, named 
+aNewVectorCreatorType: 
+
+\begin{desc}
+  \item[\kw{operation} create\/\LB{}length \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}aNewVectorType\/\RB{}]~\\
+    Create a new immutable vector of length {\it length}, all of whose
+    elements are \kw{nil}.  This is not terribly useful.
+  \item[\kw{operation} literal\/\LB{}other \CO{} Sequence.of\/\LB{}T\/\RB{}\/\RB{} \returns{} \/\LB{}aNewVectorType\/\RB{}]~\\
+    Create a new immutable vector, initialized with all of the elements of 
+    {\it other}.
+  \item[\kw{operation} literal\/\LB{}other \CO{} Sequence.of\/\LB{}T\/\RB{}, length \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}aNewVectorType\/\RB{}]~\\
+    Create a new immutable vector of length {\it length}, initialized with
+    the first length elements of {\it other}.
+  \item[\kw{operation} literal\/\LB{}other \CO{} Sequence.of\/\LB{}T\/\RB{}, start \CO{} Integer, length \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}aNewVectorType\/\RB{}]~\\
+    Create a new immutable vector of length {\it length}, initialized with
+    the length elements of {\it other}, starting at index {\it start}.
+\end{desc}
+
+\noindent Objects with type {\it \tn{ImmutableVector}.of\/\LB{}T\/\RB{}} have the
+following interface, called aNewVectorType:
+
+\begin{desc}
+  \item[\kw{function}  getElement\/\LB{}index \CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}T\/\RB{}]~\\
+    Return the element at {\it index}.
+  \item[\kw{function}  lowerbound \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return 0.
+  \item[\kw{function}  upperbound \returns{} \/\LB{}\tn{Integer}\/\RB{}]~\\
+    Return the largest valid index.
+  \item[\kw{operation} catenate \/\LB{}other \CO{} aNewVectorType\/\RB{} \returns{} \LB{}aNewVectorType\/\RB{}]~\\
+    Return a new Immutable vector containing all of the elements of self
+    followed by all of the elements of other.
+  \item[\kw{function}  getSlice\/\LB{}lb \CO{} \tn{Integer}, length\CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}aNewVectorType\/\RB{}]~\\
+    Return a new object with type aNewVectorType containing the {\it length}
+    elements starting a position {\it lb}.
+  \item[\kw{function}  getElement\/\LB{}lb \CO{} \tn{Integer}, length\CO{} \tn{Integer}\/\RB{} \returns{} \/\LB{}aNewVectorType\/\RB{}]~\\
+    The same as getSlice, but is able to use the subscript notation.
+\end{desc}
+
+\label{builtin ImmutableVectorOfAny}
+ImmutableVectorOfAny is ImmutableVector.of{Any}.
+
+\label{builtin ImmutableVectorOfInt}
+ImmutableVectorOfInt is ImmutableVector.of{Integer}.
+
+\label{builtin ImmutableVectorOfString}
+ImmutableVectorOfString is ImmutableVector.of{String}.
+

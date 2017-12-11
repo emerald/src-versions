@@ -1,0 +1,32 @@
+{\small\it\begin{minipage}{\textwidth}\begin{tabbing}
+xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=xxx\=\+\kill%
+\cd{} Define an \tn{Integer} stack creation \kw{object}\\[1.0ex]{}%
+\kw{export} Stack\\[1.0ex]{}%
+\kw{const} Stack \assign{}\+\\*{}%
+  \kw{immutable} \kw{object} Stack\+\\*{}%
+    \kw{const} StackType \assign{}\+\\*{}%
+      \kw{typeobject} StackType\+\\*{}%
+        \kw{operation} Push\/\LB{}n\CO{} \tn{Integer}\/\RB{}\\*{}%
+        \kw{operation} Pop \returns{} \/\LB{}n\CO{} \tn{Integer}\/\RB{}\\*{}%
+        \kw{function} Empty \returns{} \/\LB{}result \CO{} \tn{Boolean}\/\RB{}\-\\*{}%
+      \kw{end} StackType\-\\[1.0ex]{}%
+    \kw{export} \kw{function} getSignature \returns{} \/\LB{}r \CO{} \tn{Signature}\/\RB{}\+\\*{}%
+      r \assign{} StackType\-\\*{}%
+    \kw{end} getSignature\\[1.0ex]{}%
+    \kw{export} \kw{operation} create \returns{} \/\LB{}result \CO{} StackType\/\RB{}\+\\*{}%
+      result \assign{} \+\\*{}%
+        \kw{object} aStack\+\\*{}%
+	  \kw{const} store \assign{} \tn{Array}.of\/\LB{}\tn{Integer}\/\RB{}.empty\\[1.0ex]{}%
+	  \kw{export} \kw{operation} Push\/\LB{}n\CO{} \tn{Integer}\/\RB{}\+\\*{}%
+	    store.addUpper\/\LB{}n\/\RB{}\-\\*{}%
+	  \kw{end} Push\\[1.0ex]{}%
+	  \kw{export} \kw{operation} Pop \returns{} \/\LB{}n\CO{} \tn{Integer}\/\RB{}\+\\*{}%
+	    n \assign{} store.removeUpper\-\\*{}%
+	  \kw{end} Pop\\[1.0ex]{}%
+	  \kw{export} \kw{function} Empty \returns{} \/\LB{}result \CO{} \tn{Boolean}\/\RB{}\+\\*{}%
+	    result \assign{} store.empty\-\\*{}%
+	  \kw{end} Empty\-\\*{}%
+        \kw{end} aStack\-\-\\*{}%
+    \kw{end} create\-\-\\[1.0ex]{}%
+\kw{end} Stack
+\end{tabbing}\end{minipage}}

@@ -1,0 +1,39 @@
+I have explored RCS's ability to deal with overlapping edits of a file, and
+now postulate the following procedure to allow multiple edits to a file
+to proceed in parallel and be later merged.  The procedure will be described
+with only 2 simultaneous edits, but I believe that it generalizes.
+
+Person A checks out a file "f" for editing, locking a particular version say
+1.12.
+
+Person B wants to check out the same file, but finds it locked.  He then:
+
+    1.  checks out the file unlocked so that he starts at the same place that
+	person A started, remembering the version number (1.12).
+    2.  chmod +w's the file, and edits it to his heart's content.
+    3.  When he is done and happy, he checks the file back in with a new
+	branch, doing:
+	    ci -r1.12.1.1 f
+    4.  He waits until person a is finished editing the file and has checked
+	in his changes, creating version 1.13.
+    5.  He executes:
+	    co -l -j1.12.1.1 f
+	Which creates a "joined" version between 1.12.1.1 and the latest
+	version on the trunk (1.13), and checks out this file locked.
+	
+	Assuming that this join process does not indicate any overlaps, the
+	person just verifies that the file is ok (compiling and running
+	tests) and then checks it back in immediately.  If co -j indicates
+	overlaps then these have to be corrected manually.
+
+Generalizing this to more than 2 simultaneous edits requires that each
+sucessive editor find a new branch number 1.12.2.1, 1.12.3.1, ... to assign
+to his branch.  When all the dust has settled, you can join them all up
+together with
+
+	co -l -j1.12.1.1,1.12:1.12.2.1,1.12:1.12.3.1 foo
+	
+The argument to -j is a comma separated list of pairs, the first of each
+pair is the common ancestor (always 1.12 in this case) and the second is the
+branch to join in.  The result of the previous join is used as input to the
+next join.

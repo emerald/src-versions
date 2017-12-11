@@ -1,0 +1,29 @@
+#
+# sgi specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH=`arch`
+
+# (ANSI) C compiler
+CC=gcc
+
+# definitions to enable common extensions in headers and libraries
+XCPFLAGS=-D__ANSI__ -fsigned-char -DDISTRIBUTED -DTIMESLICE -DUSEDISTGC
+
+XLIB=
+
+# C preprocessor
+CPP=gcc -E
+
+# dependency generator
+DEPEND=gcc -MM
+
+# ranlib.  ar does the work for us so it's not needed
+RANLIB=true
+
+# 
+CFLAGSOPT=-g 
+OPTCOPT=$(CFLAGSOPT)
+OPTVMOPT=$(CFLAGSOPT)

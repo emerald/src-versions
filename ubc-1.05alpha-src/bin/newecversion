@@ -1,0 +1,25 @@
+#!/bin/csh -f
+# If your copy doesn't grok -p, then set P to the null string
+
+set P = -p
+if ($#argv == 0) then
+    set versionnumber = `findecversion`
+    if ("$versionnumber" == "") set versionnumber = 1
+    echo "Creating version number $versionnumber"
+else
+    set versionnumber = $argv[1]
+endif
+if (-r Compiler.v$versionnumber) then
+    echo "newversion: version number $versionnumber already exists"
+    ls -lt {Compiler.v,Builtins.v}$versionnumber
+    exit (1)
+endif
+if (! -r Compiler || ! -r Builtins) then
+    echo "  Not all of the required files exist"
+    exit (1)
+endif
+foreach i (Compiler Builtins)
+   echo cp $P $i ${i}.v$versionnumber
+   cp -i $P $i ${i}.v$versionnumber
+   chmod -w ${i}.v$versionnumber
+end

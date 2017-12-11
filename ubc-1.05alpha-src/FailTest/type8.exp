@@ -1,0 +1,16 @@
+Compiling type8.m
+"type8.m", line 5: Type of the constant "y" must be manifest
+"type8.m", line 6: Non type in constant declaration
+"type8.m", line 7 Warning: Can't figure out the type of the constant yy
+"type8.m", line 8: Non type in view expression
+"type8.m", line 8 Warning: Can't figure out the type of the constant zz
+"type8.m", line 9: Type of view expressions must be manifest
+"type8.m", line 9: Non type in view expression
+"type8.m", line 9: Type of the parameter "a" must be manifest
+"type8.m", line 9: Non type in parameter declaration
+"type8.m", line 9: Type of the parameter "c" must be manifest
+  Can't find operation getsignature
+  Type integertype doesn't conform to type typetype
+"type8.m", line 2: The initializer type doesn't conform to that declared for the constant
+"type8.m", line 3: The initializer type doesn't conform to that declared for the variable
+"type8.m", line 9: Invocation +[1] returns 1 results, 0 are expected

@@ -1,0 +1,40 @@
+#!/bin/csh -f
+set old = $1
+set new = $2
+set element = $3
+set id = $4
+set fn = $5
+
+ed - $old << theend
+1,/NV <-/-1 d
+/end NV/+1,/object aNVT/-1 d
+/object aNVT/s/^/const $new <- /
+/end aNVT/+1,\$d
+1,\$s/aNVT/$new/g
+1,\$s/aNV/a$new/g
+1,\$s/NV/${new}Type/g
+/${new}Type <-/s/^/const/
+1,\$s/ElementType/$element/g
+/typeobject ${new}Type/s/ builtin.*\$/ builtin 0x16$id/
+/immutable object $new/s/\$/ builtin 0x10$id/
+/object .* builtin/s/builtin.*\$/ builtin 0x14$id/
+g/%/d
+\$a
+export $new to "Builtins"
+.
+w $fn
+q
+theend
+if ($old == IVec.m) then
+    ed - $fn << theend
+1i
+const RIS <- typeobject RIS
+  function  getElement [Integer] -> [$element]
+  function  upperbound -> [Integer]
+  function  lowerbound -> [Integer]
+end RIS
+.
+w
+q
+theend
+endif

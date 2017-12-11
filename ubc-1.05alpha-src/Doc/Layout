@@ -1,0 +1,150 @@
+
+Emerald System Layout
+====================
+
+Goals
+----
+
+The structure of the Emerald file tree is somewhat complicated. We are 
+attempting to support any and all Unix-like OSes, using only fairly 
+standard tools (ed, sed, sh, awk and make.)  Also, we support multiple 
+binaries for each architecture simultaneously, and multiple users, each 
+who want different binaries. 
+
+To support multiple simultaneous binaries, we have lots of 
+subdirectories in bin, lib and vm. To support multiple users, on 
+different machines, with different preferences, we customize each 
+user's path as appropriate. 
+
+Simple installation:
+
+You need to set a couple of environment variables:
+EMERALDROOT - should not change much; can be set in .cshrc.  Points
+	      to the common, shared, Emerald tree.
+EMERALDARCH - contains the name of an 'architecture' whose binaries
+	      you wish to run.  If you don't want to do anything fancy,
+	      this can simply be the output of arch on your machine.
+	      Do this in your .cshrc too.
+
+You need a couple of aliases (because you can't set your parent's
+environment, we need to do this this way.)
+
+alias emroot 'setenv `$EMERALDROOT \!*`'
+alias emarch 'eval `$EMERALDROOT/bin/setarch \!*`'
+
+The useemerald script did, at one point, set up a new user's
+environment properly.
+
+
+The Directory Structure
+----------------------
+
+RV   Builtins          Emerald source code and experimental binaries
+		       for builtin objects
+
+     Doc               miscellaneous documents
+
+RV   EC                Emerald source code and experimental binaries
+		       for Emerald compiler
+
+     Env               the Emerald operating environment, under construction
+
+     Example           example programs, not necessarily all current
+
+RV   ExecTests         regression tests
+
+     FailTests         regression tests, expected to fail
+
+R    Report            LaTeX source and .dvi files for the Emerald
+		       Programming Language Report
+
+     Test              more test code
+
+R    Tutorial          LaTeX source and .dvi files for the Emerald
+		       Programming Language Tutorial
+
+R    X                 X Window stuff
+
+  A  bin               Emerald interpreters, and tools.  See document
+		       BinTools for a description of the available tools.
+
+R    ccalls            C source code for special operations accessible
+		       through low-level Emerald 'primitive' instruction
+
+R    emyacc            C source code for Emerald generating Yacc
+
+     emyacc-ex         Example of an Emerald parser
+
+R    gc                C source code for garbage collector used in
+                       Emerald interpreter
+
+  A  lib               Stable Emerald compiler and builtins, link
+		       libraries, and architecture specific makefiles
+
+RVA  vm                C source code for Emerald interpreter
+
+R    vmc               C source code for virtual machine description
+		       compiler
+
+The above is actually a bit of an over-simplicification, as there may be 
+multiple, numbered, directories containing different versions of the same 
+thing.  For example, there are EC_0, EC_1 and EC_2 directories, not just a 
+single EC directory.  EC, is in fact, a symbolic link to one of these 
+directories.  Such 'multiple version' directories are prefixed with a 'V'.
+The numbered versions (except for the one linked to by EC) are backups
+of old versions, and can generally be ignored.
+
+Similarly, there are 'multiple architecture' directories, such as vm, which 
+contain similar subdirectories, (e.g. sun4 and hp700), exactly one of which 
+is for use at a time, namely when working on that particular architecture.  
+One can expect the contents of each of the multiple architecture directories 
+to contain binaries for the same single version of the sources.  Note that 
+we can consider binaries for the same architecture but using different 
+compile options or compilers to be different architectures. These 
+directories are prefixed by an 'A'. 
+
+Directories listed above that contain important source code have an RCS 
+subdirectory within them.  These are prefixed by a 'R'. 
+
+
+How it all hangs together
+------------------------
+
+Emerald currently consists of a compiler, which produces byte-codes as
+output, and an interpreter for executing the byte-code output.
+
+There is a checkpoint facility for dumping the entire system at suitable
+points.  There are variants of the compiler that use this mechanism.
+
+There is a tool for producing interpreters.  This level of indirection
+is not currently used to much advantage, as there is a single
+interpreter.
+
+There is a mechanism to support multiple architectures.
+
+The compiler is written in itself, and this makes modification tricky.
+There are version tools to help ease the pain.
+
+How to build the interpreter
+---------------------------
+
+Go to the appropriate subdirectory of $EMERALDROOT/vm and emmake.
+It is your responsibility to ensure that standard tools (like
+make, any tools defined in macroMakefiles, ls and grep) are in
+the search path.
+
+How to build the compiler
+------------------------
+
+The easiest way is to use emmake ffs.  The end result is a compiler which 
+produces CP files.  Note that this is the experimental compiler, and
+hence, you will need to invoke it with xemc.  To install it as the
+stable compiler, you'll need to copy bits to lib.
+
+How to use the compiler
+----------------------
+
+See Appendix B of the Emerald Programming Language Report for starters, or 
+the Emerald Tutorial.  Basically, run emc.  Give a filename at the prompt.  
+Exit with EOF.  Run the resultant .x file as an argument to emx. 
+

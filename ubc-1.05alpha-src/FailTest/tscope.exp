@@ -1,0 +1,7 @@
+Compiling tscope.m
+"tscope.m", line 3: Redefinition of symbol "s"
+"tscope.m", line 14: Operation harry[0] is multiply defined
+"tscope.m", line 22: Operation billy is multiply defined
+"tscope.m", line 26: Function must return 1 result, not 0
+"tscope.m", line 28: Function must return 1 result, not 0
+"tscope.m", line 30: Function must return 1 result, not 2

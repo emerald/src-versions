@@ -1,0 +1,23 @@
+Compiling multi2.m
+"multi2.m", line 14: Operation lots[1] is not defined
+"multi2.m", line 15: Operation lots[2] is not defined
+  charactertype is a primitive type which cannot be conformed to
+  Type integertype doesn't conform to type charactertype
+"multi2.m", line 16: type of rhs expression 1 does not conform to lhs
+  integertype is a primitive type which cannot be conformed to
+  Type stringtype doesn't conform to type integertype
+"multi2.m", line 16: type of rhs expression 2 does not conform to lhs
+  Vector mismatch
+  Type charactertype doesn't conform to type stringtype
+"multi2.m", line 16: type of rhs expression 3 does not conform to lhs
+  Vector mismatch
+  Type integertype doesn't conform to type stringtype
+"multi2.m", line 17: type of rhs expression 1 does not conform to lhs
+  charactertype is a primitive type which cannot be conformed to
+  Type stringtype doesn't conform to type charactertype
+"multi2.m", line 17: type of rhs expression 2 does not conform to lhs
+  integertype is a primitive type which cannot be conformed to
+  Type charactertype doesn't conform to type integertype
+"multi2.m", line 17: type of rhs expression 3 does not conform to lhs
+"multi2.m", line 18: Invocation lots[0] returns 3 results, 2 are expected
+"multi2.m", line 19: Invocation lots[0] returns 3 results, 4 are expected

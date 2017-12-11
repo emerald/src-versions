@@ -1,0 +1,87 @@
+#!/bin/csh -f
+#
+# forallarch : do an Emerald specific command once on a particular
+#              machine of each supported architecture.  Supported
+#              architectures are found in $EMERALDROOT/lib/systems
+#              an alternative file can be given after the -f flag
+#
+# EMERALDROOT is expected to be set on rlogin
+# EMERALDARCH will be set on rlogin
+#
+# currently supported commands:
+#  ccalls - build all ccalls libraries, needed to build interpreters
+#  emx    - build all Emerald interpreters
+#  emxnt  - build, but do not test, all Emerald interpreters
+#  emxntp - build, but do not test, all Emerald interpreters in parallel
+#  emyacc - build and install emyacc on all systems
+#  vmc    - build and install vmc on all systems
+#
+
+set sysfile = $EMERALDROOT/lib/systems
+if ($#argv >= 2 && .$1 == .-f) then
+    set sysfile = $2
+    shift
+    shift
+endif
+
+if ($#argv != 1) then
+    echo "Usage: forallarch [-f sysfile] <command>"
+    exit 1
+endif
+
+set systems = `sed -e "/^#/d" $sysfile`
+while ($#systems > 1) 
+    set arch = $systems[1]
+    shift systems
+    set host = $systems[1]
+    shift systems
+    
+    echo "Making $1 for $arch on $host"
+    switch ($1)
+    case fullemx:
+        rsh $host -n eval \`setarch -q $arch\` \; \
+	  cd $EMERALDROOT/vm/$arch \;  rm Makefile \; ln -s ../src/Makefile . \; emmake links \; emmake clean \; emmake emx \; \
+	  cd $EMERALDROOT/ExecTest \; emmake test 
+        breaksw
+    case emx:
+        rsh $host -n eval \`setarch -q $arch\` \; \
+	  cd $EMERALDROOT/vm/$arch \; emmake emx \; \
+	  cd $EMERALDROOT/ExecTest \; emmake test 
+        breaksw
+    case test:
+        rsh $host -n eval \`setarch -q $arch\` \; \
+	  cd $EMERALDROOT/ExecTest \; emmake test 
+        breaksw
+    case testp:
+        rsh $host -n eval \`setarch -q $arch\` \; \
+	  cd $EMERALDROOT/ExecTest \; emmake test &
+        breaksw
+    case emxnt:
+        rsh $host -n eval \`setarch -q $arch\` \; \
+	  cd $EMERALDROOT/vm/$arch \; emmake emx \;
+        breaksw
+    case emxntp:
+        rsh $host -n eval \`setarch -q $arch\` \; \
+	  cd $EMERALDROOT/vm/$arch \; emmake emx \; &
+        breaksw
+    case emyacc:
+        rsh $host -n eval \`setarch -q $arch\` \; \
+	  cd $EMERALDROOT/emyacc \; emmake clean \; emmake install
+	breaksw
+    case vmc:
+        rsh $host -n eval \`setarch -q $arch\` \; \
+	  cd $EMERALDROOT/vmc \; emmake clean \; emmake install
+	breaksw
+    case speed:
+        rsh $host -n eval \`setarch -q $arch\` \; \
+	  cd $EMERALDROOT/Example \; set time=0 \; emx -v count.x
+	breaksw
+    default:
+	echo "$1 : Unknown forallarch command"
+	exit 1
+	breaksw
+    endsw
+end
+
+exit 0
+

@@ -1,0 +1,3 @@
+Compiling ident1.m
+"ident1.m", line 2: Type of the variable "integer" must be manifest
+"ident1.m", line 2: Non type in variable declaration

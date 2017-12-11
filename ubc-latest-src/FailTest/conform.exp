@@ -1,0 +1,19 @@
+Compiling conform.m
+  Can't find operation setx
+  Type rudolphtype doesn't conform to type arectype
+"conform.m", line 7: type of rhs does not conform to lhs
+  Can't find operation setx
+  Type harrytype doesn't conform to type arectype
+"conform.m", line 9: type of rhs does not conform to lhs
+  Immutable mismatch
+  Type sallytype doesn't conform to type arectype
+"conform.m", line 14: type of rhs does not conform to lhs
+  integertype is a primitive type which cannot be conformed to
+  Type realtype doesn't conform to type integertype
+"conform.m", line 16: type of rhs does not conform to lhs
+  Immutable mismatch
+  Type billytype doesn't conform to type arectype
+"conform.m", line 19: type of rhs does not conform to lhs
+  Immutable mismatch
+  Type marytype doesn't conform to type arectype
+"conform.m", line 24: type of rhs does not conform to lhs

@@ -1,0 +1,144 @@
+\section{Compiling Emerald Programs}
+\label{compiler appendix}
+
+This appendix presents a sample \emd{} program, and shows how
+Emerald programs are compiled and executed.  
+Examples of the Emerald style of programming can be found
+in \cite{Raj90spe}.
+
+The latest implementation of Emerald uses an interpreter to increase
+portability.  The compiler is written in Emerald, and generates executable
+files containing byte codes which are then interpreted.  The two commands of
+interest are:
+\begin{description}
+  \item[emc]{}~\\
+    The emerald compiler is interactive.  The primary commands of interest
+    to casual Emerald users are:
+    \begin{description}
+      \item[{\bf load} filename]{} ~\\
+	Define the environment in which this compilation is to be executed.
+	Environments are stored in Unix files in the working directory.  
+	Exported identifiers are made known in the environment
+	in order to facilitate separate compilation.  A compilation
+	environment consists of two files:  {\it filename\/} and {\it
+	filename\/}.idb.  Both will be created as needed if they do not
+	already exist.
+      \item[filename]{} ~\\
+	Compile the given file (whose name should end in .m).  The
+	executable is written to a file with the extension .x.
+    \end{description}
+  \item[emx]{} ~\\
+    The emerald interpreter.  Typically invoked as:
+    \begin{quote}
+      emx filename.x
+    \end{quote}
+    Emx supports a large number of flags, the most useful of which are:
+    \begin{description}
+      \item[-i]{} ~\\
+	Invoke the integrated Emerald debugger when errors occur.
+      \item[-Tcall]{} ~\\
+	Generate a call trace giving the calls and returns of all operations
+	and functions.
+      \item[-v]{} ~\\
+	Generate summary statistics on program termination.
+    \end{description}
+\end{description}
+
+The environment mechanism 
+permits the sharing of object
+definitions between compilations.  Objects (actually, identifiers) exported
+from one compilation unit that are to be used in another must be exported to
+the environment in order to be visible to later compilation units.
+An Emerald compilation unit is defined as follows:
+
+\begin{center}
+\begin{tabular}{lcl}
+compilation & $::=$   & \oseq{environmentExport $|$ constantDeclaration } \\
+environmentExport
+            & $::=$   & \kw{export} \sseq{identifier}{\terminal{,}} \\
+\end{tabular}
+\end{center}
+
+For example, if an object $Directory$ is being defined in compilation, and
+needs to be used by other objects (being compiled later), a statement:
+
+\begin{quote}
+  \kw{export}  \it Directory
+\end{quote}
+
+is needed. Other source code that uses the identifier {\it Directory} must
+be compiled in the context of this export.
+
+\subsection{A Sample Program}
+\label{sample program}
+
+This simple example involves an integer stack creator ({\it Stack\/}),
+which is compiled first, and a test object ({\it Tester\/}), which is compiled
+later and makes use of the $Stack$. The two programs are entered into
+separate Unix files.
+
+\subsubsection*{The file {\tt stack.m}}
+\begin{figure}[tbp]
+\input{stack-prog}
+\caption{The file {\tt stack.m}}
+\label{STACK PROG}
+\end{figure}
+This Emerald program file defines the stack-creator (see Figure~\ref{STACK
+PROG}); once created, this object
+accepts $create$ invocations and returns a new stack-like object
+(conforming to $Stacktype$) on each such invocation. See
+\cite{Hutchinson87,Raj90spe} for a better understanding of this
+program.  Note that the name Stack is exported to the compilation
+environment using the export directive.
+    
+\subsection*{The file {\tt tester.m}}
+\begin{figure}
+\input{teststack-prog}
+\caption{The file {\tt tester.m}}
+\label{TEST STACK PROG}
+\end{figure}
+This file (see~Figure~\ref{TEST STACK PROG}) contains a simple object that
+can be used to 
+test the $Stack$ object defined in Figure~\ref{STACK PROG}.
+This object invokes the stack-creator object $Stack$
+to create the new stack named $myStack$; the rest of the program is fairly
+straight-forward. The name {\it Stack\/} in unbound in this example,
+therefore this program must be compiled in a compilation environment that
+includes the name {\it Stack\/}.
+Also note the predefined identifier {\it stdin\/} and {\it stdout\/} which name
+the (already opened) standard input and output streams respectively.
+
+\subsection{Compiling the Program}
+\label{compiling program}
+Compiling the program requires the following steps.  We assume that the
+source files are named stack.m and stacktest.m.  The following steps provide
+input to the compiler at its ``Command:'' prompt, after it has been started
+using the Unix command ``emc''.
+\begin{enumerate}
+  \item{} Direct the compiler to load the stack environment:  ``load
+    stackenv''.
+  \item{} Compile the stack creator: ``stack.m''.
+  \item{} Compile the stack tester: ``stacktest.m''.
+  \item{} Terminate the compiler ``quit''.
+\end{enumerate}
+\subsection{Executing the Program}
+\label{executing program}
+The previous steps have generated two emerald executable files, stack.x and
+stacktest.x.  These must be executed together:
+\begin{quote}
+  emx stack.x stacktest.x
+\end{quote}
+
+On executing this command, we get the following output:
+
+\begin{verbatim}
+        Pushing 0 on my stack.
+        Pushing 1 on my stack.
+        Pushing 2 on my stack.
+        Pushing 3 on my stack.
+        Printing in reverse order.
+        Popped 3 from my stack.
+        Popped 2 from my stack.
+        Popped 1 from my stack.
+        Popped 0 from my stack.
+\end{verbatim}

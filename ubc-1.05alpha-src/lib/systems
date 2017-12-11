@@ -1,0 +1,30 @@
+#
+# Systems on which emerald runs
+# This file is used by $EMERALDROOT/bin/forallarch
+#
+# architecture	machinename
+#
+
+  hp700		cobra
+  hp700x	cobra
+  hp700mt	cobra
+  next		blue
+  nextmt	blue
+  sgi		rainforest
+  sgimt		rainforest
+  sgix		rainforest
+  sun4		ice
+  sun4x		ice
+  sun4mt	ice
+  sun4sol	cascade
+  sun4solx	columbia
+  sun4solmt	columbia
+  i386freebsd	manning
+  i386freebsdx	manning
+  i386freebsdmt	manning
+  i386linux	zephyr
+  i386linuxx	zephyr
+  i386linuxmt	zephyr
+  i86pc		rickards
+  i86pcmt	rickards
+  dec3000mt	stockholm

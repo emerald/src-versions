@@ -1,0 +1,28 @@
+#!/bin/csh -f
+#
+# Generate the tables and lists that drive the new ccalls mechanism
+
+set files = ($*)
+set ccdef = $EMERALDROOT/lib/ccdef
+@ moduleindex = 0
+cp /dev/null $ccdef
+
+foreach file ($files)
+  set modulename = `echo $file:r | tr a-z A-Z`
+  echo Generating $modulename
+  echo >> $ccdef "#define ${modulename} $moduleindex"
+  set ccs = `grep '^CCALL' $file | sed -e 's/CCALL *( *//' -e 's/,/ /g' -e 's/)//' -e 's/"//g' -e 's/;//' -e 's/\r//'`
+  @ i = 1
+  @ functionindex = 0
+  while ($i < $#ccs)
+    set functionname = $ccs[$i]
+    @ i ++
+    set ccallname = $ccs[$i]
+    @ i ++
+    set ccallstring = $ccs[$i]
+    @ i ++
+    echo >> $ccdef "#define ${ccallname} $functionindex"
+    @ functionindex ++
+  end
+  @ moduleindex ++
+end

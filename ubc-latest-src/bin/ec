@@ -1,0 +1,26 @@
+#!/bin/sh
+I="set dieonerror@"
+E=0
+ECHO=echo
+ARGS=
+
+for i do
+    if [ $E = 1 ] ; then
+	I=$I"$i@" ;
+	E=0
+    else
+	case $i in
+	    set) I=$I"set "; E=1; ;;
+	    -s) I=$I"set "; E=1; ;;
+	    unset) I=$I"unset "; E=1; ;;
+	    -u) I=$I"unset "; E=1; ;;
+	    -T) I=$I"set trace"; E=1; ;;
+	    -O*) ARGS=$ARGS$i; ;;
+	    load) I=$I"load "; E=1; ;;
+	    -l) I=$I"load "; E=1; ;;
+	     *) I=$I"$i@"; ;;
+	 esac
+    fi
+done
+
+$ECHO $I | tr '@' '\012' | emc $ARGS

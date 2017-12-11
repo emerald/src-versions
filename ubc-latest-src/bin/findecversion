@@ -1,0 +1,13 @@
+#!/bin/csh -f
+set max = 0
+set nonomatch
+set all = ( Compiler.v[0-9]*)
+unset nonomatch
+if ( "$all" != 'Compiler.v[0-9]*') then
+    foreach i ( $all )
+	set this = `echo $i | sed -e 's/Compiler.v//'`
+	if ($this > $max) set max = $this
+    end
+endif
+@ max ++
+echo $max

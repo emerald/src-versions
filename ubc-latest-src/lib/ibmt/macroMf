@@ -1,0 +1,29 @@
+#
+# ibmgcc2 specific definitions
+# of commonly-used macros
+#
+
+# architecture definition
+ARCH = `arch`
+
+# (ANSI) C compiler
+CC = gcc
+
+# definitions to enable common extensions in headers and libraries
+XCPFLAGS = -Dibm -DDISTRIBUTED -DTIMESLICE
+
+XLIB = -lisode
+
+# C preprocessor
+CPP = cc -E
+
+# dependency generator
+DEPEND = gcc -MM
+
+# ranlib.  ar does the work for us so it's not needed
+RANLIB = true
+
+# 
+CFLAGSOPT = -g -fsigned-char -fno-strength-reduce
+OPTCOPT   = $(CFLAGSOPT)
+OPTVMOPT  = $(CFLAGSOPT)

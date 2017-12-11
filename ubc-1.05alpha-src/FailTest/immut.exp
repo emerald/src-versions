@@ -1,0 +1,3 @@
+Compiling immut.m
+"immut.m", line 8: Immutable objects are not allowed recovery sections
+"immut.m", line 8: Immutable objects are not allowed processes
