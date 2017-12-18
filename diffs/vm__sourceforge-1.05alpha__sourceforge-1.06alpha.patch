@@ -1,0 +1,153 @@
+diff -x Makefile.in -x COPYING -x CVS -x configure -x '*.ps' -x vmclex.c -x vmcpar.c -x vmcpar.h -x parse.m -x emx.exe -x emx.ncb -x emx.opt -x emx.dsp -x emx.dsw -x emx.mak -x emx.plg -I '^\([ /]\*.*\)\?$' --ignore-space-change --ignore-blank-lines -ruN sourceforge-1.05alpha/vm/src/codeptrextra.c sourceforge-1.06alpha/vm/src/codeptrextra.c
+--- sourceforge-1.05alpha/vm/src/codeptrextra.c	1970-01-01 01:00:00.000000000 +0100
++++ sourceforge-1.06alpha/vm/src/codeptrextra.c	2017-12-11 17:59:03.087714500 +0100
+@@ -0,0 +1,13 @@
++#include <stdlib.h>
++#include <stdio.h>
++
++typedef unsigned int word;
++
++int main( int argc, char **argv )
++{
++	int old_size = 2 * 1024 * 1024;
++	static word *old_start;
++	old_start = (word *) malloc (old_size);
++	printf("%#x",(int) old_start &  0xfc000000);
++	free(old_start);
++}
+diff -x Makefile.in -x COPYING -x CVS -x configure -x '*.ps' -x vmclex.c -x vmcpar.c -x vmcpar.h -x parse.m -x emx.exe -x emx.ncb -x emx.opt -x emx.dsp -x emx.dsw -x emx.mak -x emx.plg -I '^\([ /]\*.*\)\?$' --ignore-space-change --ignore-blank-lines -ruN sourceforge-1.05alpha/vm/src/codeptrextra.h sourceforge-1.06alpha/vm/src/codeptrextra.h
+--- sourceforge-1.05alpha/vm/src/codeptrextra.h	1970-01-01 01:00:00.000000000 +0100
++++ sourceforge-1.06alpha/vm/src/codeptrextra.h	2017-12-11 17:59:03.087714500 +0100
+@@ -0,0 +1,2 @@
++#undef CODEPTREXTRA
++#define CODEPTREXTRA 0xb4000000
+diff -x Makefile.in -x COPYING -x CVS -x configure -x '*.ps' -x vmclex.c -x vmcpar.c -x vmcpar.h -x parse.m -x emx.exe -x emx.ncb -x emx.opt -x emx.dsp -x emx.dsw -x emx.mak -x emx.plg -I '^\([ /]\*.*\)\?$' --ignore-space-change --ignore-blank-lines -ruN sourceforge-1.05alpha/vm/src/gc.c sourceforge-1.06alpha/vm/src/gc.c
+--- sourceforge-1.05alpha/vm/src/gc.c	2017-12-11 17:59:02.999715171 +0100
++++ sourceforge-1.06alpha/vm/src/gc.c	2017-12-11 17:59:03.088714493 +0100
+@@ -1013,7 +1013,7 @@
+     new_ub = new_end;
+     int tmp = (int)old_start & ~ALLBITS;
+     //MB_REMOVE
+-    TRACE(memory, 0, ("ALLBITS = %#x", ALLBITS));
++    /*TRACE(memory, 0, ("ALLBITS = %#x", ALLBITS));
+     TRACE(memory, 0, ("~ALLBITS = %#x", ~ALLBITS));
+     TRACE(memory, 0, ("CODEPTREXTRA = %#x", CODEPTREXTRA));
+     TRACE(memory, 0, ("~ALLBITS | CODEPTREXTRA = %#x", ~ALLBITS | CODEPTREXTRA));
+@@ -1024,6 +1024,7 @@
+     TRACE(memory, 0, ("(old_start & ~ALLBITS) | CODEPTREXTRA = %#x", tmp | CODEPTREXTRA));
+     TRACE(memory, 0, ("result = %#x", ((int)old_start & ~ALLBITS) | CODEPTREXTRA)) 
+     TRACE(memory, 0, ("old_size = %#x", old_size)) 
++    */
+     if (((int)old_start & CODEPTREXTRA) != CODEPTREXTRA) {
+       TRACE(memory, 0, ("EXTRA: old_start = %#x", (unsigned int)old_start));
+       abort();
+diff -x Makefile.in -x COPYING -x CVS -x configure -x '*.ps' -x vmclex.c -x vmcpar.c -x vmcpar.h -x parse.m -x emx.exe -x emx.ncb -x emx.opt -x emx.dsp -x emx.dsw -x emx.mak -x emx.plg -I '^\([ /]\*.*\)\?$' --ignore-space-change --ignore-blank-lines -ruN sourceforge-1.05alpha/vm/src/gencodeptrextra.sh sourceforge-1.06alpha/vm/src/gencodeptrextra.sh
+--- sourceforge-1.05alpha/vm/src/gencodeptrextra.sh	1970-01-01 01:00:00.000000000 +0100
++++ sourceforge-1.06alpha/vm/src/gencodeptrextra.sh	2017-12-11 17:59:03.088714493 +0100
+@@ -0,0 +1,5 @@
++#!/bin/sh
++#errornumber=`./emx |egrep old_start\|new_start |sed s/"^.*old_start = "//|sed s/"^.*new_start = "//`
++
++echo \#undef CODEPTREXTRA > codeptrextra.h;
++echo \#define CODEPTREXTRA `./codeptrextra` >> codeptrextra.h;
+diff -x Makefile.in -x COPYING -x CVS -x configure -x '*.ps' -x vmclex.c -x vmcpar.c -x vmcpar.h -x parse.m -x emx.exe -x emx.ncb -x emx.opt -x emx.dsp -x emx.dsw -x emx.mak -x emx.plg -I '^\([ /]\*.*\)\?$' --ignore-space-change --ignore-blank-lines -ruN sourceforge-1.05alpha/vm/src/Makefile.am sourceforge-1.06alpha/vm/src/Makefile.am
+--- sourceforge-1.05alpha/vm/src/Makefile.am	2017-12-11 17:59:02.997715186 +0100
++++ sourceforge-1.06alpha/vm/src/Makefile.am	2017-12-11 17:59:03.087714500 +0100
+@@ -1,4 +1,13 @@
+ bin_PROGRAMS = emx
++
++noinst_PROGRAMS = codeptrextra 
++
++noinst_SCRIPTS = gencodeptrextra.sh
++
++EXTRA_DIST =  gencodeptrextra.sh
++
++codeptrextra_SOURCES = codeptrextra.c
++
+ emx_SOURCES = array.c \
+ 	bufstr.c \
+ 	call.c \
+@@ -90,17 +99,25 @@
+ 	vm_i.h \
+ 	vm_exp.h \
+ 	write.h \
+-	cctab.h 
++	cctab.h \
++	codeptrextra.h 
+ #\
+ #	$(X11INC) \
+ #	$(LWPINC)
+ 
+-LDADD = ../../ccalls/libccalls.a
++emx_LDADD = ../../ccalls/libccalls.a
+ 
+ EMERALDROOT=$(top_srcdir)
+-BUILT_SOURCES = cctab.c
+-CLEANFILES = cctab.c cctab.h
++
++BUILT_SOURCES = cctab.c codeptrextra.h
++
++CLEANFILES = cctab.c cctab.h codeptrextra.h
++
++codeptrextra.h:	codeptrextra
++	./gencodeptrextra.sh
++
+ cctab.h: cctab.c
++
+ cctab.c: Makefile
+ 	EMERALDROOT=$(top_srcdir) $(top_srcdir)/bin/gencctab.sh `cd $(top_srcdir)/ccalls;ls *.o`
+ 
+diff -x Makefile.in -x COPYING -x CVS -x configure -x '*.ps' -x vmclex.c -x vmcpar.c -x vmcpar.h -x parse.m -x emx.exe -x emx.ncb -x emx.opt -x emx.dsp -x emx.dsw -x emx.mak -x emx.plg -I '^\([ /]\*.*\)\?$' --ignore-space-change --ignore-blank-lines -ruN sourceforge-1.05alpha/vm/src/remote.c sourceforge-1.06alpha/vm/src/remote.c
+--- sourceforge-1.05alpha/vm/src/remote.c	2017-12-11 17:59:03.001715156 +0100
++++ sourceforge-1.06alpha/vm/src/remote.c	2017-12-11 17:59:03.091714470 +0100
+@@ -367,7 +367,8 @@
+   stack[1] = (int)ctdg;
+   rootdir = CreateObjectFromOutside(ctd, (u32)stack);
+   if (doDistribution) {
+-    printf("Emerald listening on port %d %x, epoch %d %x\n", myid.port, myid.port, myid.epoch, myid.epoch);
++    fprintf(stdout,"Emerald listening on port %d %x, epoch %d %x\n", myid.port, myid.port, myid.epoch, myid.epoch);
++    fflush(stdout);
+   }
+ #endif
+ 
+diff -x Makefile.in -x COPYING -x CVS -x configure -x '*.ps' -x vmclex.c -x vmcpar.c -x vmcpar.h -x parse.m -x emx.exe -x emx.ncb -x emx.opt -x emx.dsp -x emx.dsw -x emx.mak -x emx.plg -I '^\([ /]\*.*\)\?$' --ignore-space-change --ignore-blank-lines -ruN sourceforge-1.05alpha/vm/src/storage.c sourceforge-1.06alpha/vm/src/storage.c
+--- sourceforge-1.05alpha/vm/src/storage.c	2017-12-11 17:59:03.002715148 +0100
++++ sourceforge-1.06alpha/vm/src/storage.c	2017-12-11 17:59:03.091714470 +0100
+@@ -165,8 +165,6 @@
+ void *vmMalloc(int a)
+ {
+   unsigned *t = (unsigned *)malloc(((a + 3)&~3) + (8 + PMEXTRA) * sizeof(int));
+-  fprintf(stderr,"Nummer et!\n");
+-  exit(0);
+ 
+   /*  if (!junk) junk = fopen("junk", "w");*/
+   setupOne(t, a);
+@@ -232,8 +230,6 @@
+ static int nmallocs, nfrees, nbigmallocs;
+ void *vmMalloc(int a)
+ {
+-  TRACE(memory,0,("Nummer to!\n"));
+-  exit(0);
+   if (a > 40000) {
+     nbigmallocs ++;
+   }
+diff -x Makefile.in -x COPYING -x CVS -x configure -x '*.ps' -x vmclex.c -x vmcpar.c -x vmcpar.h -x parse.m -x emx.exe -x emx.ncb -x emx.opt -x emx.dsp -x emx.dsw -x emx.mak -x emx.plg -I '^\([ /]\*.*\)\?$' --ignore-space-change --ignore-blank-lines -ruN sourceforge-1.05alpha/vm/src/types.h sourceforge-1.06alpha/vm/src/types.h
+--- sourceforge-1.05alpha/vm/src/types.h	2017-12-11 17:59:03.002715148 +0100
++++ sourceforge-1.06alpha/vm/src/types.h	2017-12-11 17:59:03.092714462 +0100
+@@ -479,3 +479,4 @@
+ ****************************************************************************/
+ 
+ #endif /* _EMERALD_TYPES_H */
++#include "codeptrextra.h"
+diff -x Makefile.in -x COPYING -x CVS -x configure -x '*.ps' -x vmclex.c -x vmcpar.c -x vmcpar.h -x parse.m -x emx.exe -x emx.ncb -x emx.opt -x emx.dsp -x emx.dsw -x emx.mak -x emx.plg -I '^\([ /]\*.*\)\?$' --ignore-space-change --ignore-blank-lines -ruN sourceforge-1.05alpha/vm/src/write.c sourceforge-1.06alpha/vm/src/write.c
+--- sourceforge-1.05alpha/vm/src/write.c	2017-12-11 17:59:03.003715140 +0100
++++ sourceforge-1.06alpha/vm/src/write.c	2017-12-11 17:59:03.093714455 +0100
+@@ -248,7 +248,7 @@
+ {
+   assert(ct);
+ 
+-  if ((int) ct < NUMBUILTINS) {
++  if ((unsigned int) ct < NUMBUILTINS) {
+     assert(0);
+     return sizeofObject;
+   } else if (ct->d.instanceSize >= 0) {
