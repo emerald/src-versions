@@ -1,0 +1,33 @@
+diff -x Makefile.in -x COPYING -x CVS -x configure -x '*.ps' -x vmclex.c -x vmcpar.c -x vmcpar.h -x parse.m -x emx.exe -x emx.ncb -x emx.opt -x emx.dsp -x emx.dsw -x emx.mak -x emx.plg -I '^\([ /]\*.*\)\?$' --ignore-space-change --ignore-blank-lines -ruN sourceforge-1.05alpha/vmc/Makefile ubc-latest-src/vmc/Makefile
+--- sourceforge-1.05alpha/vmc/Makefile	2017-12-11 17:59:03.003715140 +0100
++++ ubc-latest-src/vmc/Makefile	2017-12-11 17:59:03.496711383 +0100
+@@ -4,7 +4,7 @@
+ # uses standard system C compiler
+ #
+ 
+-CFLAGS = -I.
++CFLAGS = -I. -m32
+ INSTALLIN = $(EMERALDROOT)/bin/$(EMERALDARCH)
+ OBJ = vmclex.o vmcpar.o semantic.o trace.o \
+ 		iisc.o iset.o slist.o sisc.o ilist.o strings.o
+diff -x Makefile.in -x COPYING -x CVS -x configure -x '*.ps' -x vmclex.c -x vmcpar.c -x vmcpar.h -x parse.m -x emx.exe -x emx.ncb -x emx.opt -x emx.dsp -x emx.dsw -x emx.mak -x emx.plg -I '^\([ /]\*.*\)\?$' --ignore-space-change --ignore-blank-lines -ruN sourceforge-1.05alpha/vmc/semantic.c ubc-latest-src/vmc/semantic.c
+--- sourceforge-1.05alpha/vmc/semantic.c	2017-12-11 17:59:03.003715140 +0100
++++ ubc-latest-src/vmc/semantic.c	2017-12-11 17:59:03.497711376 +0100
+@@ -145,7 +123,7 @@
+ #include <stdio.h>\n\
+ #endif\n\
+ void disassemble(unsigned int ptr, int len, FILE *f);\n\
+-int totalbytecodes;\n\
++long long totalbytecodes;\n\
+ #ifdef PROFILEINTERPRET\n\
+ int bc_freq[NINSTRUCTIONS];\n\
+ #endif\n\
+@@ -156,7 +134,7 @@
+   u32 pc;\n";
+ 
+ static char *interpretmid1 = "\
+-  int addtototalbytecodes = 0;\n\
++  long long addtototalbytecodes = 0;\n\
+   unsigned char opcode;\n\
+ #if defined(INTERPRETERLOCALS)\n\
+   INTERPRETERLOCALS\n\
